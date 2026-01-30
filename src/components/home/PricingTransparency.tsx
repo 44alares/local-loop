@@ -1,31 +1,32 @@
 import { Palette, Printer, Building2, CreditCard } from 'lucide-react';
+import { COMMISSION_RATES } from '@/lib/pricing';
 
 const breakdown = [
   {
-    icon: Palette,
-    label: 'Designer Royalty',
-    percentage: 10,
-    color: 'secondary',
-    description: 'Goes directly to the creative mind behind the design',
-  },
-  {
     icon: Printer,
     label: 'Maker Earnings',
-    percentage: 75,
+    percentage: COMMISSION_RATES.MAKER * 100,
     color: 'accent',
-    description: 'Covers materials, labor, and supports local production',
+    description: 'Covers production costs and labor in your community',
   },
   {
     icon: Building2,
-    label: 'MakeHug Platform',
-    percentage: 10,
+    label: 'Makehug Platform',
+    percentage: COMMISSION_RATES.PLATFORM * 100,
+    color: 'secondary',
+    description: 'Service fee to keep the platform running',
+  },
+  {
+    icon: Palette,
+    label: 'Designer Royalty',
+    percentage: COMMISSION_RATES.DESIGNER * 100,
     color: 'primary',
-    description: 'Keeps the platform running and connecting communities',
+    description: 'IP royalties to the creative mind behind the design',
   },
   {
     icon: CreditCard,
     label: 'Payment Processing',
-    percentage: 5,
+    percentage: COMMISSION_RATES.PAYMENT_GATEWAY * 100,
     color: 'muted',
     description: 'Secure payment gateway fees',
   },
@@ -42,7 +43,7 @@ export function PricingTransparency() {
               Transparent Pricing
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Every purchase supports real people — designers who dream, makers who craft, 
+              Every purchase supports real people — makers who craft, designers who dream, 
               and local economies that thrive.
             </p>
           </div>
@@ -51,10 +52,10 @@ export function PricingTransparency() {
           <div className="bg-card rounded-2xl p-8 shadow-card mb-8">
             {/* Bar Chart */}
             <div className="h-12 rounded-full overflow-hidden flex mb-8">
-              <div className="bg-secondary h-full" style={{ width: '10%' }} />
               <div className="bg-accent h-full" style={{ width: '75%' }} />
-              <div className="bg-primary h-full" style={{ width: '10%' }} />
-              <div className="bg-muted-foreground/30 h-full" style={{ width: '5%' }} />
+              <div className="bg-secondary h-full" style={{ width: '14%' }} />
+              <div className="bg-primary h-full" style={{ width: '8%' }} />
+              <div className="bg-muted-foreground/30 h-full" style={{ width: '3%' }} />
             </div>
 
             {/* Legend */}
@@ -89,17 +90,17 @@ export function PricingTransparency() {
               <strong className="text-foreground">Example:</strong> For a $25 product
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary">
-                Designer: $2.50
-              </span>
               <span className="px-3 py-1 rounded-full bg-accent/10 text-accent">
                 Maker: $18.75
               </span>
+              <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary">
+                Platform: $3.50
+              </span>
               <span className="px-3 py-1 rounded-full bg-primary/10 text-primary">
-                Platform: $2.50
+                Designer: $2.00
               </span>
               <span className="px-3 py-1 rounded-full bg-muted text-muted-foreground">
-                Payment: $1.25
+                Payment: $0.75
               </span>
             </div>
           </div>

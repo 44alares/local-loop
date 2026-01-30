@@ -4,13 +4,23 @@ import { ProductCard } from '@/components/ProductCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { mockProducts, categoryLabels, styleLabels } from '@/data/mockData';
-import { Search, SlidersHorizontal, MapPin, X } from 'lucide-react';
+import { mockProducts } from '@/data/mockData';
+import { categories, categoryLabels, styleLabels } from '@/data/categories';
+import { Search, SlidersHorizontal, MapPin, X, Monitor, Gamepad2, Wrench, Cog, Palette, Baby } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const categories = Object.entries(categoryLabels);
 const styles = Object.entries(styleLabels);
 const materials = ['PLA', 'ABS', 'PETG', 'Resin', 'Nylon'];
+
+// Map category icons
+const categoryIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  desktop: Monitor,
+  gaming: Gamepad2,
+  repair: Wrench,
+  functional: Cog,
+  decoration: Palette,
+  kids: Baby,
+};
 
 export default function Shop() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,8 +56,27 @@ export default function Shop() {
               Shop Designs
             </h1>
             <p className="text-lg text-muted-foreground">
-              Find designs you love, printed in your city. Support local makers. Zero-mile delivery.
+              Find designs you love, printed in your city. Support local makers. Zero-kilometer delivery.
             </p>
+          </div>
+
+          {/* Category Pills */}
+          <div className="flex flex-wrap gap-3 mb-8">
+            {categories.map((cat) => {
+              const IconComponent = categoryIcons[cat.id];
+              return (
+                <Button
+                  key={cat.id}
+                  variant={selectedCategory === cat.id ? "secondary" : "outline"}
+                  size="lg"
+                  onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
+                  className="gap-2"
+                >
+                  {IconComponent && <IconComponent className="h-4 w-4" />}
+                  {cat.name}
+                </Button>
+              );
+            })}
           </div>
 
           {/* Search & Filter Bar */}
@@ -124,23 +153,6 @@ export default function Shop() {
         <div className="border-b border-border bg-card animate-fade-in">
           <div className="container py-6">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Category */}
-              <div>
-                <h3 className="font-semibold mb-3">Product Type</h3>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map(([value, label]) => (
-                    <Button
-                      key={value}
-                      variant={selectedCategory === value ? "secondary" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedCategory(selectedCategory === value ? null : value)}
-                    >
-                      {label}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
               {/* Style */}
               <div>
                 <h3 className="font-semibold mb-3">Visual Style</h3>

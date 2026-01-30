@@ -6,27 +6,28 @@ import {
   Upload, Printer, MapPin, ArrowRight,
   Globe, Shield, Zap
 } from 'lucide-react';
+import { SocialPillarsModal } from '@/components/about/SocialPillarsModal';
 
 const values = [
   {
     icon: Leaf,
-    title: 'Sustainability',
-    description: 'Zero international shipping means zero unnecessary carbon emissions. Every product is made in your neighborhood.',
+    title: 'Zero-KM Production',
+    description: 'Products travel meters, not oceans. Every item is made in your neighborhood, eliminating global shipping emissions.',
   },
   {
     icon: Shield,
-    title: 'Quality',
+    title: 'Verified Quality',
     description: 'Every maker is verified. Every design is curated. We only accept the best because you deserve the best.',
   },
   {
     icon: Users,
-    title: 'Community',
-    description: 'We believe in the power of local. Supporting makers in your city strengthens your community.',
+    title: 'Community First',
+    description: '75% of every purchase stays with your local Maker. We believe in neighborhood prosperity over distant profits.',
   },
   {
     icon: Sparkles,
-    title: 'Design',
-    description: 'Beautiful objects that serve a purpose. No mass-produced clutter — only thoughtful, crafted pieces.',
+    title: 'Circular Design',
+    description: 'Fight planned obsolescence. Our Repair Hub provides spare parts to extend the life of what you already own.',
   },
 ];
 
@@ -80,25 +81,23 @@ export default function About() {
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-display font-bold mb-6">
-              Making It Possible for Quality Objects to Be Created{' '}
-              <span className="text-secondary">Close to Home</span>
+              The Future is{' '}
+              <span className="text-secondary">Local</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              We believe great design shouldn't travel thousands of miles. MakeHug connects 
-              creators, makers, and lovers of craft in neighborhoods worldwide.
+              Makehug is an ethical ecosystem where products are manufactured by neighbors, 
+              not shipped across oceans. We connect designers, local makers, and conscious 
+              buyers to create a zero-kilometer economy.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center items-center gap-6">
               <Button variant="hero" asChild>
                 <Link to="/shop">
                   Start Shopping
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button variant="hero-outline" asChild>
-                <Link to="/maker">
-                  Join as Maker
-                </Link>
-              </Button>
+              <SocialPillarsModal />
+              <span className="text-sm text-muted-foreground">Learn More</span>
             </div>
           </div>
         </div>
@@ -118,7 +117,7 @@ export default function About() {
               <p className="text-lg text-muted-foreground mb-6">
                 MakeHug bridges this gap. We connect designers with local makers, enabling 
                 sustainable, on-demand production that supports local economies and reduces 
-                environmental impact.
+                environmental impact through zero-kilometer logistics.
               </p>
               <div className="grid grid-cols-3 gap-6 pt-6 border-t border-border">
                 <div className="text-center">
