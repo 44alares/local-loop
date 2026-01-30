@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Designer from "./pages/Designer";
 import Maker from "./pages/Maker";
 import Community from "./pages/Community";
+import PrintMyDesign from "./pages/PrintMyDesign";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/designer" element={<Designer />} />
           <Route path="/maker" element={<Maker />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/print-my-design" element={<PrintMyDesign />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

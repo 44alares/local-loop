@@ -4,11 +4,15 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { mockProducts, mockMakers, mockReviews } from '@/data/mockData';
+import { ralColors } from '@/data/ralColors';
+import { calculatePriceBreakdown, getShippingOptions, COMMISSION_RATES } from '@/lib/pricing';
 import { 
   ArrowLeft, Heart, Share2, Star, MapPin, Clock, 
   Package, Shield, Truck, ChevronRight, Check,
-  Palette, Printer, Building2, CreditCard
+  Palette, Printer, Building2, CreditCard, Leaf, Store
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -20,17 +24,26 @@ export default function ProductDetail() {
   const [selectedMaker, setSelectedMaker] = useState<string | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedShipping, setSelectedShipping] = useState('direct-pickup');
   const [quantity, setQuantity] = useState(1);
   const [locationSearch, setLocationSearch] = useState('');
+  const [ndaAccepted, setNdaAccepted] = useState(false);
 
   const maker = selectedMaker ? mockMakers.find((m) => m.id === selectedMaker) : null;
+  const shippingOptions = getShippingOptions();
+  const selectedShippingOption = shippingOptions.find(o => o.id === selectedShipping);
 
-  // Calculate price breakdown
+  // Calculate price breakdown with new commission rates
   const basePrice = product.price;
-  const designerRoyalty = basePrice * 0.10;
-  const makerMargin = basePrice * 0.75;
-  const platformFee = basePrice * 0.10;
-  const paymentFee = basePrice * 0.05;
+  const priceBreakdown = calculatePriceBreakdown(basePrice);
+  const shippingCost = selectedShippingOption?.price || 0;
+  const totalPrice = (basePrice + shippingCost) * quantity;
+
+  // Sort makers by distance (mock: just shuffle for demo)
+  const sortedMakers = [...mockMakers].sort((a, b) => {
+    // In real app, would sort by distance from user location
+    return a.rating > b.rating ? -1 : 1;
+  });
 
   return (
     <Layout>
@@ -127,31 +140,34 @@ export default function ProductDetail() {
                 <span className="text-muted-foreground">{product.currency}</span>
               </div>
               
-              {/* Price Breakdown */}
+              {/* Price Breakdown - Updated Commission */}
               <div className="space-y-2 text-sm">
                 <p className="text-muted-foreground mb-3">Your purchase supports:</p>
                 <div className="flex items-center gap-2">
-                  <Palette className="h-4 w-4 text-secondary" />
-                  <span>Designer: ${designerRoyalty.toFixed(2)} (10%)</span>
-                </div>
-                <div className="flex items-center gap-2">
                   <Printer className="h-4 w-4 text-accent" />
-                  <span>Maker: ${makerMargin.toFixed(2)} (75%)</span>
+                  <span>Maker: ${priceBreakdown.makerEarnings.toFixed(2)} (75%)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-primary" />
-                  <span>Platform: ${platformFee.toFixed(2)} (10%)</span>
+                  <Building2 className="h-4 w-4 text-secondary" />
+                  <span>Platform: ${priceBreakdown.platformFee.toFixed(2)} (14%)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Palette className="h-4 w-4 text-primary" />
+                  <span>Designer: ${priceBreakdown.designerRoyalty.toFixed(2)} (8%)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Payment: ${paymentFee.toFixed(2)} (5%)</span>
+                  <span className="text-muted-foreground">Payment: ${priceBreakdown.paymentGatewayFee.toFixed(2)} (3%)</span>
                 </div>
               </div>
             </div>
 
-            {/* Smart Maker Search */}
+            {/* Smart Maker Search with Geofencing */}
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Find a Maker Near You</h3>
+              <h3 className="font-semibold text-lg flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-secondary" />
+                Find a Maker Near You
+              </h3>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
@@ -161,10 +177,15 @@ export default function ProductDetail() {
                   className="pl-10 h-12"
                 />
               </div>
+              
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <Leaf className="h-4 w-4 text-secondary" />
+                Closest makers shown first for zero-KM delivery
+              </p>
 
               {/* Maker Cards */}
               <div className="space-y-3">
-                {mockMakers.map((makerItem) => (
+                {sortedMakers.map((makerItem, index) => (
                   <button
                     key={makerItem.id}
                     onClick={() => {
@@ -180,11 +201,18 @@ export default function ProductDetail() {
                     )}
                   >
                     <div className="flex items-start gap-4">
-                      <img
-                        src={makerItem.avatar}
-                        alt={makerItem.name}
-                        className="h-12 w-12 rounded-full"
-                      />
+                      <div className="relative">
+                        <img
+                          src={makerItem.avatar}
+                          alt={makerItem.name}
+                          className="h-12 w-12 rounded-full"
+                        />
+                        {index === 0 && (
+                          <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center text-xs">
+                            1
+                          </span>
+                        )}
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="font-semibold">{makerItem.name}</p>
@@ -240,21 +268,33 @@ export default function ProductDetail() {
                   </div>
                 </div>
 
-                {/* Color */}
+                {/* RAL Color Selection */}
                 <div>
-                  <h3 className="font-semibold mb-3">Select Color</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {maker.colors.map((color) => (
-                      <Button
-                        key={color}
-                        variant={selectedColor === color ? "secondary" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedColor(color)}
-                      >
-                        {color}
-                      </Button>
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <Palette className="h-4 w-4" />
+                    Select RAL Color
+                  </h3>
+                  <div className="grid grid-cols-8 gap-2 mb-2">
+                    {ralColors.slice(0, 16).map((color) => (
+                      <button
+                        key={color.code}
+                        onClick={() => setSelectedColor(color.code)}
+                        className={cn(
+                          "h-8 w-8 rounded-lg border-2 transition-all",
+                          selectedColor === color.code 
+                            ? "border-secondary scale-110 shadow-lg" 
+                            : "border-transparent hover:scale-105"
+                        )}
+                        style={{ backgroundColor: color.hex }}
+                        title={`${color.code} - ${color.name}`}
+                      />
                     ))}
                   </div>
+                  {selectedColor && (
+                    <p className="text-sm text-muted-foreground">
+                      Selected: {ralColors.find(c => c.code === selectedColor)?.code} - {ralColors.find(c => c.code === selectedColor)?.name}
+                    </p>
+                  )}
                 </div>
 
                 {/* Quantity */}
@@ -278,6 +318,71 @@ export default function ProductDetail() {
                     </Button>
                   </div>
                 </div>
+
+                {/* Shipping Options - Zero-KM Priority */}
+                <div>
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <Truck className="h-4 w-4" />
+                    Delivery Option
+                  </h3>
+                  <div className="space-y-2">
+                    {shippingOptions.map((option) => (
+                      <button
+                        key={option.id}
+                        onClick={() => setSelectedShipping(option.id)}
+                        className={cn(
+                          "w-full p-4 rounded-xl border-2 text-left transition-all flex items-center justify-between",
+                          selectedShipping === option.id 
+                            ? "border-secondary bg-secondary/5" 
+                            : "border-border hover:border-secondary/50"
+                        )}
+                      >
+                        <div className="flex items-center gap-3">
+                          {option.id === 'direct-pickup' ? (
+                            <MapPin className="h-5 w-5 text-secondary" />
+                          ) : option.id === 'local-point' ? (
+                            <Store className="h-5 w-5 text-accent" />
+                          ) : (
+                            <Truck className="h-5 w-5 text-muted-foreground" />
+                          )}
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium">{option.name}</p>
+                              {option.isRecommended && (
+                                <Badge variant="secondary" className="text-xs">Recommended</Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground">{option.description}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className={cn("font-semibold", option.price === 0 && "text-secondary")}>
+                            {option.price === 0 ? 'FREE' : `$${option.price.toFixed(2)}`}
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* NDA Agreement for Makers */}
+                <div className="p-4 rounded-xl border border-accent/50 bg-accent/5">
+                  <div className="flex items-start gap-3">
+                    <Checkbox 
+                      id="nda" 
+                      checked={ndaAccepted}
+                      onCheckedChange={(checked) => setNdaAccepted(checked as boolean)}
+                    />
+                    <div className="space-y-1">
+                      <Label htmlFor="nda" className="font-medium cursor-pointer">
+                        IP Protection Agreement
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        The Maker agrees to a Non-Disclosure Agreement and cannot commercialize, share, or distribute the designer's files without explicit written permission.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -287,9 +392,9 @@ export default function ProductDetail() {
                 variant="accent"
                 size="xl"
                 className="flex-1"
-                disabled={!selectedMaker || !selectedMaterial || !selectedColor}
+                disabled={!selectedMaker || !selectedMaterial || !selectedColor || !ndaAccepted}
               >
-                Add to Cart — ${(product.price * quantity).toFixed(2)}
+                Add to Cart — ${totalPrice.toFixed(2)}
               </Button>
               <Button variant="outline" size="xl">
                 <Heart className="h-5 w-5" />
@@ -306,8 +411,8 @@ export default function ProductDetail() {
                 <p className="text-xs text-muted-foreground">Verified Makers</p>
               </div>
               <div className="text-center">
-                <Truck className="h-6 w-6 mx-auto mb-2 text-secondary" />
-                <p className="text-xs text-muted-foreground">Local Pickup</p>
+                <Leaf className="h-6 w-6 mx-auto mb-2 text-secondary" />
+                <p className="text-xs text-muted-foreground">Zero-KM Delivery</p>
               </div>
               <div className="text-center">
                 <Package className="h-6 w-6 mx-auto mb-2 text-secondary" />

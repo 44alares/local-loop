@@ -1,0 +1,473 @@
+import { useState } from 'react';
+import { Layout } from '@/components/layout/Layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Lightbulb,
+  FileUp,
+  ArrowRight,
+  Upload,
+  Calculator,
+  Palette,
+  Printer,
+  Building2,
+  CreditCard,
+  CheckCircle2,
+} from 'lucide-react';
+import { ralColors, RALColor } from '@/data/ralColors';
+import { calculatePrintPrice, COMMISSION_RATES } from '@/lib/pricing';
+
+type FlowType = 'idea' | 'file' | null;
+
+export default function PrintMyDesign() {
+  const [selectedFlow, setSelectedFlow] = useState<FlowType>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [selectedMaterial, setSelectedMaterial] = useState('');
+  const [selectedColor, setSelectedColor] = useState<RALColor | null>(null);
+  const [estimatedWeight, setEstimatedWeight] = useState('');
+  const [estimatedPrintTime, setEstimatedPrintTime] = useState('');
+  const [ndaAccepted, setNdaAccepted] = useState(false);
+  const [ideaSubmitted, setIdeaSubmitted] = useState(false);
+
+  // Calculate estimated price based on inputs
+  const calculateEstimate = () => {
+    if (!estimatedWeight || !estimatedPrintTime || !selectedMaterial) return null;
+    
+    const materialCosts: Record<string, number> = {
+      'PLA': 25,
+      'ABS': 28,
+      'PETG': 30,
+      'Resin': 45,
+      'Nylon': 50,
+    };
+
+    const price = calculatePrintPrice({
+      weightGrams: parseFloat(estimatedWeight),
+      printTimeMinutes: parseFloat(estimatedPrintTime),
+      materialDensity: 1.24, // Average PLA density
+      materialCostPerKg: materialCosts[selectedMaterial] || 25,
+      laborRatePerHour: 15,
+    });
+
+    return price;
+  };
+
+  const estimatedPrice = calculateEstimate();
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+    }
+  };
+
+  if (ideaSubmitted) {
+    return (
+      <Layout>
+        <div className="container py-20">
+          <div className="max-w-lg mx-auto text-center">
+            <div className="h-20 w-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="h-10 w-10 text-secondary" />
+            </div>
+            <h1 className="text-display-sm font-bold mb-4">Request Submitted!</h1>
+            <p className="text-lg text-muted-foreground mb-8">
+              We've received your design idea. Our team of designers will review it and get back to you within 48 hours.
+            </p>
+            <Button variant="hero" onClick={() => { setIdeaSubmitted(false); setSelectedFlow(null); }}>
+              Submit Another Request
+            </Button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      {/* Hero */}
+      <section className="bg-gradient-hero py-16 md:py-20">
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center">
+            <Badge variant="secondary" className="mb-4">Custom Printing</Badge>
+            <h1 className="text-display font-bold mb-4">
+              Print My Design
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              Bring your ideas to life with local makers. Whether you have a concept or a ready file, we'll help you get it made.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Flow Selection */}
+      {!selectedFlow && (
+        <section className="container py-16">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Flow A: I have an idea */}
+            <Card 
+              className="cursor-pointer hover:border-secondary transition-colors group"
+              onClick={() => setSelectedFlow('idea')}
+            >
+              <CardHeader className="text-center pb-4">
+                <div className="h-16 w-16 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-secondary/20 transition-colors">
+                  <Lightbulb className="h-8 w-8 text-secondary" />
+                </div>
+                <CardTitle className="text-xl">I Have an Idea</CardTitle>
+                <CardDescription>
+                  Describe your concept and we'll connect you with a designer who can bring it to life
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <Button variant="outline" className="group-hover:bg-secondary group-hover:text-secondary-foreground transition-colors">
+                  Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Flow B: I have a file */}
+            <Card 
+              className="cursor-pointer hover:border-accent transition-colors group"
+              onClick={() => setSelectedFlow('file')}
+            >
+              <CardHeader className="text-center pb-4">
+                <div className="h-16 w-16 rounded-2xl bg-accent/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-accent/20 transition-colors">
+                  <FileUp className="h-8 w-8 text-accent" />
+                </div>
+                <CardTitle className="text-xl">I Have a File</CardTitle>
+                <CardDescription>
+                  Upload your STL or STEP file and get instant pricing based on material and print time
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <Button variant="outline" className="group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                  Upload File <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      )}
+
+      {/* Flow A: Idea Form */}
+      {selectedFlow === 'idea' && (
+        <section className="container py-16">
+          <div className="max-w-2xl mx-auto">
+            <Button 
+              variant="ghost" 
+              onClick={() => setSelectedFlow(null)}
+              className="mb-6"
+            >
+              ← Back to options
+            </Button>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-secondary" />
+                  Describe Your Idea
+                </CardTitle>
+                <CardDescription>
+                  Tell us about what you want to create. A designer will review and provide a quote.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Your Name</Label>
+                  <Input id="name" placeholder="John Doe" />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input id="email" type="email" placeholder="john@example.com" />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="title">Project Title</Label>
+                  <Input id="title" placeholder="Custom phone stand, replacement part, etc." />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="description">Describe Your Idea</Label>
+                  <Textarea 
+                    id="description" 
+                    placeholder="Please describe in detail what you want to create. Include dimensions, purpose, any reference images or links..."
+                    rows={6}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="budget">Estimated Budget (Optional)</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select budget range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="under-25">Under $25</SelectItem>
+                      <SelectItem value="25-50">$25 - $50</SelectItem>
+                      <SelectItem value="50-100">$50 - $100</SelectItem>
+                      <SelectItem value="100-250">$100 - $250</SelectItem>
+                      <SelectItem value="over-250">Over $250</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="reference">Reference Images (URLs)</Label>
+                  <Textarea 
+                    id="reference" 
+                    placeholder="Paste any links to reference images or similar products..."
+                    rows={2}
+                  />
+                </div>
+                
+                <Button 
+                  variant="hero" 
+                  className="w-full"
+                  onClick={() => setIdeaSubmitted(true)}
+                >
+                  Submit Request
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      )}
+
+      {/* Flow B: File Upload & Pricing */}
+      {selectedFlow === 'file' && (
+        <section className="container py-16">
+          <div className="max-w-4xl mx-auto">
+            <Button 
+              variant="ghost" 
+              onClick={() => setSelectedFlow(null)}
+              className="mb-6"
+            >
+              ← Back to options
+            </Button>
+            
+            <div className="grid lg:grid-cols-5 gap-8">
+              {/* Left: Upload & Configuration */}
+              <div className="lg:col-span-3 space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Upload className="h-5 w-5 text-accent" />
+                      Upload Your File
+                    </CardTitle>
+                    <CardDescription>
+                      Supported formats: STL, STEP, OBJ, 3MF
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-accent transition-colors">
+                      <input
+                        type="file"
+                        accept=".stl,.step,.stp,.obj,.3mf"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                        id="file-upload"
+                      />
+                      <label htmlFor="file-upload" className="cursor-pointer">
+                        <FileUp className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                        {uploadedFile ? (
+                          <p className="font-medium text-secondary">{uploadedFile.name}</p>
+                        ) : (
+                          <>
+                            <p className="font-medium mb-1">Drop your file here or click to browse</p>
+                            <p className="text-sm text-muted-foreground">Maximum file size: 100MB</p>
+                          </>
+                        )}
+                      </label>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Material Selection */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Material & Specifications</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                      <Label>Material</Label>
+                      <Select value={selectedMaterial} onValueChange={setSelectedMaterial}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select material" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="PLA">PLA - Standard ($25/kg)</SelectItem>
+                          <SelectItem value="ABS">ABS - Heat Resistant ($28/kg)</SelectItem>
+                          <SelectItem value="PETG">PETG - Durable ($30/kg)</SelectItem>
+                          <SelectItem value="Resin">Resin - High Detail ($45/kg)</SelectItem>
+                          <SelectItem value="Nylon">Nylon - Industrial ($50/kg)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Palette className="h-4 w-4" />
+                        RAL Color
+                      </Label>
+                      <div className="grid grid-cols-8 gap-2">
+                        {ralColors.slice(0, 16).map((color) => (
+                          <button
+                            key={color.code}
+                            onClick={() => setSelectedColor(color)}
+                            className={`h-8 w-8 rounded-lg border-2 transition-all ${
+                              selectedColor?.code === color.code 
+                                ? 'border-secondary scale-110' 
+                                : 'border-transparent hover:scale-105'
+                            }`}
+                            style={{ backgroundColor: color.hex }}
+                            title={`${color.code} - ${color.name}`}
+                          />
+                        ))}
+                      </div>
+                      {selectedColor && (
+                        <p className="text-sm text-muted-foreground">
+                          Selected: {selectedColor.code} - {selectedColor.name}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="weight">Estimated Weight (grams)</Label>
+                        <Input 
+                          id="weight" 
+                          type="number" 
+                          placeholder="e.g., 50"
+                          value={estimatedWeight}
+                          onChange={(e) => setEstimatedWeight(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="time">Print Time (minutes)</Label>
+                        <Input 
+                          id="time" 
+                          type="number" 
+                          placeholder="e.g., 120"
+                          value={estimatedPrintTime}
+                          onChange={(e) => setEstimatedPrintTime(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* NDA Agreement */}
+                <Card className="border-accent/50">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-3">
+                      <Checkbox 
+                        id="nda" 
+                        checked={ndaAccepted}
+                        onCheckedChange={(checked) => setNdaAccepted(checked as boolean)}
+                      />
+                      <div className="space-y-1">
+                        <Label htmlFor="nda" className="font-medium cursor-pointer">
+                          Non-Disclosure Agreement (Required)
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          By checking this box, I understand that the Maker who prints my design agrees to a Non-Disclosure Agreement and cannot commercialize, share, or distribute my design files without explicit written permission.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Right: Price Calculator */}
+              <div className="lg:col-span-2">
+                <Card className="sticky top-24">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Calculator className="h-5 w-5" />
+                      Price Estimate
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {estimatedPrice ? (
+                      <>
+                        <div className="text-center py-4">
+                          <p className="text-4xl font-bold">${estimatedPrice.toFixed(2)}</p>
+                          <p className="text-muted-foreground text-sm mt-1">Estimated total</p>
+                        </div>
+
+                        <div className="space-y-3 pt-4 border-t border-border">
+                          <p className="text-sm font-medium text-muted-foreground">Commission Breakdown:</p>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-2">
+                                <Printer className="h-4 w-4 text-accent" />
+                                Maker (75%)
+                              </span>
+                              <span>${(estimatedPrice * COMMISSION_RATES.MAKER).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-2">
+                                <Building2 className="h-4 w-4 text-secondary" />
+                                Platform (14%)
+                              </span>
+                              <span>${(estimatedPrice * COMMISSION_RATES.PLATFORM).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-2">
+                                <Palette className="h-4 w-4 text-primary" />
+                                Designer (8%)
+                              </span>
+                              <span>${(estimatedPrice * COMMISSION_RATES.DESIGNER).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-muted-foreground">
+                              <span className="flex items-center gap-2">
+                                <CreditCard className="h-4 w-4" />
+                                Payment (3%)
+                              </span>
+                              <span>${(estimatedPrice * COMMISSION_RATES.PAYMENT_GATEWAY).toFixed(2)}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <Button 
+                          variant="hero" 
+                          className="w-full" 
+                          disabled={!uploadedFile || !ndaAccepted}
+                        >
+                          Find Local Makers
+                        </Button>
+                      </>
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Calculator className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                        <p>Enter material, weight, and print time to see your estimate</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+    </Layout>
+  );
+}
