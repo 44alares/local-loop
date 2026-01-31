@@ -14,10 +14,10 @@ export function TrendingProducts() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
           <div>
             <h2 className="text-display-sm font-bold mb-2">
-              Trending Now
+              Newest Designs
             </h2>
             <p className="text-lg text-muted-foreground">
-              Discover the most popular designs from our community
+              Discover the newest designs from our community
             </p>
           </div>
           <Button variant="outline" asChild>

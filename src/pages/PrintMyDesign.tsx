@@ -106,9 +106,9 @@ export default function PrintMyDesign() {
       <section className="bg-gradient-hero py-16 md:py-20">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge variant="secondary" className="mb-4">Custom Printing</Badge>
+            <Badge variant="secondary" className="mb-4">Custom Production</Badge>
             <h1 className="text-display font-bold mb-4">
-              Print My Design
+              Make My Design
             </h1>
             <p className="text-xl text-muted-foreground">
               Bring your ideas to life with local makers. Whether you have a concept or a ready file, we'll help you get it made.
@@ -132,13 +132,16 @@ export default function PrintMyDesign() {
                 </div>
                 <CardTitle className="text-xl">I Have an Idea</CardTitle>
                 <CardDescription>
-                  Describe your concept and we'll connect you with a designer who can bring it to life
+                  Describe your concept and connect with a designer and a maker to bring it to life
                 </CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
-                <Button variant="outline" className="group-hover:bg-secondary group-hover:text-secondary-foreground transition-colors">
+              <CardContent className="text-center space-y-3">
+                <Button variant="outline" className="w-full group-hover:bg-secondary group-hover:text-secondary-foreground transition-colors">
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
+                <p className="text-xs text-muted-foreground">
+                  Connect with a designer and a maker
+                </p>
               </CardContent>
             </Card>
 

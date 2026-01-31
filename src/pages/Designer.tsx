@@ -9,7 +9,7 @@ import {
 const benefits = [
   {
     icon: DollarSign,
-    title: '10% Royalty Per Sale',
+    title: '8% Royalty Per Sale',
     description: 'Earn passive income every time your design is printed anywhere in the world.',
   },
   {
@@ -58,7 +58,7 @@ export default function Designer() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button variant="hero-accent" asChild>
-                  <Link to="/signup?role=designer">
+                  <Link to="/start-creating">
                     Start Creating
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
@@ -77,7 +77,7 @@ export default function Designer() {
                 className="rounded-2xl shadow-2xl"
               />
               <div className="absolute -bottom-6 -left-6 p-6 bg-card rounded-xl shadow-card-hover">
-                <p className="text-3xl font-bold text-accent">$2.50</p>
+                <p className="text-3xl font-bold text-accent">$2.00</p>
                 <p className="text-sm text-muted-foreground">avg. royalty per sale</p>
               </div>
             </div>
@@ -134,8 +134,8 @@ export default function Designer() {
                 ))}
               </div>
               <Button variant="accent" size="xl" className="mt-8" asChild>
-                <Link to="/signup?role=designer">
-                  Apply Now
+                <Link to="/start-creating">
+                  Start Creating
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -187,7 +187,7 @@ export default function Designer() {
               on MakeHug. Your creativity deserves to reach the world.
             </p>
             <Button variant="hero-accent" asChild>
-              <Link to="/signup?role=designer">
+              <Link to="/start-creating">
                 Start Creating Today
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>

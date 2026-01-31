@@ -108,16 +108,19 @@ export default function About() {
         <div className="container">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-display-sm font-bold mb-6">Our Mission</h2>
+              <h2 className="text-display-sm font-bold mb-6">Our Approach</h2>
               <p className="text-lg text-muted-foreground mb-6">
-                The world is full of beautiful designs that never make it to production because 
-                of the barriers of manufacturing. Meanwhile, talented makers around the world 
-                have the skills and equipment to bring those designs to life.
+                We have developed an automatic pricing method to eliminate unfair price competition. 
+                Prices are calculated based on material and time, not bidding wars.
               </p>
               <p className="text-lg text-muted-foreground mb-6">
-                MakeHug bridges this gap. We connect designers with local makers, enabling 
-                sustainable, on-demand production that supports local economies and reduces 
-                environmental impact through zero-kilometer logistics.
+                Makers are assigned based solely on proximity to the buyer to reduce carbon footprint. 
+                All Makers must be certified to ensure that the quality matches the "Real Scale Proof" 
+                photo provided by the designer.
+              </p>
+              <p className="text-lg text-muted-foreground mb-6">
+                This system creates a fair marketplace where everyone wins: designers earn royalties, 
+                makers receive fair compensation, and buyers get quality products made locally.
               </p>
               <div className="grid grid-cols-3 gap-6 pt-6 border-t border-border">
                 <div className="text-center">

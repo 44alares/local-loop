@@ -46,8 +46,8 @@ export interface Product {
   makerCount: number;
 }
 
-export type ProductCategory = 'functional' | 'desktop' | 'decoration' | 'kids' | 'other';
-export type ProductStyle = 'geometric' | 'colorful' | 'mixed';
+export type ProductCategory = 'functional' | 'desktop' | 'decoration' | 'kids' | 'gaming' | 'repair' | 'other';
+export type ProductStyle = 'geometric' | 'colorful' | 'mixed' | 'industrial';
 
 export interface Review {
   id: string;
@@ -80,9 +80,9 @@ export type OrderStatus = 'pending' | 'accepted' | 'printing' | 'qa_check' | 're
 
 export interface PriceBreakdown {
   basePrice: number;
-  designerRoyalty: number; // 10%
+  designerRoyalty: number; // 8%
   makerMargin: number; // 75%
-  platformFee: number; // 10%
-  paymentFee: number; // 5%
+  platformFee: number; // 14%
+  paymentFee: number; // 3%
   total: number;
 }
