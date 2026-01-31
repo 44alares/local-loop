@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { label: 'Discover', href: '/' },
   { label: 'Shop', href: '/shop' },
-  { label: 'Print My Design', href: '/print-my-design' },
+  { label: 'Make My Design', href: '/make-my-design' },
   { label: "I'm a Designer", href: '/designer' },
   { label: "I'm a Maker", href: '/maker' },
   { label: 'About', href: '/about' },
@@ -36,7 +36,7 @@ export function Header() {
               to={item.href}
               className={cn(
                 "px-4 py-2 text-sm font-medium rounded-lg transition-colors",
-                item.href === '/print-my-design' && "text-accent font-semibold",
+                item.href === '/make-my-design' && "text-accent font-semibold",
                 location.pathname === item.href
                   ? "bg-muted text-foreground"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -85,7 +85,7 @@ export function Header() {
                 onClick={() => setIsMenuOpen(false)}
                 className={cn(
                   "block px-4 py-3 text-base font-medium rounded-lg transition-colors",
-                  item.href === '/print-my-design' && "text-accent",
+                  item.href === '/make-my-design' && "text-accent",
                   location.pathname === item.href
                     ? "bg-muted text-foreground"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"

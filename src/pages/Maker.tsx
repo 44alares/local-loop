@@ -59,7 +59,7 @@ export default function Maker() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button variant="hero-accent" asChild>
-                  <Link to="/signup?role=maker">
+                  <Link to="/join-as-maker">
                     Join as Maker
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
@@ -166,7 +166,7 @@ export default function Maker() {
                 ))}
               </div>
               <Button variant="accent" size="xl" className="mt-8" asChild>
-                <Link to="/signup?role=maker">
+                <Link to="/join-as-maker">
                   Apply Now
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
@@ -190,7 +190,7 @@ export default function Maker() {
               makers receive a badge on their profile and priority in search results.
             </p>
             <Button variant="hero-accent" asChild>
-              <Link to="/signup?role=maker">
+              <Link to="/join-as-maker">
                 Start Your Application
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
