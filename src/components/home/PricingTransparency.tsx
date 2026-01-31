@@ -1,40 +1,32 @@
 import { Palette, Printer, Building2, CreditCard } from 'lucide-react';
 import { COMMISSION_RATES } from '@/lib/pricing';
-
-const breakdown = [
-  {
-    icon: Printer,
-    label: 'Maker Earnings',
-    percentage: COMMISSION_RATES.MAKER * 100,
-    color: 'accent',
-    description: 'Covers production costs and labor in your community',
-  },
-  {
-    icon: Building2,
-    label: 'Makehug Platform',
-    percentage: COMMISSION_RATES.PLATFORM * 100,
-    color: 'secondary',
-    description: 'Service fee to keep the platform running',
-  },
-  {
-    icon: Palette,
-    label: 'Designer Royalty',
-    percentage: COMMISSION_RATES.DESIGNER * 100,
-    color: 'primary',
-    description: 'IP royalties to the creative mind behind the design',
-  },
-  {
-    icon: CreditCard,
-    label: 'Payment Processing',
-    percentage: COMMISSION_RATES.PAYMENT_GATEWAY * 100,
-    color: 'muted',
-    description: 'Secure payment gateway fees',
-  },
-];
-
+const breakdown = [{
+  icon: Printer,
+  label: 'Maker Earnings',
+  percentage: COMMISSION_RATES.MAKER * 100,
+  color: 'accent',
+  description: 'Covers production costs and labor in your community'
+}, {
+  icon: Building2,
+  label: 'Makehug Platform',
+  percentage: COMMISSION_RATES.PLATFORM * 100,
+  color: 'secondary',
+  description: 'Service fee to keep the platform running'
+}, {
+  icon: Palette,
+  label: 'Designer Royalty',
+  percentage: COMMISSION_RATES.DESIGNER * 100,
+  color: 'primary',
+  description: 'IP royalties to the creative mind behind the design'
+}, {
+  icon: CreditCard,
+  label: 'Payment Processing',
+  percentage: COMMISSION_RATES.PAYMENT_GATEWAY * 100,
+  color: 'muted',
+  description: 'Secure payment gateway fees'
+}];
 export function PricingTransparency() {
-  return (
-    <section className="py-20 md:py-28 bg-cream-dark/30">
+  return <section className="py-20 md:py-28 bg-cream-dark/30">
       <div className="container">
         <div className="max-w-4xl mx-auto">
           {/* Section Header */}
@@ -52,35 +44,31 @@ export function PricingTransparency() {
           <div className="bg-card rounded-2xl p-8 shadow-card mb-8">
             {/* Bar Chart */}
             <div className="h-12 rounded-full overflow-hidden flex mb-8">
-              <div className="bg-accent h-full" style={{ width: '75%' }} />
-              <div className="bg-secondary h-full" style={{ width: '14%' }} />
-              <div className="bg-primary h-full" style={{ width: '8%' }} />
-              <div className="bg-muted-foreground/30 h-full" style={{ width: '3%' }} />
+              <div className="bg-accent h-full" style={{
+              width: '75%'
+            }} />
+              <div className="bg-secondary h-full" style={{
+              width: '14%'
+            }} />
+              <div className="bg-primary h-full" style={{
+              width: '8%'
+            }} />
+              <div className="bg-muted-foreground/30 h-full" style={{
+              width: '3%'
+            }} />
             </div>
 
             {/* Legend */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {breakdown.map((item) => (
-                <div key={item.label} className="flex gap-3">
-                  <div className={`h-10 w-10 rounded-lg flex items-center justify-center shrink-0 ${
-                    item.color === 'secondary' ? 'bg-secondary/10' :
-                    item.color === 'accent' ? 'bg-accent/10' :
-                    item.color === 'primary' ? 'bg-primary/10' :
-                    'bg-muted'
-                  }`}>
-                    <item.icon className={`h-5 w-5 ${
-                      item.color === 'secondary' ? 'text-secondary' :
-                      item.color === 'accent' ? 'text-accent' :
-                      item.color === 'primary' ? 'text-primary' :
-                      'text-muted-foreground'
-                    }`} />
+              {breakdown.map(item => <div key={item.label} className="flex gap-3">
+                  <div className={`h-10 w-10 rounded-lg flex items-center justify-center shrink-0 ${item.color === 'secondary' ? 'bg-secondary/10' : item.color === 'accent' ? 'bg-accent/10' : item.color === 'primary' ? 'bg-primary/10' : 'bg-muted'}`}>
+                    <item.icon className={`h-5 w-5 ${item.color === 'secondary' ? 'text-secondary' : item.color === 'accent' ? 'text-accent' : item.color === 'primary' ? 'text-primary' : 'text-muted-foreground'}`} />
                   </div>
                   <div>
                     <p className="font-semibold">{item.percentage}%</p>
                     <p className="text-sm text-muted-foreground">{item.label}</p>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
 
@@ -93,9 +81,7 @@ export function PricingTransparency() {
               <span className="px-3 py-1 rounded-full bg-accent/10 text-accent">
                 Maker: $18.75
               </span>
-              <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary">
-                Platform: $3.50
-              </span>
+              <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary">Platform: $3.50</span>
               <span className="px-3 py-1 rounded-full bg-primary/10 text-primary">
                 Designer: $2.00
               </span>
@@ -106,6 +92,5 @@ export function PricingTransparency() {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 }
