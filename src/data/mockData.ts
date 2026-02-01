@@ -5,6 +5,16 @@ import geometricDeskOrganizerImg from '@/assets/products/geometric-desk-organize
 import articulatedDragonImg from '@/assets/products/articulated-dragon.jpg';
 import honeycombWallArtImg from '@/assets/products/honeycomb-wall-art.jpg';
 import phoneStandImg from '@/assets/products/phone-stand.jpg';
+import cableManagementSystemImg from '@/assets/products/cable-management-system.jpg';
+import precisionCaliperCaseImg from '@/assets/products/precision-caliper-case.jpg';
+import parametricWrenchImg from '@/assets/products/parametric-wrench.jpg';
+import drillDustCollectorImg from '@/assets/products/drill-dust-collector.jpg';
+import solderingHelpingHandsImg from '@/assets/products/soldering-helping-hands.jpg';
+import customControllerGripsImg from '@/assets/products/custom-controller-grips.jpg';
+import consoleVerticalStandImg from '@/assets/products/console-vertical-stand.jpg';
+import universalReplacementKnobImg from '@/assets/products/universal-replacement-knob.jpg';
+import zipperPullReplacementImg from '@/assets/products/zipper-pull-replacement.jpg';
+import dishwasherBasketWheelImg from '@/assets/products/dishwasher-basket-wheel.jpg';
 
 export const mockDesigners: Designer[] = [
   {
@@ -134,7 +144,7 @@ export const mockProducts: Product[] = [
     name: 'Cable Management System',
     description: 'Keep your cables organized with this modular cable management system. Mounts under your desk for a clean workspace.',
     images: [
-      'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&h=600&fit=crop',
+      cableManagementSystemImg,
     ],
     price: 12,
     currency: 'USD',
@@ -213,7 +223,7 @@ export const mockProducts: Product[] = [
     name: 'Precision Caliper Case',
     description: 'A protective case for digital or analog calipers. Custom-fit interior prevents scratches and keeps your measuring tools organized.',
     images: [
-      'https://images.unsplash.com/photo-1504917595217-d4dc5ebb6122?w=600&h=600&fit=crop',
+      precisionCaliperCaseImg,
     ],
     price: 16,
     currency: 'USD',
@@ -232,7 +242,7 @@ export const mockProducts: Product[] = [
     name: 'Parametric Wrench',
     description: 'Adjustable parametric wrench with customizable jaw size. Perfect for light-duty tasks and emergencies.',
     images: [
-      'https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=600&h=600&fit=crop',
+      parametricWrenchImg,
     ],
     price: 11,
     currency: 'USD',
@@ -251,7 +261,7 @@ export const mockProducts: Product[] = [
     name: 'Drill Dust Collector',
     description: 'Attaches to your drill to collect dust while drilling. Works with most standard drill bits.',
     images: [
-      'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=600&h=600&fit=crop',
+      drillDustCollectorImg,
     ],
     price: 9,
     currency: 'USD',
@@ -270,7 +280,7 @@ export const mockProducts: Product[] = [
     name: 'Soldering Helping Hands',
     description: 'Articulated arms with alligator clips for holding components while soldering. Adjustable base for stability.',
     images: [
-      'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=600&fit=crop',
+      solderingHelpingHandsImg,
     ],
     price: 22,
     currency: 'USD',
@@ -290,7 +300,7 @@ export const mockProducts: Product[] = [
     name: 'Custom Controller Grips',
     description: 'Ergonomic grip extensions for gaming controllers. Fits PS5, Xbox, and most third-party controllers.',
     images: [
-      'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=600&h=600&fit=crop',
+      customControllerGripsImg,
     ],
     price: 14,
     currency: 'USD',
@@ -328,7 +338,7 @@ export const mockProducts: Product[] = [
     name: 'Console Vertical Stand',
     description: 'Sleek vertical stand for gaming consoles. Improves airflow and saves desk space.',
     images: [
-      'https://images.unsplash.com/photo-1605901309584-818e25960a8f?w=600&h=600&fit=crop',
+      consoleVerticalStandImg,
     ],
     price: 19,
     currency: 'USD',
@@ -348,7 +358,7 @@ export const mockProducts: Product[] = [
     name: 'Universal Replacement Knob',
     description: 'Parametric knob that fits most appliances. Adjustable shaft diameter for perfect fit.',
     images: [
-      'https://images.unsplash.com/photo-1558618047-f4b511d0f14b?w=600&h=600&fit=crop',
+      universalReplacementKnobImg,
     ],
     price: 6,
     currency: 'USD',
@@ -367,7 +377,7 @@ export const mockProducts: Product[] = [
     name: 'Zipper Pull Replacement',
     description: 'Set of 5 universal zipper pulls. Works with most clothing, bags, and outdoor gear.',
     images: [
-      'https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&h=600&fit=crop',
+      zipperPullReplacementImg,
     ],
     price: 4,
     currency: 'USD',
@@ -386,7 +396,7 @@ export const mockProducts: Product[] = [
     name: 'Dishwasher Basket Wheel',
     description: 'Universal replacement wheel for dishwasher racks. Durable and heat-resistant.',
     images: [
-      'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&h=600&fit=crop',
+      dishwasherBasketWheelImg,
     ],
     price: 5,
     currency: 'USD',
