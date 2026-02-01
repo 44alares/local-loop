@@ -52,12 +52,14 @@ const steps = [
   },
 ];
 
+import alvaroAresImage from '@/assets/team/alvaro-ares.jpg';
+
 const team = [
   {
-    name: 'Alex Chen',
+    name: 'Alvaro Ares',
     role: 'Founder & CEO',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop',
-    bio: 'Former 3D printing engineer passionate about sustainable local economies.',
+    image: alvaroAresImage,
+    bio: 'Industrial Designer passionate about 3D printing and sustainable local economies.',
   },
   {
     name: 'Maria Santos',
