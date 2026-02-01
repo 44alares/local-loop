@@ -5,12 +5,11 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { label: 'Discover', href: '/' },
   { label: 'Shop', href: '/shop' },
-  { label: 'Make My Design', href: '/make-my-design' },
   { label: "I'm a Designer", href: '/designer' },
   { label: "I'm a Maker", href: '/maker' },
-  { label: 'About', href: '/about' },
+  { label: 'Make My Design', href: '/make-my-design' },
+  { label: 'Our Why', href: '/about' },
 ];
 
 export function Header() {
