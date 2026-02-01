@@ -2,10 +2,8 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, FileText } from 'lucide-react';
-
 export default function NDATerms() {
-  return (
-    <Layout>
+  return <Layout>
       <section className="container py-12 md:py-16">
         <div className="max-w-4xl mx-auto">
           <Button variant="ghost" asChild className="mb-6">
@@ -70,8 +68,7 @@ export default function NDATerms() {
               3. PRICING AND QUALITY TRANSPARENCY
             </h2>
             <ul className="list-disc pl-6 space-y-3 text-muted-foreground">
-              <li>
-                <strong className="text-foreground">A. Price setting:</strong> The parties agree that the sale price is calculated automatically by the Platform's algorithm ("Fair Calculation") based on objective variables (material cost, machine time, support complexity, and the Designer's royalty). No bidding, manual repricing, or manipulation of manufacturing costs is permitted, in order to prevent unfair competition.
+              <li>A. Price setting: The parties agree that the sale price is calculated automatically by the Platform's algorithm ("Fair Calculation") based on objective variables (material cost, machine time, support complexity). No bidding, manual repricing, or manipulation of manufacturing costs is permitted, in order to prevent unfair competition.<strong className="text-foreground">A. Price setting:</strong> The parties agree that the sale price is calculated automatically by the Platform's algorithm ("Fair Calculation") based on objective variables (material cost, machine time, support complexity, and the Designer's royalty). No bidding, manual repricing, or manipulation of manufacturing costs is permitted, in order to prevent unfair competition.
               </li>
               <li>
                 <strong className="text-foreground">B. Quality certification:</strong> The Maker represents and warrants that their equipment is properly calibrated to meet standard dimensional tolerances (±0.2 mm) and that they will use materials consistent with those shown in the Designer's "Real-Scale Proof."
@@ -87,6 +84,5 @@ export default function NDATerms() {
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 }
