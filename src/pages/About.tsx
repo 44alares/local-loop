@@ -84,6 +84,9 @@ export default function About() {
               The Future is{' '}
               <span className="text-secondary">Local</span>
             </h1>
+            <p className="text-lg font-medium text-foreground mb-4">
+              MakeHug was founded by individual designers and makers.
+            </p>
             <p className="text-xl text-muted-foreground mb-8">
               Makehug is an ethical ecosystem where products are manufactured by neighbors, 
               not shipped across oceans. We connect designers, local makers, and conscious 

@@ -377,21 +377,21 @@ export default function PrintMyDesign() {
                   </CardContent>
                 </Card>
 
-                {/* NDA Agreement */}
+                {/* IP Certification */}
                 <Card className="border-accent/50">
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-3">
                       <Checkbox 
-                        id="nda" 
+                        id="ip-certification" 
                         checked={ndaAccepted}
                         onCheckedChange={(checked) => setNdaAccepted(checked as boolean)}
                       />
                       <div className="space-y-1">
-                        <Label htmlFor="nda" className="font-medium cursor-pointer">
-                          Non-Disclosure Agreement (Required)
+                        <Label htmlFor="ip-certification" className="font-medium cursor-pointer">
+                          Design Ownership Certification (Required)
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          By checking this box, I understand that the Maker who prints my design agrees to a Non-Disclosure Agreement and cannot commercialize, share, or distribute my design files without explicit written permission.
+                          I certify that I am the original designer or that I have express written permission to create and distribute this design. I acknowledge that any intellectual property infringement is my sole responsibility.
                         </p>
                       </div>
                     </div>
