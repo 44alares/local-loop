@@ -65,7 +65,7 @@ export function PricingTransparency() {
                     <item.icon className={`h-5 w-5 ${item.color === 'secondary' ? 'text-secondary' : item.color === 'accent' ? 'text-accent' : item.color === 'primary' ? 'text-primary' : 'text-muted-foreground'}`} />
                   </div>
                   <div>
-                    <p className="font-semibold">{item.percentage}%</p>
+                    <p className="font-semibold">{Math.round(item.percentage)}%</p>
                     <p className="text-sm text-muted-foreground">{item.label}</p>
                   </div>
                 </div>)}
