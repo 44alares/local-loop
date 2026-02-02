@@ -87,7 +87,7 @@ export function HeroSection() {
             <div className="relative aspect-square">
               {/* Main Image */}
               <div className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl animate-fade-in">
-                <img alt="3D printed sustainable design" className="h-full w-full object-cover" src="/lovable-uploads/117f8403-eaaf-45b9-9fe4-4e9cc2a9740e.jpg" />
+                <img alt="3D printed sustainable design" className="h-full w-full object-cover" src="/lovable-uploads/9ef02256-46b9-4af9-983e-904d2e40ec11.png" />
               </div>
               
               {/* Floating Cards */}
