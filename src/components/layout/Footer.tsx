@@ -15,6 +15,7 @@ const footerLinks = {
     { label: 'Press', href: '/press' },
   ],
   support: [
+    { label: 'FAQ', href: '/faq' },
     { label: 'Help Center', href: '/help' },
     { label: 'Contact', href: '/contact' },
     { label: 'Shipping', href: '/shipping' },
