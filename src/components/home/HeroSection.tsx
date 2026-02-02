@@ -90,32 +90,6 @@ export function HeroSection() {
                 <img alt="3D printed sustainable design" className="h-full w-full object-cover" src="/lovable-uploads/9ef02256-46b9-4af9-983e-904d2e40ec11.png" />
               </div>
               
-              {/* Floating Cards */}
-              <div className="absolute -left-8 top-1/4 p-4 bg-background rounded-xl shadow-card-hover animate-float" style={{
-              animationDelay: '0s'
-            }}>
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-secondary/10 flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-secondary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Local Pickup</p>
-                    <p className="text-xs text-muted-foreground">Madrid, Spain</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="absolute -right-4 bottom-1/4 p-4 bg-background rounded-xl shadow-card-hover animate-float" style={{
-              animationDelay: '2s'
-            }}>
-                <div className="flex items-center gap-3">
-                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop" alt="Maker" className="h-10 w-10 rounded-full" />
-                  <div>
-                    <p className="text-sm font-medium">Maria Santos</p>
-                    <p className="text-xs text-muted-foreground">⭐ 4.9 · 156 prints</p>
-                  </div>
-                </div>
-              </div>
 
               {/* Decorative Elements */}
               <div className="absolute -z-10 top-0 right-0 w-72 h-72 bg-secondary/10 rounded-full blur-3xl" />
