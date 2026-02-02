@@ -218,6 +218,24 @@ export default function About() {
         </div>
       </section>
 
+      {/* FAQ CTA */}
+      <section className="py-16 md:py-20">
+        <div className="container">
+          <div className="max-w-2xl mx-auto text-center p-8 rounded-2xl bg-secondary/5 border border-secondary/20">
+            <h2 className="text-2xl font-bold mb-3">Have Questions?</h2>
+            <p className="text-muted-foreground mb-6">
+              Learn more about how MakeHug works, our intellectual property policies, and quality standards.
+            </p>
+            <Button variant="hero-outline" asChild>
+              <Link to="/faq">
+                View FAQ
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Team */}
       <section className="py-20 md:py-28 bg-cream-dark/30">
         <div className="container">

@@ -14,6 +14,7 @@ import PrintMyDesign from "./pages/PrintMyDesign";
 import StartCreating from "./pages/StartCreating";
 import JoinAsMaker from "./pages/JoinAsMaker";
 import NDATerms from "./pages/NDATerms";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/start-creating" element={<StartCreating />} />
           <Route path="/join-as-maker" element={<JoinAsMaker />} />
           <Route path="/nda-terms" element={<NDATerms />} />
+          <Route path="/faq" element={<FAQ />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
