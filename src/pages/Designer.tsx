@@ -9,7 +9,7 @@ import {
 const benefits = [
   {
     icon: DollarSign,
-    title: '8% Royalty Per Sale',
+    title: '8-20% Royalty Per Sale',
     description: 'Earn passive income every time your design is printed anywhere in the world.',
   },
   {
