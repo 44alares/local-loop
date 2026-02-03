@@ -51,6 +51,7 @@ export default function StartCreating() {
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [originalWorkCertified, setOriginalWorkCertified] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [complexity, setComplexity] = useState('');
 
   // Calculate estimated price based on inputs
   const calculateEstimate = () => {
@@ -306,6 +307,26 @@ export default function StartCreating() {
                         <SelectItem value="Nylon">Nylon - Industrial ($50/kg)</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Complexity</Label>
+                    <div className="grid grid-cols-3 gap-3">
+                      {['Functional', 'Mixed', 'Artistic'].map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => setComplexity(option)}
+                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+                            complexity === option
+                              ? 'border-secondary bg-secondary/10 text-secondary'
+                              : 'border-border hover:border-secondary/50'
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="space-y-2">

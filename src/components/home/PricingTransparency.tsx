@@ -1,5 +1,7 @@
-import { Palette, Printer, Building2, CreditCard } from 'lucide-react';
+import { Palette, Printer, Building2, CreditCard, ArrowRight } from 'lucide-react';
 import { COMMISSION_RATES } from '@/lib/pricing';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 const breakdown = [{
   icon: Printer,
   label: 'Maker Earnings',
@@ -89,6 +91,16 @@ export function PricingTransparency() {
                 Payment: $0.75
               </span>
             </div>
+          </div>
+
+          {/* Contact Button */}
+          <div className="text-center mt-8">
+            <Button variant="hero-outline" asChild>
+              <Link to="/contact">
+                Contact Us
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
