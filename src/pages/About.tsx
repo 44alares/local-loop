@@ -52,28 +52,6 @@ const steps = [
   },
 ];
 
-import alvaroAresImage from '@/assets/team/alvaro-ares.jpg';
-
-const team = [
-  {
-    name: 'Alvaro Ares',
-    role: 'Founder & CEO',
-    image: alvaroAresImage,
-    bio: 'Industrial Designer passionate about 3D printing and sustainable local economies.',
-  },
-  {
-    name: 'Maria Santos',
-    role: 'Head of Community',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop',
-    bio: 'Community builder connecting makers and designers worldwide.',
-  },
-  {
-    name: 'James Park',
-    role: 'Head of Design',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop',
-    bio: 'Industrial designer focused on sustainable product development.',
-  },
-];
 
 export default function About() {
   return (
@@ -236,31 +214,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Team */}
-      <section className="py-20 md:py-28 bg-cream-dark/30">
-        <div className="container">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-display-sm font-bold mb-4">Meet the Team</h2>
-            <p className="text-lg text-muted-foreground">
-              The people behind MakeHug who believe in a more sustainable future.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {team.map((member) => (
-              <div key={member.name} className="text-center">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-                />
-                <h3 className="font-bold">{member.name}</h3>
-                <p className="text-secondary text-sm mb-2">{member.role}</p>
-                <p className="text-muted-foreground text-sm">{member.bio}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* CTA */}
       <section className="py-20 md:py-28">
