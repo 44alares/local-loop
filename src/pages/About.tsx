@@ -243,6 +243,16 @@ export default function About() {
                 </Link>
               </Button>
             </div>
+            
+            {/* Contact Button */}
+            <div className="mt-6">
+              <Button variant="outline" asChild>
+                <Link to="/contact">
+                  Contact Us
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
