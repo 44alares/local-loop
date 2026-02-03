@@ -5,39 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Upload,
-  Image,
-  Camera,
-  Settings,
-  Calculator,
-  Printer,
-  Building2,
-  Palette,
-  CreditCard,
-  CheckCircle2,
-  FileText,
-  AlertCircle,
-} from 'lucide-react';
+import { Upload, Image, Camera, Settings, Calculator, Printer, Building2, Palette, CreditCard, CheckCircle2, FileText, AlertCircle } from 'lucide-react';
 import { ralColors, RALColor } from '@/data/ralColors';
 import { calculatePrintPrice, COMMISSION_RATES } from '@/lib/pricing';
 import { Link } from 'react-router-dom';
-
 export default function StartCreating() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [renderImage, setRenderImage] = useState<File | null>(null);
@@ -56,54 +30,44 @@ export default function StartCreating() {
   // Calculate estimated price based on inputs
   const calculateEstimate = () => {
     if (!estimatedWeight || !estimatedPrintTime || !selectedMaterial) return null;
-    
     const materialCosts: Record<string, number> = {
       'PLA': 25,
       'ABS': 28,
       'PETG': 30,
       'Resin': 45,
-      'Nylon': 50,
+      'Nylon': 50
     };
-
     const price = calculatePrintPrice({
       weightGrams: parseFloat(estimatedWeight),
       printTimeMinutes: parseFloat(estimatedPrintTime),
       materialDensity: 1.24,
       materialCostPerKg: materialCosts[selectedMaterial] || 25,
-      laborRatePerHour: 15,
+      laborRatePerHour: 15
     });
-
     return price;
   };
-
   const estimatedPrice = calculateEstimate();
-
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setUploadedFile(file);
     }
   };
-
   const handleRenderUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setRenderImage(file);
     }
   };
-
   const handleScaleProofUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setScaleProofImage(file);
     }
   };
-
   const canSubmit = uploadedFile && scaleProofImage && ndaAccepted && originalWorkCertified && selectedMaterial;
-
   if (submitted) {
-    return (
-      <Layout>
+    return <Layout>
         <div className="container py-20">
           <div className="max-w-lg mx-auto text-center">
             <div className="h-20 w-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-6">
@@ -118,12 +82,9 @@ export default function StartCreating() {
             </Button>
           </div>
         </div>
-      </Layout>
-    );
+      </Layout>;
   }
-
-  return (
-    <Layout>
+  return <Layout>
       {/* Hero */}
       <section className="bg-gradient-hero py-12 md:py-16">
         <div className="container">
@@ -132,9 +93,7 @@ export default function StartCreating() {
             <h1 className="text-display font-bold mb-4">
               Start Creating
             </h1>
-            <p className="text-xl text-muted-foreground">
-              Upload your design and earn 8% royalty on every print. Make sure to include a real-scale proof photo.
-            </p>
+            <p className="text-xl text-muted-foreground">Upload your design and earn 8-20% royalty on every print. Make sure to include a real-scale proof photo.</p>
           </div>
         </div>
       </section>
@@ -158,23 +117,13 @@ export default function StartCreating() {
                 </CardHeader>
                 <CardContent>
                   <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-secondary transition-colors">
-                    <input
-                      type="file"
-                      accept=".stl,.3mf"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      id="file-upload"
-                    />
+                    <input type="file" accept=".stl,.3mf" onChange={handleFileUpload} className="hidden" id="file-upload" />
                     <label htmlFor="file-upload" className="cursor-pointer">
                       <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                      {uploadedFile ? (
-                        <p className="font-medium text-secondary">{uploadedFile.name}</p>
-                      ) : (
-                        <>
+                      {uploadedFile ? <p className="font-medium text-secondary">{uploadedFile.name}</p> : <>
                           <p className="font-medium mb-1">Drop your STL/3MF here or click to browse</p>
                           <p className="text-sm text-muted-foreground">Maximum file size: 100MB</p>
-                        </>
-                      )}
+                        </>}
                     </label>
                   </div>
                 </CardContent>
@@ -199,22 +148,12 @@ export default function StartCreating() {
                       Slot 1: Render/Promotional Image (Optional)
                     </Label>
                     <div className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-secondary transition-colors">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleRenderUpload}
-                        className="hidden"
-                        id="render-upload"
-                      />
+                      <input type="file" accept="image/*" onChange={handleRenderUpload} className="hidden" id="render-upload" />
                       <label htmlFor="render-upload" className="cursor-pointer">
-                        {renderImage ? (
-                          <p className="font-medium text-secondary">{renderImage.name}</p>
-                        ) : (
-                          <>
+                        {renderImage ? <p className="font-medium text-secondary">{renderImage.name}</p> : <>
                             <Image className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                             <p className="text-sm">Upload a render or promotional photo</p>
-                          </>
-                        )}
+                          </>}
                       </label>
                     </div>
                   </div>
@@ -225,31 +164,19 @@ export default function StartCreating() {
                       <Camera className="h-4 w-4 text-accent" />
                       Slot 2: Real Scale Proof (Mandatory) *
                     </Label>
-                    <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
-                      scaleProofImage ? 'border-secondary bg-secondary/5' : 'border-accent/50 hover:border-accent'
-                    }`}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleScaleProofUpload}
-                        className="hidden"
-                        id="scale-proof-upload"
-                      />
+                    <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${scaleProofImage ? 'border-secondary bg-secondary/5' : 'border-accent/50 hover:border-accent'}`}>
+                      <input type="file" accept="image/*" onChange={handleScaleProofUpload} className="hidden" id="scale-proof-upload" />
                       <label htmlFor="scale-proof-upload" className="cursor-pointer">
-                        {scaleProofImage ? (
-                          <div className="flex items-center justify-center gap-2">
+                        {scaleProofImage ? <div className="flex items-center justify-center gap-2">
                             <CheckCircle2 className="h-5 w-5 text-secondary" />
                             <p className="font-medium text-secondary">{scaleProofImage.name}</p>
-                          </div>
-                        ) : (
-                          <>
+                          </div> : <>
                             <AlertCircle className="h-8 w-8 mx-auto text-accent mb-2" />
                             <p className="text-sm font-medium mb-1">Upload a photo of the printed object</p>
                             <p className="text-xs text-muted-foreground">
                               Must include a standard object for scale (pen, coin, headphones, etc.)
                             </p>
-                          </>
-                        )}
+                          </>}
                       </label>
                     </div>
                   </div>
@@ -283,11 +210,7 @@ export default function StartCreating() {
                     <div className="space-y-2">
                       <Label>Requires Supports</Label>
                       <div className="flex items-center gap-2 h-10">
-                        <Checkbox 
-                          id="supports" 
-                          checked={hasSupports}
-                          onCheckedChange={(checked) => setHasSupports(checked as boolean)}
-                        />
+                        <Checkbox id="supports" checked={hasSupports} onCheckedChange={checked => setHasSupports(checked as boolean)} />
                         <Label htmlFor="supports" className="cursor-pointer">Yes, supports needed</Label>
                       </div>
                     </div>
@@ -312,20 +235,9 @@ export default function StartCreating() {
                   <div className="space-y-2">
                     <Label>Complexity</Label>
                     <div className="grid grid-cols-3 gap-3">
-                      {['Functional', 'Mixed', 'Artistic'].map((option) => (
-                        <button
-                          key={option}
-                          type="button"
-                          onClick={() => setComplexity(option)}
-                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
-                            complexity === option
-                              ? 'border-secondary bg-secondary/10 text-secondary'
-                              : 'border-border hover:border-secondary/50'
-                          }`}
-                        >
+                      {['Functional', 'Mixed', 'Artistic'].map(option => <button key={option} type="button" onClick={() => setComplexity(option)} className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${complexity === option ? 'border-secondary bg-secondary/10 text-secondary' : 'border-border hover:border-secondary/50'}`}>
                           {option}
-                        </button>
-                      ))}
+                        </button>)}
                     </div>
                   </div>
 
@@ -335,47 +247,23 @@ export default function StartCreating() {
                       Recommended RAL Color
                     </Label>
                     <div className="grid grid-cols-8 gap-2">
-                      {ralColors.slice(0, 16).map((color) => (
-                        <button
-                          key={color.code}
-                          onClick={() => setSelectedColor(color)}
-                          className={`h-8 w-8 rounded-lg border-2 transition-all ${
-                            selectedColor?.code === color.code 
-                              ? 'border-secondary scale-110' 
-                              : 'border-transparent hover:scale-105'
-                          }`}
-                          style={{ backgroundColor: color.hex }}
-                          title={`${color.code} - ${color.name}`}
-                        />
-                      ))}
+                      {ralColors.slice(0, 16).map(color => <button key={color.code} onClick={() => setSelectedColor(color)} className={`h-8 w-8 rounded-lg border-2 transition-all ${selectedColor?.code === color.code ? 'border-secondary scale-110' : 'border-transparent hover:scale-105'}`} style={{
+                      backgroundColor: color.hex
+                    }} title={`${color.code} - ${color.name}`} />)}
                     </div>
-                    {selectedColor && (
-                      <p className="text-sm text-muted-foreground">
+                    {selectedColor && <p className="text-sm text-muted-foreground">
                         Selected: {selectedColor.code} - {selectedColor.name}
-                      </p>
-                    )}
+                      </p>}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="weight">Estimated Weight (grams)</Label>
-                      <Input 
-                        id="weight" 
-                        type="number" 
-                        placeholder="e.g., 50"
-                        value={estimatedWeight}
-                        onChange={(e) => setEstimatedWeight(e.target.value)}
-                      />
+                      <Input id="weight" type="number" placeholder="e.g., 50" value={estimatedWeight} onChange={e => setEstimatedWeight(e.target.value)} />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="time">Print Time (minutes)</Label>
-                      <Input 
-                        id="time" 
-                        type="number" 
-                        placeholder="e.g., 120"
-                        value={estimatedPrintTime}
-                        onChange={(e) => setEstimatedPrintTime(e.target.value)}
-                      />
+                      <Input id="time" type="number" placeholder="e.g., 120" value={estimatedPrintTime} onChange={e => setEstimatedPrintTime(e.target.value)} />
                     </div>
                   </div>
                 </CardContent>
@@ -390,19 +278,12 @@ export default function StartCreating() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Link 
-                    to="/nda-terms" 
-                    className="text-secondary underline hover:text-secondary/80 text-sm font-medium"
-                  >
+                  <Link to="/nda-terms" className="text-secondary underline hover:text-secondary/80 text-sm font-medium">
                     Read full Non-Disclosure Agreement & IP Terms →
                   </Link>
 
                   <div className="flex items-start gap-3">
-                    <Checkbox 
-                      id="nda" 
-                      checked={ndaAccepted}
-                      onCheckedChange={(checked) => setNdaAccepted(checked as boolean)}
-                    />
+                    <Checkbox id="nda" checked={ndaAccepted} onCheckedChange={checked => setNdaAccepted(checked as boolean)} />
                     <div className="space-y-1">
                       <Label htmlFor="nda" className="font-medium cursor-pointer">
                         I accept the NDA terms
@@ -414,11 +295,7 @@ export default function StartCreating() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <Checkbox 
-                      id="original" 
-                      checked={originalWorkCertified}
-                      onCheckedChange={(checked) => setOriginalWorkCertified(checked as boolean)}
-                    />
+                    <Checkbox id="original" checked={originalWorkCertified} onCheckedChange={checked => setOriginalWorkCertified(checked as boolean)} />
                     <div className="space-y-1">
                       <Label htmlFor="original" className="font-medium cursor-pointer">
                         I certify this is my original design
@@ -442,8 +319,7 @@ export default function StartCreating() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {estimatedPrice ? (
-                    <>
+                  {estimatedPrice ? <>
                       <div className="text-center py-4">
                         <p className="text-4xl font-bold">${estimatedPrice.toFixed(2)}</p>
                         <p className="text-muted-foreground text-sm mt-1">Suggested retail price</p>
@@ -490,33 +366,22 @@ export default function StartCreating() {
                         </p>
                       </div>
 
-                      <Button 
-                        variant="hero" 
-                        className="w-full" 
-                        disabled={!canSubmit}
-                        onClick={() => setSubmitted(true)}
-                      >
+                      <Button variant="hero" className="w-full" disabled={!canSubmit} onClick={() => setSubmitted(true)}>
                         Submit Design
                       </Button>
 
-                      {!canSubmit && (
-                        <p className="text-xs text-center text-muted-foreground">
+                      {!canSubmit && <p className="text-xs text-center text-muted-foreground">
                           Please complete all required fields and accept the terms
-                        </p>
-                      )}
-                    </>
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
+                        </p>}
+                    </> : <div className="text-center py-8 text-muted-foreground">
                       <Calculator className="h-12 w-12 mx-auto mb-4 opacity-50" />
                       <p>Enter material, weight, and print time to see your price breakdown</p>
-                    </div>
-                  )}
+                    </div>}
                 </CardContent>
               </Card>
             </div>
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 }
