@@ -2,7 +2,14 @@ import { Palette, Printer, Building2, CreditCard, ArrowRight } from 'lucide-reac
 import { COMMISSION_RATES } from '@/lib/pricing';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-const breakdown = [{
+const breakdown: Array<{
+  icon: typeof Printer;
+  label: string;
+  percentage: number;
+  percentageDisplay?: string;
+  color: string;
+  description: string;
+}> = [{
   icon: Printer,
   label: 'Maker Earnings',
   percentage: COMMISSION_RATES.MAKER * 100,
@@ -18,6 +25,7 @@ const breakdown = [{
   icon: Palette,
   label: 'Designer Royalty',
   percentage: COMMISSION_RATES.DESIGNER * 100,
+  percentageDisplay: '8-20%',
   color: 'primary',
   description: 'IP royalties to the creative mind behind the design'
 }, {
@@ -67,7 +75,7 @@ export function PricingTransparency() {
                     <item.icon className={`h-5 w-5 ${item.color === 'secondary' ? 'text-secondary' : item.color === 'accent' ? 'text-accent' : item.color === 'primary' ? 'text-primary' : 'text-muted-foreground'}`} />
                   </div>
                   <div>
-                    <p className="font-semibold">{Math.round(item.percentage)}%</p>
+                    <p className="font-semibold">{item.percentageDisplay || `${Math.round(item.percentage)}%`}</p>
                     <p className="text-sm text-muted-foreground">{item.label}</p>
                   </div>
                 </div>)}
