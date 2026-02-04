@@ -7,12 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { mockProducts, mockMakers, mockReviews } from '@/data/mockData';
-import { ralColors } from '@/data/ralColors';
-import { calculatePriceBreakdown, getShippingOptions, COMMISSION_RATES } from '@/lib/pricing';
+import { getShippingOptions } from '@/lib/pricing';
+import { ProductConfigurator, ConfigState } from '@/components/product/ProductConfigurator';
 import { 
   ArrowLeft, Heart, Share2, Star, MapPin, Clock, 
   Package, Shield, Truck, ChevronRight, Check,
-  Palette, Printer, Building2, CreditCard, Leaf, Store
+  Leaf, Store
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -22,26 +22,22 @@ export default function ProductDetail() {
   
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedMaker, setSelectedMaker] = useState<string | null>(null);
-  const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedShipping, setSelectedShipping] = useState('direct-pickup');
   const [quantity, setQuantity] = useState(1);
   const [locationSearch, setLocationSearch] = useState('');
   const [ndaAccepted, setNdaAccepted] = useState(false);
+  const [buyerPrice, setBuyerPrice] = useState(product.price);
+  const [config, setConfig] = useState<ConfigState | null>(null);
 
   const maker = selectedMaker ? mockMakers.find((m) => m.id === selectedMaker) : null;
   const shippingOptions = getShippingOptions();
   const selectedShippingOption = shippingOptions.find(o => o.id === selectedShipping);
 
-  // Calculate price breakdown with new commission rates
-  const basePrice = product.price;
-  const priceBreakdown = calculatePriceBreakdown(basePrice);
   const shippingCost = selectedShippingOption?.price || 0;
-  const totalPrice = (basePrice + shippingCost) * quantity;
+  const totalPrice = (buyerPrice + shippingCost) * quantity;
 
   // Sort makers by distance (mock: just shuffle for demo)
   const sortedMakers = [...mockMakers].sort((a, b) => {
-    // In real app, would sort by distance from user location
     return a.rating > b.rating ? -1 : 1;
   });
 
@@ -133,34 +129,12 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Price */}
-            <div className="p-6 rounded-xl bg-card border border-border">
-              <div className="flex items-baseline gap-2 mb-4">
-                <span className="text-3xl font-bold">${product.price}</span>
-                <span className="text-muted-foreground">{product.currency}</span>
-              </div>
-              
-              {/* Price Breakdown - Updated Commission */}
-              <div className="space-y-2 text-sm">
-                <p className="text-muted-foreground mb-3">Your purchase supports:</p>
-                <div className="flex items-center gap-2">
-                  <Printer className="h-4 w-4 text-accent" />
-                  <span>Maker: ${priceBreakdown.makerEarnings.toFixed(2)} (75%)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-secondary" />
-                  <span>Platform: ${priceBreakdown.platformFee.toFixed(2)} (14%)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Palette className="h-4 w-4 text-primary" />
-                  <span>Designer: ${priceBreakdown.designerRoyalty.toFixed(2)} (8%)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CreditCard className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Payment: ${priceBreakdown.paymentGatewayFee.toFixed(2)} (3%)</span>
-                </div>
-              </div>
-            </div>
+            {/* Product Configurator - Material, Color, Quality with Live Pricing */}
+            <ProductConfigurator 
+              product={product}
+              onPriceChange={setBuyerPrice}
+              onConfigChange={setConfig}
+            />
 
             {/* Smart Maker Search with Geofencing */}
             <div className="space-y-4">
@@ -188,11 +162,7 @@ export default function ProductDetail() {
                 {sortedMakers.map((makerItem, index) => (
                   <button
                     key={makerItem.id}
-                    onClick={() => {
-                      setSelectedMaker(makerItem.id);
-                      setSelectedMaterial(null);
-                      setSelectedColor(null);
-                    }}
+                    onClick={() => setSelectedMaker(makerItem.id)}
                     className={cn(
                       "w-full p-4 rounded-xl border-2 text-left transition-all",
                       selectedMaker === makerItem.id 
@@ -248,55 +218,9 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            {/* Material & Color Selection (if maker selected) */}
+            {/* Additional Options (if maker selected) */}
             {maker && (
               <div className="space-y-4 animate-fade-in">
-                {/* Material */}
-                <div>
-                  <h3 className="font-semibold mb-3">Select Material</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {maker.materials.map((material) => (
-                      <Button
-                        key={material}
-                        variant={selectedMaterial === material ? "secondary" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedMaterial(material)}
-                      >
-                        {material}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* RAL Color Selection */}
-                <div>
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <Palette className="h-4 w-4" />
-                    Select RAL Color
-                  </h3>
-                  <div className="grid grid-cols-8 gap-2 mb-2">
-                    {ralColors.slice(0, 16).map((color) => (
-                      <button
-                        key={color.code}
-                        onClick={() => setSelectedColor(color.code)}
-                        className={cn(
-                          "h-8 w-8 rounded-lg border-2 transition-all",
-                          selectedColor === color.code 
-                            ? "border-secondary scale-110 shadow-lg" 
-                            : "border-transparent hover:scale-105"
-                        )}
-                        style={{ backgroundColor: color.hex }}
-                        title={`${color.code} - ${color.name}`}
-                      />
-                    ))}
-                  </div>
-                  {selectedColor && (
-                    <p className="text-sm text-muted-foreground">
-                      Selected: {ralColors.find(c => c.code === selectedColor)?.code} - {ralColors.find(c => c.code === selectedColor)?.name}
-                    </p>
-                  )}
-                </div>
-
                 {/* Quantity */}
                 <div>
                   <h3 className="font-semibold mb-3">Quantity</h3>
@@ -392,7 +316,7 @@ export default function ProductDetail() {
                 variant="accent"
                 size="xl"
                 className="flex-1"
-                disabled={!selectedMaker || !selectedMaterial || !selectedColor || !ndaAccepted}
+                disabled={!selectedMaker || !config?.selectedColor || !ndaAccepted}
               >
                 Add to Cart — ${totalPrice.toFixed(2)}
               </Button>
@@ -432,11 +356,15 @@ export default function ProductDetail() {
             <h3 className="font-semibold mb-3">Specifications</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between py-2 border-b border-border">
+                <span className="text-muted-foreground">Product Type</span>
+                <span className="capitalize font-medium">{product.productType}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-border">
                 <span className="text-muted-foreground">Dimensions</span>
                 <span>{product.dimensions.length} × {product.dimensions.width} × {product.dimensions.height} {product.dimensions.unit}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">Materials</span>
+                <span className="text-muted-foreground">Available Materials</span>
                 <span>{product.materials.join(', ')}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-border">

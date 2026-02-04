@@ -25,7 +25,7 @@ const breakdown: Array<{
   icon: Palette,
   label: 'Designer Royalty',
   percentage: COMMISSION_RATES.DESIGNER * 100,
-  percentageDisplay: '8-20%',
+  percentageDisplay: '8-16%',
   color: 'primary',
   description: 'IP royalties to the creative mind behind the design'
 }, {

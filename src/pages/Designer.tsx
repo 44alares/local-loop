@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Upload, DollarSign, BarChart3, Globe, ArrowRight, Check, Palette, Users } from 'lucide-react';
 const benefits = [{
   icon: DollarSign,
-  title: '8-20% Royalty Per Sale',
+  title: '8-16% Royalty Per Sale',
   description: 'Earn passive income every time your design is printed anywhere in the world.'
 }, {
   icon: Globe,
@@ -56,7 +56,7 @@ export default function Designer() {
             <div className="relative hidden lg:block">
               <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=600&fit=crop" alt="3D design process" className="rounded-2xl shadow-2xl" />
               <div className="absolute -bottom-6 -left-6 p-6 bg-card rounded-xl shadow-card-hover">
-                <p className="text-3xl font-bold text-accent">8-20%</p>
+                <p className="text-3xl font-bold text-accent">8-16%</p>
                 <p className="text-sm text-muted-foreground">avg. royalty per sale</p>
               </div>
             </div>

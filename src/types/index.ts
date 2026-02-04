@@ -23,6 +23,14 @@ export interface Maker {
   verified: boolean;
 }
 
+export type ProductType = 'functional' | 'mixed' | 'artistic';
+
+export interface ProductColorSpec {
+  pla?: string[];
+  resin?: string[];
+  default?: string[];
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -32,8 +40,11 @@ export interface Product {
   currency: string;
   designer: Designer;
   category: ProductCategory;
+  productType: ProductType;
   style: ProductStyle;
   materials: string[];
+  availableColors: ProductColorSpec;
+  supportedQualities: ('standard' | 'premium' | 'ultra')[];
   dimensions: {
     length: number;
     width: number;
@@ -46,8 +57,8 @@ export interface Product {
   makerCount: number;
 }
 
-export type ProductCategory = 'functional' | 'desktop' | 'decoration' | 'kids' | 'gaming' | 'repair' | 'other';
-export type ProductStyle = 'geometric' | 'colorful' | 'mixed' | 'industrial';
+export type ProductCategory = 'functional' | 'desktop' | 'decoration' | 'kids' | 'gaming' | 'repair' | 'artistic' | 'other';
+export type ProductStyle = 'geometric' | 'colorful' | 'mixed' | 'industrial' | 'sculptural';
 
 export interface Review {
   id: string;
@@ -80,9 +91,9 @@ export type OrderStatus = 'pending' | 'accepted' | 'printing' | 'qa_check' | 're
 
 export interface PriceBreakdown {
   basePrice: number;
-  designerRoyalty: number; // 8%
-  makerMargin: number; // 75%
-  platformFee: number; // 14%
-  paymentFee: number; // 3%
+  designerRoyalty: number;
+  makerMargin: number;
+  platformFee: number;
+  paymentFee: number;
   total: number;
 }
