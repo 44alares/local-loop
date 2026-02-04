@@ -1,19 +1,106 @@
 // Updated pricing engine with new commission structure
+import type { ProductType } from '@/types';
+
 export interface PriceBreakdown {
   basePrice: number;
-  makerEarnings: number;      // 75%
-  platformFee: number;        // 14%
-  designerRoyalty: number;    // 8%
-  paymentGatewayFee: number;  // 3%
+  makerEarnings: number;
+  platformFee: number;
+  designerRoyalty: number;
+  paymentGatewayFee: number;
   total: number;
 }
 
 export const COMMISSION_RATES = {
-  MAKER: 0.75,           // 75% - Production costs and labor
+  MAKER: 0.75,           // 75% - Production costs and labor (legacy, calculated dynamically now)
   PLATFORM: 0.14,        // 14% - Makehug service fee
-  DESIGNER: 0.08,        // 8% - IP Royalties
+  DESIGNER: 0.08,        // 8% - Base IP Royalties (Functional)
   PAYMENT_GATEWAY: 0.03, // 3% - Transaction fees
 } as const;
+
+// Designer commission rates based on product type
+export const DESIGNER_RATES: Record<ProductType, number> = {
+  functional: 0.08,  // 8%
+  mixed: 0.12,       // 12%
+  artistic: 0.16,    // 16%
+};
+
+// Material surcharges for non-Artistic products
+export const MATERIAL_SURCHARGES: Record<string, number> = {
+  PLA: 0,
+  ABS: 0.10,
+  PETG: 0.15,
+  Nylon: 0.35,
+  Resin: 0.50,
+  TPU: 0.20,
+};
+
+// Material surcharges for Artistic products
+export const ARTISTIC_MATERIAL_SURCHARGES: Record<string, number> = {
+  PLA: 0,
+  Resin: 0.25,
+};
+
+// Quality surcharges for non-Artistic products
+export const QUALITY_SURCHARGES: Record<string, number> = {
+  standard: 0,
+  premium: 0.20,
+};
+
+// Quality surcharges for Artistic products
+export const ARTISTIC_QUALITY_SURCHARGES: Record<string, number> = {
+  premium: 0,
+  ultra: 0.25,
+};
+
+export interface BuyerPriceParams {
+  basePrice: number;
+  material: string;
+  quality: 'standard' | 'premium' | 'ultra';
+  isArtistic: boolean;
+}
+
+export function calculateBuyerPrice(params: BuyerPriceParams): number {
+  const { basePrice, material, quality, isArtistic } = params;
+  
+  const materialSurcharge = isArtistic 
+    ? (ARTISTIC_MATERIAL_SURCHARGES[material] ?? 0)
+    : (MATERIAL_SURCHARGES[material] ?? 0);
+  
+  const qualitySurcharge = isArtistic
+    ? (ARTISTIC_QUALITY_SURCHARGES[quality] ?? 0)
+    : (QUALITY_SURCHARGES[quality] ?? 0);
+  
+  return basePrice * (1 + materialSurcharge) * (1 + qualitySurcharge);
+}
+
+export interface FullPriceBreakdown {
+  buyerPrice: number;
+  paymentProcessing: number;
+  platformFee: number;
+  designerRoyalty: number;
+  designerRate: number;
+  makerPayout: number;
+  makerRate: number;
+}
+
+export function calculateFullBreakdown(buyerPrice: number, productType: ProductType): FullPriceBreakdown {
+  const designerRate = DESIGNER_RATES[productType];
+  const paymentProcessing = buyerPrice * COMMISSION_RATES.PAYMENT_GATEWAY;
+  const platformFee = buyerPrice * COMMISSION_RATES.PLATFORM;
+  const designerRoyalty = buyerPrice * designerRate;
+  const makerPayout = buyerPrice - paymentProcessing - platformFee - designerRoyalty;
+  const makerRate = 1 - COMMISSION_RATES.PAYMENT_GATEWAY - COMMISSION_RATES.PLATFORM - designerRate;
+  
+  return {
+    buyerPrice,
+    paymentProcessing,
+    platformFee,
+    designerRoyalty,
+    designerRate,
+    makerPayout,
+    makerRate,
+  };
+}
 
 export function calculatePriceBreakdown(basePrice: number): PriceBreakdown {
   return {

@@ -93,7 +93,7 @@ export default function StartCreating() {
             <h1 className="text-display font-bold mb-4">
               Start Creating
             </h1>
-            <p className="text-xl text-muted-foreground">Upload your design and earn 8-20% royalty on every print. Make sure to include a real-scale proof photo.</p>
+            <p className="text-xl text-muted-foreground">Upload your design and earn 8-16% royalty on every print. Make sure to include a real-scale proof photo.</p>
           </div>
         </div>
       </section>
