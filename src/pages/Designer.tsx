@@ -1,44 +1,27 @@
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { 
-  Upload, DollarSign, BarChart3, Globe, 
-  ArrowRight, Check, Palette, Users
-} from 'lucide-react';
-
-const benefits = [
-  {
-    icon: DollarSign,
-    title: '8-20% Royalty Per Sale',
-    description: 'Earn passive income every time your design is printed anywhere in the world.',
-  },
-  {
-    icon: Globe,
-    title: 'Global Reach',
-    description: 'Your designs reach customers in 150+ cities without managing logistics.',
-  },
-  {
-    icon: Users,
-    title: 'Maker Network',
-    description: 'Access our network of 2,300+ verified makers who bring your designs to life.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Analytics Dashboard',
-    description: 'Track views, sales, revenue, and see where your designs are most popular.',
-  },
-];
-
-const steps = [
-  'Sign up and create your designer profile',
-  'Upload your STL files with specifications',
-  'Designs reviewed within 24-48 hours',
-  'Go live and start earning royalties',
-];
-
+import { Upload, DollarSign, BarChart3, Globe, ArrowRight, Check, Palette, Users } from 'lucide-react';
+const benefits = [{
+  icon: DollarSign,
+  title: '8-20% Royalty Per Sale',
+  description: 'Earn passive income every time your design is printed anywhere in the world.'
+}, {
+  icon: Globe,
+  title: 'Global Reach',
+  description: 'Your designs reach customers in 150+ cities without managing logistics.'
+}, {
+  icon: Users,
+  title: 'Maker Network',
+  description: 'Access our network of 2,300+ verified makers who bring your designs to life.'
+}, {
+  icon: BarChart3,
+  title: 'Analytics Dashboard',
+  description: 'Track views, sales, revenue, and see where your designs are most popular.'
+}];
+const steps = ['Sign up and create your designer profile', 'Upload your STL files with specifications', 'Designs reviewed within 24-48 hours', 'Go live and start earning royalties'];
 export default function Designer() {
-  return (
-    <Layout>
+  return <Layout>
       {/* Hero */}
       <section className="bg-gradient-hero py-20 md:py-28">
         <div className="container">
@@ -71,13 +54,9 @@ export default function Designer() {
               </div>
             </div>
             <div className="relative hidden lg:block">
-              <img
-                src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=600&fit=crop"
-                alt="3D design process"
-                className="rounded-2xl shadow-2xl"
-              />
+              <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=600&fit=crop" alt="3D design process" className="rounded-2xl shadow-2xl" />
               <div className="absolute -bottom-6 -left-6 p-6 bg-card rounded-xl shadow-card-hover">
-                <p className="text-3xl font-bold text-accent">$2.00</p>
+                <p className="text-3xl font-bold text-accent">8-20%</p>
                 <p className="text-sm text-muted-foreground">avg. royalty per sale</p>
               </div>
             </div>
@@ -98,15 +77,13 @@ export default function Designer() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((benefit) => (
-              <div key={benefit.title} className="p-6 rounded-2xl bg-card shadow-card card-hover">
+            {benefits.map(benefit => <div key={benefit.title} className="p-6 rounded-2xl bg-card shadow-card card-hover">
                 <div className="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4">
                   <benefit.icon className="h-6 w-6 text-accent" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">{benefit.title}</h3>
                 <p className="text-muted-foreground text-sm">{benefit.description}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -124,14 +101,12 @@ export default function Designer() {
                 creative work in just a few steps.
               </p>
               <div className="space-y-4">
-                {steps.map((step, index) => (
-                  <div key={index} className="flex items-start gap-4">
+                {steps.map((step, index) => <div key={index} className="flex items-start gap-4">
                     <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center shrink-0">
                       <Check className="h-4 w-4 text-secondary-foreground" />
                     </div>
                     <p className="text-lg">{step}</p>
-                  </div>
-                ))}
+                  </div>)}
               </div>
               <Button variant="accent" size="xl" className="mt-8" asChild>
                 <Link to="/start-creating">
@@ -195,6 +170,5 @@ export default function Designer() {
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 }
