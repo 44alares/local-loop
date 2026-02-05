@@ -10,11 +10,17 @@ import {
   ARTISTIC_MATERIAL_SURCHARGES,
   QUALITY_SURCHARGES,
   ARTISTIC_QUALITY_SURCHARGES,
-  DESIGNER_RATES 
+  DESIGNER_RATES,
+  MIN_PRODUCT_PRICE
 } from '@/lib/pricing';
 import { productTypeLabels } from '@/data/categories';
 import { Palette, Layers, Sparkles, Info, Printer, Building2, CreditCard } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface ProductConfiguratorProps {
   product: Product;
@@ -27,6 +33,23 @@ export interface ConfigState {
   selectedMaterial: string;
   selectedQuality: 'standard' | 'premium' | 'ultra';
 }
+
+// Material tooltip descriptions
+const materialTooltips: Record<string, string> = {
+  PLA: 'Easy to print, nice finish; less heat/impact resistant',
+  ABS: 'Heat resistant, strong; requires enclosed printer',
+  PETG: 'More durable; water/chemical resistant',
+  Nylon: 'Very strong/tough; great for functional/wear parts',
+  Resin: 'Highest detail/smooth surface; more brittle and needs post-processing',
+  TPU: 'Flexible material; great for grips and shock absorption',
+};
+
+// Quality tooltip descriptions (Spanish as requested)
+const qualityTooltips: Record<string, string> = {
+  standard: 'FDM, 0.32 height layer',
+  premium: 'FDM, 0.32 height layer',
+  ultra: 'Resin, 0.05 height layer',
+};
 
 export function ProductConfigurator({ product, onPriceChange, onConfigChange }: ProductConfiguratorProps) {
   const isArtistic = product.category === 'artistic';
@@ -54,6 +77,44 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
   );
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   
+  // Handle Resin ↔ Ultra pairing for Artistic products
+  useEffect(() => {
+    if (isArtistic) {
+      // If Resin is selected, auto-select Ultra
+      if (selectedMaterial === 'Resin' && selectedQuality !== 'ultra') {
+        setSelectedQuality('ultra');
+      }
+      // If Ultra is selected and material is not Resin, switch to Resin
+      if (selectedQuality === 'ultra' && selectedMaterial !== 'Resin' && availableMaterials.includes('Resin')) {
+        setSelectedMaterial('Resin');
+      }
+      // If Premium is selected, ensure material is not Resin (switch to PLA)
+      if (selectedQuality === 'premium' && selectedMaterial === 'Resin') {
+        setSelectedMaterial(availableMaterials.includes('PLA') ? 'PLA' : availableMaterials[0]);
+      }
+    }
+  }, [selectedMaterial, selectedQuality, isArtistic, availableMaterials]);
+  
+  // Handle material change with Resin↔Ultra pairing
+  const handleMaterialChange = (material: string) => {
+    setSelectedMaterial(material);
+    if (isArtistic && material === 'Resin') {
+      setSelectedQuality('ultra');
+    } else if (isArtistic && material !== 'Resin' && selectedQuality === 'ultra') {
+      setSelectedQuality('premium');
+    }
+  };
+  
+  // Handle quality change with Resin↔Ultra pairing
+  const handleQualityChange = (quality: 'standard' | 'premium' | 'ultra') => {
+    setSelectedQuality(quality);
+    if (isArtistic && quality === 'ultra' && selectedMaterial !== 'Resin' && availableMaterials.includes('Resin')) {
+      setSelectedMaterial('Resin');
+    } else if (isArtistic && quality === 'premium' && selectedMaterial === 'Resin') {
+      setSelectedMaterial(availableMaterials.includes('PLA') ? 'PLA' : availableMaterials[0]);
+    }
+  };
+  
   // Get available colors based on selected material
   const availableColors = useMemo(() => {
     if (isArtistic) {
@@ -74,14 +135,15 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
     }
   }, [availableColors, selectedColor]);
   
-  // Calculate buyer price
+  // Calculate buyer price (enforcing $15 minimum)
   const buyerPrice = useMemo(() => {
-    return calculateBuyerPrice({
+    const calculated = calculateBuyerPrice({
       basePrice: product.price,
       material: selectedMaterial,
       quality: selectedQuality,
       isArtistic,
     });
+    return Math.max(calculated, MIN_PRODUCT_PRICE);
   }, [product.price, selectedMaterial, selectedQuality, isArtistic]);
   
   // Calculate full breakdown
@@ -95,21 +157,28 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
     onConfigChange?.({ selectedColor, selectedMaterial, selectedQuality });
   }, [buyerPrice, selectedColor, selectedMaterial, selectedQuality, onPriceChange, onConfigChange]);
   
-  // Get surcharge display for material
-  const getMaterialSurcharge = (material: string) => {
+  // Get surcharge display for material - show 0% for first/base material
+  const getMaterialSurcharge = (material: string, index: number) => {
     const surcharge = isArtistic 
       ? ARTISTIC_MATERIAL_SURCHARGES[material] 
       : MATERIAL_SURCHARGES[material];
-    if (!surcharge || surcharge === 0) return null;
+    
+    // First material is always 0% base
+    if (index === 0 || surcharge === 0 || surcharge === undefined) {
+      return '0%';
+    }
     return `+${Math.round(surcharge * 100)}%`;
   };
   
   // Get surcharge display for quality
-  const getQualitySurcharge = (quality: string) => {
+  const getQualitySurcharge = (quality: string, index: number) => {
     const surcharge = isArtistic 
       ? ARTISTIC_QUALITY_SURCHARGES[quality] 
       : QUALITY_SURCHARGES[quality];
-    if (!surcharge || surcharge === 0) return null;
+    
+    if (index === 0 || surcharge === 0 || surcharge === undefined) {
+      return '0%';
+    }
     return `+${Math.round(surcharge * 100)}%`;
   };
   
@@ -130,6 +199,8 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
     'Matte Black': '#2D2D2D',
     'Glossy Black': '#0A0A0A',
     'Pearl White': '#F5F5F5',
+    'Bronze': '#CD7F32',
+    'Gold': '#FFD700',
   };
   
   return (
@@ -169,7 +240,7 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
                 <span className="absolute inset-0 flex items-center justify-center">
                   <span className={cn(
                     "h-3 w-3 rounded-full",
-                    ['White', 'Clear', 'Natural', 'Pearl White', 'Yellow'].includes(color) 
+                    ['White', 'Clear', 'Natural', 'Pearl White', 'Yellow', 'Gold'].includes(color) 
                       ? 'bg-foreground' 
                       : 'bg-white'
                   )} />
@@ -188,23 +259,39 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
         <Label className="flex items-center gap-2">
           <Layers className="h-4 w-4" />
           Material
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs text-xs">
+              <div className="space-y-2">
+                {Object.entries(materialTooltips).map(([mat, desc]) => (
+                  <p key={mat}><strong>{mat}:</strong> {desc}</p>
+                ))}
+              </div>
+            </TooltipContent>
+          </Tooltip>
         </Label>
         <div className="flex flex-wrap gap-2">
-          {availableMaterials.map((material) => {
-            const surcharge = getMaterialSurcharge(material);
+          {availableMaterials.map((material, index) => {
+            const surcharge = getMaterialSurcharge(material, index);
             return (
-              <Button
-                key={material}
-                variant={selectedMaterial === material ? "secondary" : "outline"}
-                size="sm"
-                onClick={() => setSelectedMaterial(material)}
-                className="gap-1"
-              >
-                {material}
-                {surcharge && (
-                  <span className="text-xs opacity-70">{surcharge}</span>
-                )}
-              </Button>
+              <Tooltip key={material}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={selectedMaterial === material ? "secondary" : "outline"}
+                    size="sm"
+                    onClick={() => handleMaterialChange(material)}
+                    className="gap-1"
+                  >
+                    {material}
+                    <span className="text-xs opacity-70">{surcharge}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="text-xs">
+                  {materialTooltips[material] || material}
+                </TooltipContent>
+              </Tooltip>
             );
           })}
         </div>
@@ -215,23 +302,39 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
         <Label className="flex items-center gap-2">
           <Sparkles className="h-4 w-4" />
           Quality
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+            </TooltipTrigger>
+            <TooltipContent className="text-xs">
+              <div className="space-y-1">
+                <p><strong>Standard:</strong> FDM, 0,32 height layer</p>
+                <p><strong>Premium:</strong> FDM, 0,32 height layer</p>
+                <p><strong>Ultra:</strong> Resin, 0,05 height layer</p>
+              </div>
+            </TooltipContent>
+          </Tooltip>
         </Label>
         <div className="flex flex-wrap gap-2">
-          {availableQualities.map((quality) => {
-            const surcharge = getQualitySurcharge(quality);
+          {availableQualities.map((quality, index) => {
+            const surcharge = getQualitySurcharge(quality, index);
             return (
-              <Button
-                key={quality}
-                variant={selectedQuality === quality ? "secondary" : "outline"}
-                size="sm"
-                onClick={() => setSelectedQuality(quality)}
-                className="gap-1 capitalize"
-              >
-                {quality}
-                {surcharge && (
-                  <span className="text-xs opacity-70">{surcharge}</span>
-                )}
-              </Button>
+              <Tooltip key={quality}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={selectedQuality === quality ? "secondary" : "outline"}
+                    size="sm"
+                    onClick={() => handleQualityChange(quality)}
+                    className="gap-1 capitalize"
+                  >
+                    {quality}
+                    <span className="text-xs opacity-70">{surcharge}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="text-xs">
+                  {qualityTooltips[quality]}
+                </TooltipContent>
+              </Tooltip>
             );
           })}
         </div>

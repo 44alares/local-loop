@@ -3,8 +3,30 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/ProductCard';
 import { mockProducts } from '@/data/mockData';
+
 export function TrendingProducts() {
-  const trendingProducts = mockProducts.slice(0, 4);
+  // Get exactly 4 products, one from each category: Desktop, Functional, Artistic, Decoration
+  const getProductFromCategory = (category: string) => {
+    return mockProducts.find(p => p.category === category);
+  };
+  
+  const trendingProducts = [
+    getProductFromCategory('desktop'),
+    getProductFromCategory('functional'),
+    getProductFromCategory('artistic'),
+    getProductFromCategory('decoration'),
+  ].filter(Boolean);
+  
+  // If we don't have all 4 categories, fill with first available products
+  while (trendingProducts.length < 4) {
+    const nextProduct = mockProducts.find(p => !trendingProducts.includes(p));
+    if (nextProduct) {
+      trendingProducts.push(nextProduct);
+    } else {
+      break;
+    }
+  }
+  
   return <section className="py-20 md:py-28 bg-cream-dark/30">
       <div className="container">
         {/* Section Header */}
@@ -27,12 +49,12 @@ export function TrendingProducts() {
 
         {/* Products Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {trendingProducts.map(product => <ProductCard key={product.id} product={product} />)}
+          {trendingProducts.map(product => product && <ProductCard key={product.id} product={product} />)}
         </div>
 
         {/* Category Tags */}
         <div className="flex flex-wrap justify-center gap-3 mt-12">
-          {['Functional', 'Desktop', 'Decoration', 'Kids', 'Geometric', 'Colorful'].map(tag => <Link key={tag} to={`/shop?category=${tag.toLowerCase()}`} className="px-4 py-2 rounded-full bg-background border border-border hover:border-secondary hover:text-secondary transition-colors text-sm font-medium">
+          {['Desktop', 'Functional', 'Artistic', 'Decoration'].map(tag => <Link key={tag} to={`/shop?category=${tag.toLowerCase()}`} className="px-4 py-2 rounded-full bg-background border border-border hover:border-secondary hover:text-secondary transition-colors text-sm font-medium">
               {tag}
             </Link>)}
         </div>

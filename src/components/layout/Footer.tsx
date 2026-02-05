@@ -25,6 +25,7 @@ const footerLinks = {
     { label: 'Terms', href: '/terms' },
     { label: 'Privacy', href: '/privacy' },
     { label: 'Cookies', href: '/cookies' },
+    { label: 'NDA Agreement', href: '/nda-terms' },
   ],
 };
 

@@ -77,10 +77,10 @@ export default function JoinAsMaker() {
 
   const allBasicColorsChecked = Object.values(basicColorsChecked).every(v => v);
   
+  // Address is now optional
   const canSubmit = 
     fullName && 
     email && 
-    address && 
     city && 
     country && 
     zipcode && 
@@ -132,7 +132,7 @@ export default function JoinAsMaker() {
               Join as Maker
             </h1>
             <p className="text-xl text-muted-foreground">
-              Become a verified maker and earn 75% of every sale. Complete the registration below to get started.
+              Become a verified maker and earn 70% of every print. Complete the registration below to get started.
             </p>
           </div>
         </div>
@@ -187,13 +187,14 @@ export default function JoinAsMaker() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="address">Full Address *</Label>
+                <Label htmlFor="address">Full Address (Optional)</Label>
                 <Input 
                   id="address" 
                   placeholder="123 Main Street, Apt 4"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                 />
+                <p className="text-xs text-muted-foreground">Optional - helps with local pickup coordination</p>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
@@ -398,7 +399,23 @@ export default function JoinAsMaker() {
               className="w-full" 
               size="xl"
               disabled={!canSubmit}
-              onClick={() => setSubmitted(true)}
+              onClick={() => {
+                // Log submission data (in production, would send email to alaresinnova@gmail.com)
+                console.log('Maker application submitted:', {
+                  fullName,
+                  email,
+                  address,
+                  city,
+                  country,
+                  zipcode,
+                  machineType,
+                  machineCount,
+                  dailyHours,
+                  basicColorsChecked,
+                  additionalColors,
+                });
+                setSubmitted(true);
+              }}
             >
               Submit Application
             </Button>

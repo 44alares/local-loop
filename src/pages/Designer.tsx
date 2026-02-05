@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Upload, DollarSign, BarChart3, Globe, ArrowRight, Check, Palette, Users } from 'lucide-react';
 const benefits = [{
   icon: DollarSign,
-  title: '8-16% Royalty Per Sale',
+  title: '8-16% Royalty Per Print',
   description: 'Earn passive income every time your design is printed anywhere in the world.'
 }, {
   icon: Globe,
@@ -52,12 +52,21 @@ export default function Designer() {
                   </Link>
                 </Button>
               </div>
+              
+              {/* Founders Club CTA */}
+              <div className="pt-2">
+                <Button variant="outline" size="lg" className="border-accent text-accent hover:bg-accent/10" asChild>
+                  <Link to="/founders-club">
+                    Join Founders Club
+                  </Link>
+                </Button>
+              </div>
             </div>
             <div className="relative hidden lg:block">
               <img alt="3D design process" className="rounded-2xl shadow-2xl" src="/lovable-uploads/238a0a94-ff14-4890-8997-da10e32d14ba.png" />
               <div className="absolute -bottom-6 -left-6 p-6 bg-card rounded-xl shadow-card-hover">
                 <p className="text-3xl font-bold text-accent">8-16%</p>
-                <p className="text-sm text-muted-foreground">avg. royalty per sale</p>
+                <p className="text-sm text-muted-foreground">avg. royalty per print</p>
               </div>
             </div>
           </div>
