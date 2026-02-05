@@ -83,23 +83,7 @@ export function PricingTransparency() {
           </div>
 
           {/* Example */}
-          <div className="bg-background border border-border rounded-xl p-6 text-center">
-            <p className="text-muted-foreground mb-4">
-              <strong className="text-foreground">Example:</strong> For a $25 product
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <span className="px-3 py-1 rounded-full bg-accent/10 text-accent">
-                Maker: $18.75
-              </span>
-              <span className="px-3 py-1 rounded-full bg-secondary/10 text-secondary">Platform: $3.50</span>
-              <span className="px-3 py-1 rounded-full bg-primary/10 text-primary">
-                Designer: $2.00
-              </span>
-              <span className="px-3 py-1 rounded-full bg-muted text-muted-foreground">
-                Payment: $0.75
-              </span>
-            </div>
-          </div>
+          
 
           {/* Contact Button */}
           <div className="text-center mt-8">
