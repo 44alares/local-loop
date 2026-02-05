@@ -1,6 +1,9 @@
 // Updated pricing engine with new commission structure
 import type { ProductType } from '@/types';
 
+// Minimum product price - no product can be below $15
+export const MIN_PRODUCT_PRICE = 15;
+
 export interface PriceBreakdown {
   basePrice: number;
   makerEarnings: number;
@@ -11,7 +14,7 @@ export interface PriceBreakdown {
 }
 
 export const COMMISSION_RATES = {
-  MAKER: 0.75,           // 75% - Production costs and labor (legacy, calculated dynamically now)
+  MAKER: 0.70,           // 70% minimum - Production costs and labor (adjusted for maker minimum)
   PLATFORM: 0.14,        // 14% - Makehug service fee
   DESIGNER: 0.08,        // 8% - Base IP Royalties (Functional)
   PAYMENT_GATEWAY: 0.03, // 3% - Transaction fees
@@ -86,16 +89,30 @@ export interface FullPriceBreakdown {
 export function calculateFullBreakdown(buyerPrice: number, productType: ProductType): FullPriceBreakdown {
   const designerRate = DESIGNER_RATES[productType];
   const paymentProcessing = buyerPrice * COMMISSION_RATES.PAYMENT_GATEWAY;
-  const platformFee = buyerPrice * COMMISSION_RATES.PLATFORM;
-  const designerRoyalty = buyerPrice * designerRate;
-  const makerPayout = buyerPrice - paymentProcessing - platformFee - designerRoyalty;
-  const makerRate = 1 - COMMISSION_RATES.PAYMENT_GATEWAY - COMMISSION_RATES.PLATFORM - designerRate;
+  
+  // Calculate maker payout ensuring minimum 70%
+  const baseDesignerRoyalty = buyerPrice * designerRate;
+  const basePlatformFee = buyerPrice * COMMISSION_RATES.PLATFORM;
+  const baseMakerPayout = buyerPrice - paymentProcessing - basePlatformFee - baseDesignerRoyalty;
+  const baseMakerRate = baseMakerPayout / buyerPrice;
+  
+  // If maker would get less than 70%, reduce platform fee
+  let platformFee = basePlatformFee;
+  let makerPayout = baseMakerPayout;
+  let makerRate = baseMakerRate;
+  
+  if (baseMakerRate < 0.70) {
+    // Adjust platform fee to ensure maker gets 70%
+    makerRate = 0.70;
+    makerPayout = buyerPrice * 0.70;
+    platformFee = buyerPrice - paymentProcessing - baseDesignerRoyalty - makerPayout;
+  }
   
   return {
     buyerPrice,
     paymentProcessing,
     platformFee,
-    designerRoyalty,
+    designerRoyalty: baseDesignerRoyalty,
     designerRate,
     makerPayout,
     makerRate,

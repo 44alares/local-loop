@@ -116,6 +116,10 @@ export default function StartCreating() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
+                  <p className="text-sm text-accent font-medium mb-4 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    You must be registered to upload files.
+                  </p>
                   <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-secondary transition-colors">
                     <input type="file" accept=".stl,.3mf" onChange={handleFileUpload} className="hidden" id="file-upload" />
                     <label htmlFor="file-upload" className="cursor-pointer">
@@ -233,7 +237,18 @@ export default function StartCreating() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Complexity</Label>
+                    <Label className="flex items-center gap-2">
+                      Complexity
+                      <span className="relative group">
+                        <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+                        <span className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-popover border border-border rounded-lg shadow-lg text-xs text-left opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                          <strong>Functional object:</strong> utilitarian/spare/accessory focused on use, tolerances, fit (8% commission)<br/><br/>
+                          <strong>Artistic object:</strong> mainly aesthetic/sculpture/decor (16% commission)<br/><br/>
+                          <strong>Mixed object:</strong> function + aesthetics (12% commission)<br/><br/>
+                          <em className="text-accent">Mixed and Artistic objects always require manual team validation before publishing.</em>
+                        </span>
+                      </span>
+                    </Label>
                     <div className="grid grid-cols-3 gap-3">
                       {['Functional', 'Mixed', 'Artistic'].map(option => <button key={option} type="button" onClick={() => setComplexity(option)} className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${complexity === option ? 'border-secondary bg-secondary/10 text-secondary' : 'border-border hover:border-secondary/50'}`}>
                           {option}
@@ -331,7 +346,7 @@ export default function StartCreating() {
                           <div className="flex items-center justify-between">
                             <span className="flex items-center gap-2">
                               <Printer className="h-4 w-4 text-accent" />
-                              Manufacturing Cost (75%)
+                              Manufacturing Cost (70%)
                             </span>
                             <span>${(estimatedPrice * COMMISSION_RATES.MAKER).toFixed(2)}</span>
                           </div>
@@ -360,7 +375,7 @@ export default function StartCreating() {
                       </div>
 
                       <div className="bg-secondary/10 rounded-lg p-4 text-center">
-                        <p className="text-sm text-muted-foreground">Your royalty per sale</p>
+                        <p className="text-sm text-muted-foreground">Your royalty per print</p>
                         <p className="text-2xl font-bold text-secondary">
                           ${(estimatedPrice * COMMISSION_RATES.DESIGNER).toFixed(2)}
                         </p>

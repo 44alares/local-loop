@@ -49,6 +49,15 @@ export function HeroSection() {
                 </Link>
               </Button>
             </div>
+            
+            {/* Founders Club CTA */}
+            <div className="pt-2">
+              <Button variant="outline" size="lg" className="border-accent text-accent hover:bg-accent/10" asChild>
+                <Link to="/founders-club">
+                  Join Founders Club
+                </Link>
+              </Button>
+            </div>
 
             {/* Trust Indicators */}
             <div className="flex flex-wrap items-center gap-6 pt-4">

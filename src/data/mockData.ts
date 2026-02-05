@@ -126,7 +126,7 @@ export const mockProducts: Product[] = [
     name: 'Ergonomic Phone Stand',
     description: 'Designed for optimal viewing angle and maximum airflow. Works with all phone sizes and supports wireless charging.',
     images: [phoneStandImg],
-    price: 14,
+    price: 15, // Minimum $15 enforced
     currency: 'USD',
     designer: mockDesigners[2],
     category: 'desktop',
@@ -146,7 +146,7 @@ export const mockProducts: Product[] = [
     name: 'Cable Management System',
     description: 'Keep your cables organized with this modular cable management system. Mounts under your desk for a clean workspace.',
     images: [cableManagementSystemImg],
-    price: 12,
+    price: 15, // Minimum $15 enforced
     currency: 'USD',
     designer: mockDesigners[3],
     category: 'desktop',
@@ -167,7 +167,7 @@ export const mockProducts: Product[] = [
     name: 'Honeycomb Wall Art',
     description: 'Modular hexagonal wall tiles that create stunning geometric patterns. Mix and match colors for your unique wall installation.',
     images: [honeycombWallArtImg],
-    price: 8,
+    price: 15, // Minimum $15 enforced
     currency: 'USD',
     designer: mockDesigners[0],
     category: 'decoration',
@@ -249,7 +249,7 @@ export const mockProducts: Product[] = [
     name: 'Parametric Wrench',
     description: 'Adjustable parametric wrench with customizable jaw size. Perfect for light-duty tasks and emergencies.',
     images: [parametricWrenchImg],
-    price: 11,
+    price: 15, // Minimum $15 enforced
     currency: 'USD',
     designer: mockDesigners[3],
     category: 'functional',
@@ -269,7 +269,7 @@ export const mockProducts: Product[] = [
     name: 'Drill Dust Collector',
     description: 'Attaches to your drill to collect dust while drilling. Works with most standard drill bits.',
     images: [drillDustCollectorImg],
-    price: 9,
+    price: 15, // Minimum $15 enforced
     currency: 'USD',
     designer: mockDesigners[0],
     category: 'functional',
@@ -310,7 +310,7 @@ export const mockProducts: Product[] = [
     name: 'Custom Controller Grips',
     description: 'Ergonomic grip extensions for gaming controllers. Fits PS5, Xbox, and most third-party controllers.',
     images: [customControllerGripsImg],
-    price: 14,
+    price: 15, // Minimum $15 enforced
     currency: 'USD',
     designer: mockDesigners[2],
     category: 'gaming',
@@ -374,7 +374,7 @@ export const mockProducts: Product[] = [
     name: 'Universal Replacement Knob',
     description: 'Parametric knob that fits most appliances. Adjustable shaft diameter for perfect fit.',
     images: [universalReplacementKnobImg],
-    price: 6,
+    price: 15, // Minimum $15 enforced
     currency: 'USD',
     designer: mockDesigners[3],
     category: 'repair',
@@ -394,7 +394,7 @@ export const mockProducts: Product[] = [
     name: 'Zipper Pull Replacement',
     description: 'Set of 5 universal zipper pulls. Works with most clothing, bags, and outdoor gear.',
     images: [zipperPullReplacementImg],
-    price: 4,
+    price: 15, // Minimum $15 enforced
     currency: 'USD',
     designer: mockDesigners[0],
     category: 'repair',
@@ -414,7 +414,7 @@ export const mockProducts: Product[] = [
     name: 'Dishwasher Basket Wheel',
     description: 'Universal replacement wheel for dishwasher racks. Durable and heat-resistant.',
     images: [dishwasherBasketWheelImg],
-    price: 5,
+    price: 15, // Minimum $15 enforced
     currency: 'USD',
     designer: mockDesigners[1],
     category: 'repair',

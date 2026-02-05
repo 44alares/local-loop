@@ -84,6 +84,21 @@ export default function ProductDetail() {
                 ))}
               </div>
             )}
+            
+            {/* About This Design - Moved below image */}
+            <div className="pt-4">
+              <h2 className="text-xl font-bold mb-4">About This Design</h2>
+              <p className="text-muted-foreground mb-6">{product.description}</p>
+              
+              {/* AI Generated Image placeholder for Artistic products */}
+              {product.category === 'artistic' && (
+                <div className="mt-4 p-4 bg-muted/50 rounded-xl border border-dashed border-border">
+                  <p className="text-sm text-muted-foreground text-center">
+                    AI-generated visualization coming soon
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Right: Details */}
@@ -346,14 +361,11 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* Description & Reviews */}
+        {/* Specifications & Reviews */}
         <div className="mt-16 grid lg:grid-cols-2 gap-12">
-          {/* Description */}
+          {/* Specifications */}
           <div>
-            <h2 className="text-xl font-bold mb-4">About This Design</h2>
-            <p className="text-muted-foreground mb-6">{product.description}</p>
-            
-            <h3 className="font-semibold mb-3">Specifications</h3>
+            <h3 className="text-xl font-bold mb-4">Specifications</h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between py-2 border-b border-border">
                 <span className="text-muted-foreground">Product Type</span>

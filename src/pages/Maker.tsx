@@ -9,8 +9,8 @@ import {
 const benefits = [
   {
     icon: DollarSign,
-    title: '75% of Each Sale',
-    description: 'Keep the majority of each sale. Cover your costs and earn a healthy profit.',
+    title: '70% of Each Print',
+    description: 'Keep the majority of each print. Cover your costs and earn a healthy profit.',
   },
   {
     icon: Clock,
@@ -55,7 +55,7 @@ export default function Maker() {
               </h1>
               <p className="text-xl text-muted-foreground mb-8">
                 Your skills, your rules. Print designs you love, serve customers 
-                in your area, and keep 75% of every sale.
+                in your area, and keep 70% of every print.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button variant="hero-accent" asChild>
@@ -70,6 +70,15 @@ export default function Maker() {
                   </Link>
                 </Button>
               </div>
+              
+              {/* Founders Club CTA */}
+              <div className="pt-2">
+                <Button variant="outline" size="lg" className="border-accent text-accent hover:bg-accent/10" asChild>
+                  <Link to="/founders-club">
+                    Join Founders Club
+                  </Link>
+                </Button>
+              </div>
             </div>
             <div className="relative hidden lg:block">
               <img
@@ -78,7 +87,7 @@ export default function Maker() {
                 className="rounded-2xl shadow-2xl"
               />
               <div className="absolute -bottom-6 -right-6 p-6 bg-card rounded-xl shadow-card-hover">
-                <p className="text-3xl font-bold text-secondary">$18.75</p>
+                <p className="text-3xl font-bold text-secondary">$10.50</p>
                 <p className="text-sm text-muted-foreground">avg. per print</p>
               </div>
             </div>

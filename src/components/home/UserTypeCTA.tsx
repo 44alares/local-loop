@@ -8,7 +8,7 @@ const userTypes = [{
   description: "Upload your STL. Earn royalties when it's printed worldwide. You focus on creativity, we handle the rest.",
   cta: "Start Creating",
   href: "/designer",
-  highlight: "8-16% royalty per sale",
+  highlight: "8-16% royalty per print",
   color: "secondary" as const
 }, {
   id: 'maker',
@@ -17,7 +17,7 @@ const userTypes = [{
   description: "Print designs you love. Earn per print, reach global customers. Your skills, your rules.",
   cta: "Join as Maker",
   href: "/maker",
-  highlight: "75% of each sale",
+  highlight: "70% of each print",
   color: "accent" as const
 }, {
   id: 'buyer',
