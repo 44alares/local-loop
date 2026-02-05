@@ -54,7 +54,7 @@ export default function Designer() {
               </div>
             </div>
             <div className="relative hidden lg:block">
-              <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=600&fit=crop" alt="3D design process" className="rounded-2xl shadow-2xl" />
+              <img alt="3D design process" className="rounded-2xl shadow-2xl" src="/lovable-uploads/238a0a94-ff14-4890-8997-da10e32d14ba.png" />
               <div className="absolute -bottom-6 -left-6 p-6 bg-card rounded-xl shadow-card-hover">
                 <p className="text-3xl font-bold text-accent">8-16%</p>
                 <p className="text-sm text-muted-foreground">avg. royalty per sale</p>
