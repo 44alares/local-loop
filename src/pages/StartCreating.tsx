@@ -8,10 +8,19 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Slider } from '@/components/ui/slider';
 import { Upload, Image, Camera, Settings, Calculator, Printer, Building2, Palette, CreditCard, CheckCircle2, FileText, AlertCircle } from 'lucide-react';
 import { ralColors, RALColor } from '@/data/ralColors';
-import { calculatePrintPrice, COMMISSION_RATES } from '@/lib/pricing';
+import { calculatePrintPrice } from '@/lib/pricing';
 import { Link } from 'react-router-dom';
+
+// Fixed fee ranges by complexity
+const FIXED_FEE_RANGES = {
+  Functional: { min: 1, max: 3 },
+  Mixed: { min: 1, max: 10 },
+  Artistic: { min: 1, max: 20 },
+};
+
 export default function StartCreating() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [renderImage, setRenderImage] = useState<File | null>(null);
@@ -25,7 +34,11 @@ export default function StartCreating() {
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [originalWorkCertified, setOriginalWorkCertified] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [complexity, setComplexity] = useState('');
+  const [complexity, setComplexity] = useState<'Functional' | 'Mixed' | 'Artistic' | ''>('');
+  const [fixedFee, setFixedFee] = useState(2);
+
+  // Get fee range based on complexity
+  const feeRange = complexity ? FIXED_FEE_RANGES[complexity] : { min: 1, max: 3 };
 
   // Calculate estimated price based on inputs
   const calculateEstimate = () => {
@@ -46,35 +59,46 @@ export default function StartCreating() {
     });
     return price;
   };
+
   const estimatedPrice = calculateEstimate();
+
+  // Calculate variable fee (internal 5% rule, but not displayed as %)
+  const variableFee = estimatedPrice ? estimatedPrice * 0.05 : 0;
+  const totalFees = fixedFee + variableFee;
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setUploadedFile(file);
     }
   };
+
   const handleRenderUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setRenderImage(file);
     }
   };
+
   const handleScaleProofUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setScaleProofImage(file);
     }
   };
+
   const canSubmit = uploadedFile && scaleProofImage && ndaAccepted && originalWorkCertified && selectedMaterial;
+
   if (submitted) {
-    return <Layout>
-        <div className="container py-20">
+    return (
+      <Layout>
+        <div className="container py-16">
           <div className="max-w-lg mx-auto text-center">
-            <div className="h-20 w-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="h-10 w-10 text-secondary" />
+            <div className="h-16 w-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="h-8 w-8 text-secondary" />
             </div>
-            <h1 className="text-display-sm font-bold mb-4">Design Submitted!</h1>
-            <p className="text-lg text-muted-foreground mb-8">
+            <h1 className="text-2xl font-bold mb-4">Design Submitted!</h1>
+            <p className="text-muted-foreground mb-8">
               Your design has been submitted for review. Our team will verify it within 24-48 hours and notify you once it's live.
             </p>
             <Button variant="hero" onClick={() => setSubmitted(false)}>
@@ -82,52 +106,61 @@ export default function StartCreating() {
             </Button>
           </div>
         </div>
-      </Layout>;
+      </Layout>
+    );
   }
-  return <Layout>
+
+  return (
+    <Layout>
       {/* Hero */}
-      <section className="bg-gradient-hero py-12 md:py-16">
+      <section className="bg-gradient-hero py-10 md:py-12">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge variant="secondary" className="mb-4">For Designers</Badge>
-            <h1 className="text-display font-bold mb-4">
+            <Badge variant="secondary" className="mb-3">For Designers</Badge>
+            <h1 className="text-2xl md:text-3xl font-bold mb-3">
               Start Creating
             </h1>
-            <p className="text-xl text-muted-foreground">Upload your design and earn 8-16% royalty on every print. Make sure to include a real-scale proof photo.</p>
+            <p className="text-muted-foreground">
+              Upload your design and earn royalties on every print. Make sure to include a real-scale proof photo.
+            </p>
           </div>
         </div>
       </section>
 
       {/* Form */}
-      <section className="container py-12">
+      <section className="container py-8">
         <div className="max-w-5xl mx-auto">
-          <div className="grid lg:grid-cols-5 gap-8">
+          <div className="grid lg:grid-cols-5 gap-6">
             {/* Left: Upload & Configuration */}
-            <div className="lg:col-span-3 space-y-6">
+            <div className="lg:col-span-3 space-y-5">
               {/* File Upload */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Upload className="h-5 w-5 text-secondary" />
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Upload className="h-4 w-4 text-secondary" />
                     Design File Upload
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs">
                     Supported formats: STL, 3MF
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-accent font-medium mb-4 flex items-center gap-2">
+                  <p className="text-sm text-accent font-medium mb-3 flex items-center gap-2">
                     <AlertCircle className="h-4 w-4" />
                     You must be registered to upload files.
                   </p>
-                  <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-secondary transition-colors">
+                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-secondary transition-colors">
                     <input type="file" accept=".stl,.3mf" onChange={handleFileUpload} className="hidden" id="file-upload" />
                     <label htmlFor="file-upload" className="cursor-pointer">
-                      <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                      {uploadedFile ? <p className="font-medium text-secondary">{uploadedFile.name}</p> : <>
-                          <p className="font-medium mb-1">Drop your STL/3MF here or click to browse</p>
-                          <p className="text-sm text-muted-foreground">Maximum file size: 100MB</p>
-                        </>}
+                      <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+                      {uploadedFile ? (
+                        <p className="font-medium text-secondary text-sm">{uploadedFile.name}</p>
+                      ) : (
+                        <>
+                          <p className="font-medium text-sm mb-1">Drop your STL/3MF here or click to browse</p>
+                          <p className="text-xs text-muted-foreground">Maximum file size: 100MB</p>
+                        </>
+                      )}
                     </label>
                   </div>
                 </CardContent>
@@ -135,52 +168,60 @@ export default function StartCreating() {
 
               {/* Image Gallery */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Image className="h-5 w-5 text-secondary" />
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Image className="h-4 w-4 text-secondary" />
                     Image Gallery
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs">
                     Upload promotional images and required scale proof
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4">
                   {/* Slot 1: Render Image */}
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <Camera className="h-4 w-4" />
+                    <Label className="flex items-center gap-2 text-sm">
+                      <Camera className="h-3 w-3" />
                       Slot 1: Render/Promotional Image (Optional)
                     </Label>
-                    <div className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-secondary transition-colors">
+                    <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-secondary transition-colors">
                       <input type="file" accept="image/*" onChange={handleRenderUpload} className="hidden" id="render-upload" />
                       <label htmlFor="render-upload" className="cursor-pointer">
-                        {renderImage ? <p className="font-medium text-secondary">{renderImage.name}</p> : <>
-                            <Image className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                            <p className="text-sm">Upload a render or promotional photo</p>
-                          </>}
+                        {renderImage ? (
+                          <p className="font-medium text-secondary text-sm">{renderImage.name}</p>
+                        ) : (
+                          <>
+                            <Image className="h-6 w-6 mx-auto text-muted-foreground mb-1" />
+                            <p className="text-xs">Upload a render or promotional photo</p>
+                          </>
+                        )}
                       </label>
                     </div>
                   </div>
 
                   {/* Slot 2: Scale Proof (Mandatory) */}
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <Camera className="h-4 w-4 text-accent" />
+                    <Label className="flex items-center gap-2 text-sm">
+                      <Camera className="h-3 w-3 text-accent" />
                       Slot 2: Real Scale Proof (Mandatory) *
                     </Label>
-                    <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${scaleProofImage ? 'border-secondary bg-secondary/5' : 'border-accent/50 hover:border-accent'}`}>
+                    <div className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${scaleProofImage ? 'border-secondary bg-secondary/5' : 'border-accent/50 hover:border-accent'}`}>
                       <input type="file" accept="image/*" onChange={handleScaleProofUpload} className="hidden" id="scale-proof-upload" />
                       <label htmlFor="scale-proof-upload" className="cursor-pointer">
-                        {scaleProofImage ? <div className="flex items-center justify-center gap-2">
-                            <CheckCircle2 className="h-5 w-5 text-secondary" />
-                            <p className="font-medium text-secondary">{scaleProofImage.name}</p>
-                          </div> : <>
-                            <AlertCircle className="h-8 w-8 mx-auto text-accent mb-2" />
-                            <p className="text-sm font-medium mb-1">Upload a photo of the printed object</p>
+                        {scaleProofImage ? (
+                          <div className="flex items-center justify-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-secondary" />
+                            <p className="font-medium text-secondary text-sm">{scaleProofImage.name}</p>
+                          </div>
+                        ) : (
+                          <>
+                            <AlertCircle className="h-6 w-6 mx-auto text-accent mb-1" />
+                            <p className="text-xs font-medium mb-1">Upload a photo of the printed object</p>
                             <p className="text-xs text-muted-foreground">
                               Must include a standard object for scale (pen, coin, headphones, etc.)
                             </p>
-                          </>}
+                          </>
+                        )}
                       </label>
                     </div>
                   </div>
@@ -189,18 +230,18 @@ export default function StartCreating() {
 
               {/* Print Settings */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Settings className="h-5 w-5 text-secondary" />
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Settings className="h-4 w-4 text-secondary" />
                     Print Settings
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Part Count</Label>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm">Part Count</Label>
                       <Select value={partCount} onValueChange={setPartCount}>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-9">
                           <SelectValue placeholder="Select parts" />
                         </SelectTrigger>
                         <SelectContent>
@@ -211,74 +252,137 @@ export default function StartCreating() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="space-y-2">
-                      <Label>Requires Supports</Label>
-                      <div className="flex items-center gap-2 h-10">
-                        <Checkbox id="supports" checked={hasSupports} onCheckedChange={checked => setHasSupports(checked as boolean)} />
-                        <Label htmlFor="supports" className="cursor-pointer">Yes, supports needed</Label>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm">Requires Supports</Label>
+                      <div className="flex items-center gap-2 h-9">
+                        <Checkbox id="supports" checked={hasSupports} onCheckedChange={(checked) => setHasSupports(checked as boolean)} />
+                        <Label htmlFor="supports" className="cursor-pointer text-sm">Yes, supports needed</Label>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Recommended Material(s)</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm">Recommended Material(s)</Label>
                     <Select value={selectedMaterial} onValueChange={setSelectedMaterial}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-9">
                         <SelectValue placeholder="Select material" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="PLA">PLA - Standard ($25/kg)</SelectItem>
-                        <SelectItem value="ABS">ABS - Heat Resistant ($28/kg)</SelectItem>
-                        <SelectItem value="PETG">PETG - Durable ($30/kg)</SelectItem>
-                        <SelectItem value="Resin">Resin - High Detail ($45/kg)</SelectItem>
-                        <SelectItem value="Nylon">Nylon - Industrial ($50/kg)</SelectItem>
+                        <SelectItem value="PLA">PLA - Standard</SelectItem>
+                        <SelectItem value="ABS">ABS - Heat Resistant</SelectItem>
+                        <SelectItem value="PETG">PETG - Durable</SelectItem>
+                        <SelectItem value="Resin">Resin - High Detail</SelectItem>
+                        <SelectItem value="Nylon">Nylon - Industrial</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
+                  <div className="space-y-1.5">
+                    <Label className="flex items-center gap-2 text-sm">
                       Complexity
                       <span className="relative group">
                         <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
-                        <span className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-popover border border-border rounded-lg shadow-lg text-xs text-left opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                          <strong>Functional object:</strong> utilitarian/spare/accessory focused on use, tolerances, fit (8% commission)<br/><br/>
-                          <strong>Artistic object:</strong> mainly aesthetic/sculpture/decor (16% commission)<br/><br/>
-                          <strong>Mixed object:</strong> function + aesthetics (12% commission)<br/><br/>
+                        <span className="absolute left-0 bottom-full mb-2 w-64 p-3 bg-popover border border-border rounded-lg shadow-lg text-xs text-left opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                          <strong>Functional object:</strong> utilitarian/spare/accessory focused on use, tolerances, fit<br/><br/>
+                          <strong>Artistic object:</strong> mainly aesthetic/sculpture/decor<br/><br/>
+                          <strong>Mixed object:</strong> function + aesthetics<br/><br/>
                           <em className="text-accent">Mixed and Artistic objects always require manual team validation before publishing.</em>
                         </span>
                       </span>
                     </Label>
-                    <div className="grid grid-cols-3 gap-3">
-                      {['Functional', 'Mixed', 'Artistic'].map(option => <button key={option} type="button" onClick={() => setComplexity(option)} className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${complexity === option ? 'border-secondary bg-secondary/10 text-secondary' : 'border-border hover:border-secondary/50'}`}>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(['Functional', 'Mixed', 'Artistic'] as const).map((option) => (
+                        <button
+                          key={option}
+                          type="button"
+                          onClick={() => {
+                            setComplexity(option);
+                            setFixedFee(FIXED_FEE_RANGES[option].min);
+                          }}
+                          className={`p-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
+                            complexity === option
+                              ? 'border-secondary bg-secondary/10 text-secondary'
+                              : 'border-border hover:border-secondary/50'
+                          }`}
+                        >
                           {option}
-                        </button>)}
+                        </button>
+                      ))}
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <Palette className="h-4 w-4" />
+                  {/* Fixed Fee Slider - Only show when complexity is selected */}
+                  {complexity && (
+                    <div className="space-y-2 p-3 bg-muted/50 rounded-lg">
+                      <Label className="text-sm">Fixed fee (EUR)</Label>
+                      <div className="flex items-center gap-4">
+                        <Slider
+                          value={[fixedFee]}
+                          onValueChange={(value) => setFixedFee(value[0])}
+                          min={feeRange.min}
+                          max={feeRange.max}
+                          step={0.5}
+                          className="flex-1"
+                        />
+                        <span className="font-bold text-secondary min-w-[60px] text-right">
+                          €{fixedFee.toFixed(2)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Fixed fee + variable fee based on the sale price.
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="space-y-1.5">
+                    <Label className="flex items-center gap-2 text-sm">
+                      <Palette className="h-3 w-3" />
                       Recommended RAL Color
                     </Label>
-                    <div className="grid grid-cols-8 gap-2">
-                      {ralColors.slice(0, 16).map(color => <button key={color.code} onClick={() => setSelectedColor(color)} className={`h-8 w-8 rounded-lg border-2 transition-all ${selectedColor?.code === color.code ? 'border-secondary scale-110' : 'border-transparent hover:scale-105'}`} style={{
-                      backgroundColor: color.hex
-                    }} title={`${color.code} - ${color.name}`} />)}
+                    <div className="grid grid-cols-8 gap-1.5">
+                      {ralColors.slice(0, 16).map((color) => (
+                        <button
+                          key={color.code}
+                          onClick={() => setSelectedColor(color)}
+                          className={`h-7 w-7 rounded-lg border-2 transition-all ${
+                            selectedColor?.code === color.code
+                              ? 'border-secondary scale-110'
+                              : 'border-transparent hover:scale-105'
+                          }`}
+                          style={{ backgroundColor: color.hex }}
+                          title={`${color.code} - ${color.name}`}
+                        />
+                      ))}
                     </div>
-                    {selectedColor && <p className="text-sm text-muted-foreground">
+                    {selectedColor && (
+                      <p className="text-xs text-muted-foreground">
                         Selected: {selectedColor.code} - {selectedColor.name}
-                      </p>}
+                      </p>
+                    )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="weight">Estimated Weight (grams)</Label>
-                      <Input id="weight" type="number" placeholder="e.g., 50" value={estimatedWeight} onChange={e => setEstimatedWeight(e.target.value)} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="weight" className="text-sm">Estimated Weight (grams)</Label>
+                      <Input
+                        id="weight"
+                        type="number"
+                        placeholder="e.g., 50"
+                        value={estimatedWeight}
+                        onChange={(e) => setEstimatedWeight(e.target.value)}
+                        className="h-9"
+                      />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="time">Print Time (minutes)</Label>
-                      <Input id="time" type="number" placeholder="e.g., 120" value={estimatedPrintTime} onChange={e => setEstimatedPrintTime(e.target.value)} />
+                    <div className="space-y-1.5">
+                      <Label htmlFor="time" className="text-sm">Print Time (minutes)</Label>
+                      <Input
+                        id="time"
+                        type="number"
+                        placeholder="e.g., 120"
+                        value={estimatedPrintTime}
+                        onChange={(e) => setEstimatedPrintTime(e.target.value)}
+                        className="h-9"
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -286,36 +390,36 @@ export default function StartCreating() {
 
               {/* Legal Section */}
               <Card className="border-accent/50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-accent" />
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <FileText className="h-4 w-4 text-accent" />
                     Legal & IP Terms
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3">
                   <Link to="/nda-terms" className="text-secondary underline hover:text-secondary/80 text-sm font-medium">
                     Read full Non-Disclosure Agreement & IP Terms →
                   </Link>
 
-                  <div className="flex items-start gap-3">
-                    <Checkbox id="nda" checked={ndaAccepted} onCheckedChange={checked => setNdaAccepted(checked as boolean)} />
-                    <div className="space-y-1">
-                      <Label htmlFor="nda" className="font-medium cursor-pointer">
+                  <div className="flex items-start gap-2">
+                    <Checkbox id="nda" checked={ndaAccepted} onCheckedChange={(checked) => setNdaAccepted(checked as boolean)} />
+                    <div className="space-y-0.5">
+                      <Label htmlFor="nda" className="font-medium cursor-pointer text-sm">
                         I accept the NDA terms
                       </Label>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         I understand that Makers are bound by our Non-Disclosure Agreement and cannot commercialize my design files.
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <Checkbox id="original" checked={originalWorkCertified} onCheckedChange={checked => setOriginalWorkCertified(checked as boolean)} />
-                    <div className="space-y-1">
-                      <Label htmlFor="original" className="font-medium cursor-pointer">
+                  <div className="flex items-start gap-2">
+                    <Checkbox id="original" checked={originalWorkCertified} onCheckedChange={(checked) => setOriginalWorkCertified(checked as boolean)} />
+                    <div className="space-y-0.5">
+                      <Label htmlFor="original" className="font-medium cursor-pointer text-sm">
                         I certify this is my original design
                       </Label>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         I confirm that I am the original creator of this design and have full rights to distribute it commercially.
                       </p>
                     </div>
@@ -327,76 +431,71 @@ export default function StartCreating() {
             {/* Right: Price Calculator */}
             <div className="lg:col-span-2">
               <Card className="sticky top-24">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calculator className="h-5 w-5" />
-                    Price Breakdown
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Calculator className="h-4 w-4" />
+                    Fee Preview
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {estimatedPrice ? <>
-                      <div className="text-center py-4">
-                        <p className="text-4xl font-bold">${estimatedPrice.toFixed(2)}</p>
+                <CardContent className="space-y-4">
+                  {estimatedPrice && complexity ? (
+                    <>
+                      <div className="text-center py-3">
+                        <p className="text-3xl font-bold">${estimatedPrice.toFixed(2)}</p>
                         <p className="text-muted-foreground text-sm mt-1">Suggested retail price</p>
                       </div>
 
-                      <div className="space-y-3 pt-4 border-t border-border">
-                        <p className="text-sm font-medium text-muted-foreground">Commission Breakdown:</p>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex items-center justify-between">
-                            <span className="flex items-center gap-2">
-                              <Printer className="h-4 w-4 text-accent" />
-                              Manufacturing Cost (70%)
-                            </span>
-                            <span>${(estimatedPrice * COMMISSION_RATES.MAKER).toFixed(2)}</span>
+                      <div className="space-y-2 pt-3 border-t border-border">
+                        <p className="text-sm font-medium text-muted-foreground">Fee Preview (amounts only):</p>
+                        <div className="space-y-1.5 text-sm">
+                          <div className="flex items-center justify-between py-1">
+                            <span className="text-muted-foreground">Fixed fee</span>
+                            <span className="font-medium">€{fixedFee.toFixed(2)}</span>
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="flex items-center gap-2">
-                              <Palette className="h-4 w-4 text-primary" />
-                              Designer Royalty (8%)
-                            </span>
-                            <span className="text-secondary font-medium">${(estimatedPrice * COMMISSION_RATES.DESIGNER).toFixed(2)}</span>
+                          <div className="flex items-center justify-between py-1">
+                            <span className="text-muted-foreground">Variable fee</span>
+                            <span className="font-medium">€{variableFee.toFixed(2)}</span>
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="flex items-center gap-2">
-                              <Building2 className="h-4 w-4 text-secondary" />
-                              Platform Fee (14%)
-                            </span>
-                            <span>${(estimatedPrice * COMMISSION_RATES.PLATFORM).toFixed(2)}</span>
-                          </div>
-                          <div className="flex items-center justify-between text-muted-foreground">
-                            <span className="flex items-center gap-2">
-                              <CreditCard className="h-4 w-4" />
-                              Payment (3%)
-                            </span>
-                            <span>${(estimatedPrice * COMMISSION_RATES.PAYMENT_GATEWAY).toFixed(2)}</span>
+                          <div className="flex items-center justify-between py-1.5 border-t border-border">
+                            <span className="font-medium">Estimated total fees</span>
+                            <span className="font-bold text-secondary">€{totalFees.toFixed(2)}</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="bg-secondary/10 rounded-lg p-4 text-center">
-                        <p className="text-sm text-muted-foreground">Your royalty per print</p>
-                        <p className="text-2xl font-bold text-secondary">
-                          ${(estimatedPrice * COMMISSION_RATES.DESIGNER).toFixed(2)}
+                      <div className="bg-secondary/10 rounded-lg p-3 text-center">
+                        <p className="text-xs text-muted-foreground">Your royalty per print</p>
+                        <p className="text-xl font-bold text-secondary">
+                          ${(estimatedPrice - totalFees - (estimatedPrice * 0.7)).toFixed(2)}
                         </p>
                       </div>
+
+                      <p className="text-xs text-muted-foreground text-center">
+                        You'll see exact amounts before publishing.
+                      </p>
 
                       <Button variant="hero" className="w-full" disabled={!canSubmit} onClick={() => setSubmitted(true)}>
                         Submit Design
                       </Button>
 
-                      {!canSubmit && <p className="text-xs text-center text-muted-foreground">
+                      {!canSubmit && (
+                        <p className="text-xs text-center text-muted-foreground">
                           Please complete all required fields and accept the terms
-                        </p>}
-                    </> : <div className="text-center py-8 text-muted-foreground">
-                      <Calculator className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>Enter material, weight, and print time to see your price breakdown</p>
-                    </div>}
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-center py-6 text-muted-foreground">
+                      <Calculator className="h-10 w-10 mx-auto mb-3 opacity-50" />
+                      <p className="text-sm">Select complexity and enter material, weight, and print time to see your fee preview</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
           </div>
         </div>
       </section>
-    </Layout>;
+    </Layout>
+  );
 }

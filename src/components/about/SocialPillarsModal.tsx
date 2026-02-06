@@ -12,7 +12,7 @@ const pillars = [
   {
     icon: MapPin,
     title: 'Local Economy',
-    description: '75% of every purchase stays with the Maker in your community. We prioritize neighborhood prosperity over global logistics.',
+    description: 'The majority of every purchase stays with the Maker in your community. We prioritize neighborhood prosperity over global logistics.',
     color: 'secondary',
   },
   {
@@ -30,7 +30,7 @@ const pillars = [
   {
     icon: Scale,
     title: 'Fair Pay',
-    description: 'Transparent commission split protecting all stakeholders. Makers: 75%, Platform: 14%, Designers: 8%, Payment: 3%.',
+    description: 'Transparent fee structure protecting all stakeholders. You will see exact amounts before you pay.',
     color: 'accent',
   },
 ];

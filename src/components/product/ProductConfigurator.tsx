@@ -10,7 +10,6 @@ import {
   ARTISTIC_MATERIAL_SURCHARGES,
   QUALITY_SURCHARGES,
   ARTISTIC_QUALITY_SURCHARGES,
-  DESIGNER_RATES,
   MIN_PRODUCT_PRICE
 } from '@/lib/pricing';
 import { productTypeLabels } from '@/data/categories';
@@ -157,29 +156,16 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
     onConfigChange?.({ selectedColor, selectedMaterial, selectedQuality });
   }, [buyerPrice, selectedColor, selectedMaterial, selectedQuality, onPriceChange, onConfigChange]);
   
-  // Get surcharge display for material - show 0% for first/base material
-  const getMaterialSurcharge = (material: string, index: number) => {
-    const surcharge = isArtistic 
-      ? ARTISTIC_MATERIAL_SURCHARGES[material] 
-      : MATERIAL_SURCHARGES[material];
-    
-    // First material is always 0% base
-    if (index === 0 || surcharge === 0 || surcharge === undefined) {
-      return '0%';
-    }
-    return `+${Math.round(surcharge * 100)}%`;
+  // Get surcharge label for material - show "Base" for first material
+  const getMaterialLabel = (material: string, index: number) => {
+    if (index === 0) return 'Base';
+    return null;
   };
   
-  // Get surcharge display for quality
-  const getQualitySurcharge = (quality: string, index: number) => {
-    const surcharge = isArtistic 
-      ? ARTISTIC_QUALITY_SURCHARGES[quality] 
-      : QUALITY_SURCHARGES[quality];
-    
-    if (index === 0 || surcharge === 0 || surcharge === undefined) {
-      return '0%';
-    }
-    return `+${Math.round(surcharge * 100)}%`;
+  // Get surcharge label for quality - show "Base" for first quality
+  const getQualityLabel = (quality: string, index: number) => {
+    if (index === 0) return 'Base';
+    return null;
   };
   
   // Color hex map (simplified)
@@ -204,21 +190,18 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
   };
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Product Type Badge (read-only) */}
       <div className="flex items-center gap-2">
-        <Label className="text-muted-foreground">Product Type:</Label>
-        <Badge variant="secondary" className="capitalize">
+        <Label className="text-muted-foreground text-sm">Product Type:</Label>
+        <Badge variant="secondary" className="capitalize text-xs">
           {productTypeLabels[product.productType]}
         </Badge>
-        <span className="text-xs text-muted-foreground">
-          ({Math.round(DESIGNER_RATES[product.productType] * 100)}% designer commission)
-        </span>
       </div>
       
       {/* Color Selector */}
-      <div className="space-y-3">
-        <Label className="flex items-center gap-2">
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-sm">
           <Palette className="h-4 w-4" />
           Color
         </Label>
@@ -228,9 +211,9 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
               key={color}
               onClick={() => setSelectedColor(color)}
               className={cn(
-                "h-10 w-10 rounded-lg border-2 transition-all relative",
+                "h-8 w-8 rounded-lg border-2 transition-all relative",
                 selectedColor === color 
-                  ? "border-secondary scale-110 shadow-lg" 
+                  ? "border-secondary scale-110 shadow-md" 
                   : "border-border hover:scale-105"
               )}
               style={{ backgroundColor: colorHexMap[color] || '#CCC' }}
@@ -239,7 +222,7 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
               {selectedColor === color && (
                 <span className="absolute inset-0 flex items-center justify-center">
                   <span className={cn(
-                    "h-3 w-3 rounded-full",
+                    "h-2 w-2 rounded-full",
                     ['White', 'Clear', 'Natural', 'Pearl White', 'Yellow', 'Gold'].includes(color) 
                       ? 'bg-foreground' 
                       : 'bg-white'
@@ -250,13 +233,13 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
           ))}
         </div>
         {selectedColor && (
-          <p className="text-sm text-muted-foreground">Selected: {selectedColor}</p>
+          <p className="text-xs text-muted-foreground">Selected: {selectedColor}</p>
         )}
       </div>
       
       {/* Material Selector */}
-      <div className="space-y-3">
-        <Label className="flex items-center gap-2">
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-sm">
           <Layers className="h-4 w-4" />
           Material
           <Tooltip>
@@ -264,7 +247,7 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
               <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
             </TooltipTrigger>
             <TooltipContent className="max-w-xs text-xs">
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {Object.entries(materialTooltips).map(([mat, desc]) => (
                   <p key={mat}><strong>{mat}:</strong> {desc}</p>
                 ))}
@@ -274,7 +257,7 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
         </Label>
         <div className="flex flex-wrap gap-2">
           {availableMaterials.map((material, index) => {
-            const surcharge = getMaterialSurcharge(material, index);
+            const label = getMaterialLabel(material, index);
             return (
               <Tooltip key={material}>
                 <TooltipTrigger asChild>
@@ -282,10 +265,10 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
                     variant={selectedMaterial === material ? "secondary" : "outline"}
                     size="sm"
                     onClick={() => handleMaterialChange(material)}
-                    className="gap-1"
+                    className="gap-1 h-8 text-xs"
                   >
                     {material}
-                    <span className="text-xs opacity-70">{surcharge}</span>
+                    {label && <span className="text-xs opacity-70">({label})</span>}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="text-xs">
@@ -298,8 +281,8 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
       </div>
       
       {/* Quality Selector */}
-      <div className="space-y-3">
-        <Label className="flex items-center gap-2">
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-sm">
           <Sparkles className="h-4 w-4" />
           Quality
           <Tooltip>
@@ -317,7 +300,7 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
         </Label>
         <div className="flex flex-wrap gap-2">
           {availableQualities.map((quality, index) => {
-            const surcharge = getQualitySurcharge(quality, index);
+            const label = getQualityLabel(quality, index);
             return (
               <Tooltip key={quality}>
                 <TooltipTrigger asChild>
@@ -325,10 +308,10 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
                     variant={selectedQuality === quality ? "secondary" : "outline"}
                     size="sm"
                     onClick={() => handleQualityChange(quality)}
-                    className="gap-1 capitalize"
+                    className="gap-1 capitalize h-8 text-xs"
                   >
                     {quality}
-                    <span className="text-xs opacity-70">{surcharge}</span>
+                    {label && <span className="text-xs opacity-70">({label})</span>}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="text-xs">
@@ -342,9 +325,9 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
       
       {/* Live Price Display */}
       <div className="p-4 rounded-xl bg-card border border-border">
-        <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-3xl font-bold">${buyerPrice.toFixed(2)}</span>
-          <span className="text-muted-foreground">{product.currency}</span>
+        <div className="flex items-baseline gap-2 mb-3">
+          <span className="text-2xl font-bold">${buyerPrice.toFixed(2)}</span>
+          <span className="text-muted-foreground text-sm">{product.currency}</span>
           {buyerPrice !== product.price && (
             <span className="text-sm text-muted-foreground line-through">
               ${product.price.toFixed(2)}
@@ -352,54 +335,54 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
           )}
         </div>
         
-        {/* Fees & Payout Breakdown */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <Info className="h-4 w-4 text-secondary" />
+        {/* Fees & Payout Breakdown - Amounts only, no percentages */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+            <Info className="h-3.5 w-3.5 text-secondary" />
             Fees & Payout Breakdown
           </div>
           
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between py-1.5 border-b border-border/50">
-              <span className="text-muted-foreground">Buyer Price (total)</span>
+          <div className="space-y-1.5 text-sm">
+            <div className="flex justify-between py-1 border-b border-border/50">
+              <span className="text-muted-foreground">Buyer Price</span>
               <span className="font-semibold">${breakdown.buyerPrice.toFixed(2)}</span>
             </div>
             
-            <div className="flex justify-between py-1.5">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <CreditCard className="h-3.5 w-3.5" />
-                Payment processing (3%)
+            <div className="flex justify-between py-1">
+              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
+                <CreditCard className="h-3 w-3" />
+                Payment processing
               </span>
-              <span>${breakdown.paymentProcessing.toFixed(2)}</span>
+              <span className="text-xs">${breakdown.paymentProcessing.toFixed(2)}</span>
             </div>
             
-            <div className="flex justify-between py-1.5">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <Building2 className="h-3.5 w-3.5" />
-                Platform fee (14%)
+            <div className="flex justify-between py-1">
+              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
+                <Building2 className="h-3 w-3" />
+                Platform fee
               </span>
-              <span>${breakdown.platformFee.toFixed(2)}</span>
+              <span className="text-xs">${breakdown.platformFee.toFixed(2)}</span>
             </div>
             
-            <div className="flex justify-between py-1.5">
-              <span className="flex items-center gap-2 text-muted-foreground">
-                <Palette className="h-3.5 w-3.5" />
-                Designer royalty ({Math.round(breakdown.designerRate * 100)}%)
+            <div className="flex justify-between py-1">
+              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
+                <Palette className="h-3 w-3" />
+                Designer earns
               </span>
-              <span className="text-primary">${breakdown.designerRoyalty.toFixed(2)}</span>
+              <span className="text-xs text-primary">${breakdown.designerRoyalty.toFixed(2)}</span>
             </div>
             
-            <div className="flex justify-between py-2 border-t border-border bg-accent/5 -mx-4 px-4 rounded-b-lg">
-              <span className="flex items-center gap-2 font-medium">
-                <Printer className="h-3.5 w-3.5 text-accent" />
-                Maker payout ({Math.round(breakdown.makerRate * 100)}%)
+            <div className="flex justify-between py-1.5 border-t border-border bg-accent/5 -mx-4 px-4 rounded-b-lg">
+              <span className="flex items-center gap-1.5 font-medium text-xs">
+                <Printer className="h-3 w-3 text-accent" />
+                Maker earns
               </span>
-              <span className="font-bold text-accent">${breakdown.makerPayout.toFixed(2)}</span>
+              <span className="font-bold text-accent text-sm">${breakdown.makerPayout.toFixed(2)}</span>
             </div>
           </div>
           
           <p className="text-xs text-muted-foreground mt-2">
-            Product type ({productTypeLabels[product.productType]}) is set by the designer and cannot be changed.
+            Product type ({productTypeLabels[product.productType]}) is set by the designer.
           </p>
         </div>
       </div>

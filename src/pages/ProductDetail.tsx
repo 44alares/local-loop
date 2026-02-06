@@ -43,23 +43,23 @@ export default function ProductDetail() {
 
   return (
     <Layout>
-      <div className="container py-8">
+      <div className="container py-6">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
           <Link to="/shop" className="hover:text-foreground transition-colors">
             Shop
           </Link>
           <ChevronRight className="h-4 w-4" />
           <span className="capitalize">{product.category}</span>
           <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground">{product.name}</span>
+          <span className="text-foreground line-clamp-1">{product.name}</span>
         </nav>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid lg:grid-cols-2 gap-8">
           {/* Left: Images */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Main Image */}
-            <div className="aspect-square rounded-2xl overflow-hidden bg-muted">
+            <div className="aspect-square rounded-xl overflow-hidden bg-muted">
               <img
                 src={product.images[selectedImage]}
                 alt={product.name}
@@ -69,13 +69,13 @@ export default function ProductDetail() {
             
             {/* Thumbnails */}
             {product.images.length > 1 && (
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 {product.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
                     className={cn(
-                      "w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors",
+                      "w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors",
                       selectedImage === index ? "border-secondary" : "border-transparent"
                     )}
                   >
@@ -85,53 +85,76 @@ export default function ProductDetail() {
               </div>
             )}
             
-            {/* About This Design - Moved below image */}
-            <div className="pt-4">
-              <h2 className="text-xl font-bold mb-4">About This Design</h2>
-              <p className="text-muted-foreground mb-6">{product.description}</p>
+            {/* About This Design */}
+            <div className="pt-3">
+              <h2 className="text-lg font-bold mb-2">About This Design</h2>
+              <p className="text-sm text-muted-foreground">{product.description}</p>
               
               {/* AI Generated Image placeholder for Artistic products */}
               {product.category === 'artistic' && (
-                <div className="mt-4 p-4 bg-muted/50 rounded-xl border border-dashed border-border">
-                  <p className="text-sm text-muted-foreground text-center">
+                <div className="mt-3 p-3 bg-muted/50 rounded-lg border border-dashed border-border">
+                  <p className="text-xs text-muted-foreground text-center">
                     AI-generated visualization coming soon
                   </p>
                 </div>
               )}
             </div>
+
+            {/* Specifications - Now directly below About This Design */}
+            <div className="pt-3">
+              <h3 className="text-lg font-bold mb-3">Specifications</h3>
+              <div className="space-y-1.5 text-sm">
+                <div className="flex justify-between py-1.5 border-b border-border">
+                  <span className="text-muted-foreground">Product Type</span>
+                  <span className="capitalize font-medium">{product.productType}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-border">
+                  <span className="text-muted-foreground">Dimensions</span>
+                  <span>{product.dimensions.length} × {product.dimensions.width} × {product.dimensions.height} {product.dimensions.unit}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-border">
+                  <span className="text-muted-foreground">Available Materials</span>
+                  <span>{product.materials.join(', ')}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-border">
+                  <span className="text-muted-foreground">Style</span>
+                  <span className="capitalize">{product.style}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Right: Details */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             {/* Header */}
             <div>
-              <Badge variant="secondary" className="mb-3 capitalize">
+              <Badge variant="secondary" className="mb-2 capitalize text-xs">
                 {product.category}
               </Badge>
-              <h1 className="text-display-sm font-bold mb-4">{product.name}</h1>
+              <h1 className="text-2xl font-bold mb-3">{product.name}</h1>
               
               {/* Designer */}
               <Link 
                 to={`/designer/${product.designer.id}`}
-                className="inline-flex items-center gap-3 group"
+                className="inline-flex items-center gap-2 group"
               >
                 <img
                   src={product.designer.avatar}
                   alt={product.designer.name}
-                  className="h-10 w-10 rounded-full"
+                  className="h-8 w-8 rounded-full"
                 />
                 <div>
-                  <p className="font-medium group-hover:text-secondary transition-colors">
+                  <p className="text-sm font-medium group-hover:text-secondary transition-colors">
                     {product.designer.name}
                   </p>
-                  <p className="text-sm text-muted-foreground">{product.designer.location}</p>
+                  <p className="text-xs text-muted-foreground">{product.designer.location}</p>
                 </div>
               </Link>
 
               {/* Rating */}
-              <div className="flex items-center gap-3 mt-4">
+              <div className="flex items-center gap-3 mt-3 text-sm">
                 <div className="flex items-center gap-1">
-                  <Star className="h-5 w-5 fill-accent text-accent" />
+                  <Star className="h-4 w-4 fill-accent text-accent" />
                   <span className="font-semibold">{product.rating}</span>
                 </div>
                 <span className="text-muted-foreground">
@@ -139,7 +162,7 @@ export default function ProductDetail() {
                 </span>
                 <span className="text-muted-foreground">•</span>
                 <span className="text-muted-foreground">
-                  {product.makerCount} makers available
+                  {product.makerCount} makers
                 </span>
               </div>
             </div>
@@ -152,80 +175,73 @@ export default function ProductDetail() {
             />
 
             {/* Smart Maker Search with Geofencing */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-secondary" />
+            <div className="space-y-3">
+              <h3 className="font-semibold text-sm flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-secondary" />
                 Find a Maker Near You
               </h3>
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Enter your zipcode or city..."
                   value={locationSearch}
                   onChange={(e) => setLocationSearch(e.target.value)}
-                  className="pl-10 h-12"
+                  className="pl-9 h-10 text-sm"
                 />
               </div>
               
-              <p className="text-sm text-muted-foreground flex items-center gap-1">
-                <Leaf className="h-4 w-4 text-secondary" />
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Leaf className="h-3 w-3 text-secondary" />
                 Closest makers shown first for zero-KM delivery
               </p>
 
               {/* Maker Cards */}
-              <div className="space-y-3">
-                {sortedMakers.map((makerItem, index) => (
+              <div className="space-y-2">
+                {sortedMakers.slice(0, 3).map((makerItem, index) => (
                   <button
                     key={makerItem.id}
                     onClick={() => setSelectedMaker(makerItem.id)}
                     className={cn(
-                      "w-full p-4 rounded-xl border-2 text-left transition-all",
+                      "w-full p-3 rounded-lg border-2 text-left transition-all",
                       selectedMaker === makerItem.id 
                         ? "border-secondary bg-secondary/5" 
                         : "border-border hover:border-secondary/50"
                     )}
                   >
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-3">
                       <div className="relative">
                         <img
                           src={makerItem.avatar}
                           alt={makerItem.name}
-                          className="h-12 w-12 rounded-full"
+                          className="h-10 w-10 rounded-full"
                         />
                         {index === 0 && (
-                          <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center text-xs">
+                          <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center text-xs">
                             1
                           </span>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold">{makerItem.name}</p>
+                          <p className="font-semibold text-sm">{makerItem.name}</p>
                           {makerItem.verified && (
-                            <Badge variant="secondary" className="text-xs">Verified</Badge>
+                            <Badge variant="secondary" className="text-xs h-5">Verified</Badge>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground">{makerItem.location}</p>
-                        <div className="flex items-center gap-3 mt-2 text-sm">
+                        <p className="text-xs text-muted-foreground">{makerItem.location}</p>
+                        <div className="flex items-center gap-2 mt-1 text-xs">
                           <span className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-accent text-accent" />
-                            {makerItem.rating} ({makerItem.reviewCount})
+                            <Star className="h-3 w-3 fill-accent text-accent" />
+                            {makerItem.rating}
                           </span>
                           <span className="flex items-center gap-1 text-muted-foreground">
-                            <Clock className="h-4 w-4" />
+                            <Clock className="h-3 w-3" />
                             {makerItem.leadTime}
                           </span>
                         </div>
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {makerItem.materials.map((mat) => (
-                            <span key={mat} className="text-xs px-2 py-0.5 rounded-full bg-muted">
-                              {mat}
-                            </span>
-                          ))}
-                        </div>
                       </div>
                       {selectedMaker === makerItem.id && (
-                        <Check className="h-5 w-5 text-secondary shrink-0" />
+                        <Check className="h-4 w-4 text-secondary shrink-0" />
                       )}
                     </div>
                   </button>
@@ -238,19 +254,19 @@ export default function ProductDetail() {
               <div className="space-y-4 animate-fade-in">
                 {/* Quantity */}
                 <div>
-                  <h3 className="font-semibold mb-3">Quantity</h3>
-                  <div className="flex items-center gap-3">
+                  <h3 className="font-semibold text-sm mb-2">Quantity</h3>
+                  <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
-                      size="icon"
+                      size="sm"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     >
                       -
                     </Button>
-                    <span className="w-12 text-center font-medium">{quantity}</span>
+                    <span className="w-10 text-center font-medium text-sm">{quantity}</span>
                     <Button
                       variant="outline"
-                      size="icon"
+                      size="sm"
                       onClick={() => setQuantity(quantity + 1)}
                     >
                       +
@@ -260,7 +276,7 @@ export default function ProductDetail() {
 
                 {/* Shipping Options - Zero-KM Priority */}
                 <div>
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
                     <Truck className="h-4 w-4" />
                     Delivery Option
                   </h3>
@@ -270,32 +286,32 @@ export default function ProductDetail() {
                         key={option.id}
                         onClick={() => setSelectedShipping(option.id)}
                         className={cn(
-                          "w-full p-4 rounded-xl border-2 text-left transition-all flex items-center justify-between",
+                          "w-full p-3 rounded-lg border-2 text-left transition-all flex items-center justify-between",
                           selectedShipping === option.id 
                             ? "border-secondary bg-secondary/5" 
                             : "border-border hover:border-secondary/50"
                         )}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           {option.id === 'direct-pickup' ? (
-                            <MapPin className="h-5 w-5 text-secondary" />
+                            <MapPin className="h-4 w-4 text-secondary" />
                           ) : option.id === 'local-point' ? (
-                            <Store className="h-5 w-5 text-accent" />
+                            <Store className="h-4 w-4 text-accent" />
                           ) : (
-                            <Truck className="h-5 w-5 text-muted-foreground" />
+                            <Truck className="h-4 w-4 text-muted-foreground" />
                           )}
                           <div>
                             <div className="flex items-center gap-2">
-                              <p className="font-medium">{option.name}</p>
+                              <p className="font-medium text-sm">{option.name}</p>
                               {option.isRecommended && (
-                                <Badge variant="secondary" className="text-xs">Recommended</Badge>
+                                <Badge variant="secondary" className="text-xs h-5">Recommended</Badge>
                               )}
                             </div>
-                            <p className="text-sm text-muted-foreground">{option.description}</p>
+                            <p className="text-xs text-muted-foreground">{option.description}</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className={cn("font-semibold", option.price === 0 && "text-secondary")}>
+                          <p className={cn("font-semibold text-sm", option.price === 0 && "text-secondary")}>
                             {option.price === 0 ? 'FREE' : `$${option.price.toFixed(2)}`}
                           </p>
                         </div>
@@ -305,18 +321,18 @@ export default function ProductDetail() {
                 </div>
 
                 {/* NDA Agreement for Makers */}
-                <div className="p-4 rounded-xl border border-accent/50 bg-accent/5">
-                  <div className="flex items-start gap-3">
+                <div className="p-3 rounded-lg border border-accent/50 bg-accent/5">
+                  <div className="flex items-start gap-2">
                     <Checkbox 
                       id="nda" 
                       checked={ndaAccepted}
                       onCheckedChange={(checked) => setNdaAccepted(checked as boolean)}
                     />
                     <div className="space-y-1">
-                      <Label htmlFor="nda" className="font-medium cursor-pointer">
+                      <Label htmlFor="nda" className="font-medium text-sm cursor-pointer">
                         IP Protection Agreement
                       </Label>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         The Maker agrees to a Non-Disclosure Agreement and cannot commercialize, share, or distribute the designer's files without explicit written permission.
                       </p>
                     </div>
@@ -326,109 +342,82 @@ export default function ProductDetail() {
             )}
 
             {/* Actions */}
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <Button
                 variant="accent"
-                size="xl"
+                size="lg"
                 className="flex-1"
                 disabled={!selectedMaker || !config?.selectedColor || !ndaAccepted}
               >
                 Add to Cart — ${totalPrice.toFixed(2)}
               </Button>
-              <Button variant="outline" size="xl">
-                <Heart className="h-5 w-5" />
+              <Button variant="outline" size="lg">
+                <Heart className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="xl">
-                <Share2 className="h-5 w-5" />
+              <Button variant="outline" size="lg">
+                <Share2 className="h-4 w-4" />
               </Button>
             </div>
 
             {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
+            <div className="grid grid-cols-3 gap-3 pt-3 border-t border-border">
               <div className="text-center">
-                <Shield className="h-6 w-6 mx-auto mb-2 text-secondary" />
+                <Shield className="h-5 w-5 mx-auto mb-1 text-secondary" />
                 <p className="text-xs text-muted-foreground">Verified Makers</p>
               </div>
               <div className="text-center">
-                <Leaf className="h-6 w-6 mx-auto mb-2 text-secondary" />
+                <Leaf className="h-5 w-5 mx-auto mb-1 text-secondary" />
                 <p className="text-xs text-muted-foreground">Zero-KM Delivery</p>
               </div>
               <div className="text-center">
-                <Package className="h-6 w-6 mx-auto mb-2 text-secondary" />
+                <Package className="h-5 w-5 mx-auto mb-1 text-secondary" />
                 <p className="text-xs text-muted-foreground">Quality Guaranteed</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Specifications & Reviews */}
-        <div className="mt-16 grid lg:grid-cols-2 gap-12">
-          {/* Specifications */}
-          <div>
-            <h3 className="text-xl font-bold mb-4">Specifications</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">Product Type</span>
-                <span className="capitalize font-medium">{product.productType}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">Dimensions</span>
-                <span>{product.dimensions.length} × {product.dimensions.width} × {product.dimensions.height} {product.dimensions.unit}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">Available Materials</span>
-                <span>{product.materials.join(', ')}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">Style</span>
-                <span className="capitalize">{product.style}</span>
-              </div>
-            </div>
+        {/* Reviews Section */}
+        <div className="mt-12">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold">Customer Reviews</h2>
+            <Button variant="outline" size="sm">Write a Review</Button>
           </div>
-
-          {/* Reviews */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Customer Reviews</h2>
-              <Button variant="outline" size="sm">Write a Review</Button>
-            </div>
-            
-            <div className="space-y-4">
-              {mockReviews.map((review) => (
-                <div key={review.id} className="p-4 rounded-xl bg-card border border-border">
-                  <div className="flex items-start gap-3">
-                    <img
-                      src={review.userAvatar}
-                      alt={review.userName}
-                      className="h-10 w-10 rounded-full"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{review.userName}</span>
-                        {review.verified && (
-                          <Badge variant="secondary" className="text-xs">Verified</Badge>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1 mt-1">
-                        {[...Array(5)].map((_, i) => (
+          
+          <div className="grid md:grid-cols-2 gap-4">
+            {mockReviews.map((review) => (
+              <div key={review.id} className="p-4 rounded-lg bg-card border border-border">
+                <div className="flex items-start gap-3 mb-2">
+                  <img
+                    src={review.userAvatar}
+                    alt={review.userName}
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">{review.userName}</p>
+                    <div className="flex items-center gap-2">
+                      <div className="flex">
+                        {Array.from({ length: 5 }).map((_, i) => (
                           <Star
                             key={i}
                             className={cn(
-                              "h-4 w-4",
-                              i < review.rating ? "fill-accent text-accent" : "text-muted"
+                              "h-3 w-3",
+                              i < review.rating
+                                ? "fill-accent text-accent"
+                                : "fill-muted text-muted"
                             )}
                           />
                         ))}
-                        <span className="text-sm text-muted-foreground ml-2">
-                          {review.date}
-                        </span>
                       </div>
-                      <p className="mt-2 text-muted-foreground">{review.comment}</p>
+                      <span className="text-xs text-muted-foreground">
+                        {review.date}
+                      </span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+                <p className="text-sm text-muted-foreground">{review.comment}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
