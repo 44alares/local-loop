@@ -132,7 +132,7 @@ export default function JoinAsMaker() {
               Join as Maker
             </h1>
             <p className="text-xl text-muted-foreground">
-              Become a verified maker and earn 70% of every print. Complete the registration below to get started.
+              Become a verified maker and earn the majority of every print. Complete the registration below to get started.
             </p>
           </div>
         </div>

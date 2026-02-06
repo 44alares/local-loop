@@ -27,37 +27,52 @@ export function TrendingProducts() {
     }
   }
   
-  return <section className="py-20 md:py-28 bg-cream-dark/30">
+  return (
+    <section className="py-12 md:py-16 bg-cream-dark/30">
       <div className="container">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 mb-8">
           <div>
-            <h2 className="text-display-sm font-bold mb-2">
+            <h2 className="text-xl md:text-2xl font-bold mb-1">
               Trending Designs
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Discover the newest designs from our community
             </p>
           </div>
-          <Button variant="outline" asChild>
+          <Button variant="outline" size="sm" asChild>
             <Link to="/shop">
               View All Designs
-              <ArrowRight className="h-4 w-4 ml-2" />
+              <ArrowRight className="h-4 w-4 ml-1" />
             </Link>
           </Button>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {trendingProducts.map(product => product && <ProductCard key={product.id} product={product} />)}
+        {/* Products Grid - 2x2 on mobile, 4 columns on desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+          {trendingProducts.map(product => product && (
+            <ProductCard 
+              key={product.id} 
+              product={product}
+              compact
+              className="md:[&]:!p-4 md:[&_.aspect-\\[4\\/3\\]]:!aspect-square"
+            />
+          ))}
         </div>
 
         {/* Category Tags */}
-        <div className="flex flex-wrap justify-center gap-3 mt-12">
-          {['Desktop', 'Functional', 'Artistic', 'Decoration'].map(tag => <Link key={tag} to={`/shop?category=${tag.toLowerCase()}`} className="px-4 py-2 rounded-full bg-background border border-border hover:border-secondary hover:text-secondary transition-colors text-sm font-medium">
+        <div className="flex flex-wrap justify-center gap-2 mt-8">
+          {['Desktop', 'Functional', 'Artistic', 'Decoration'].map(tag => (
+            <Link 
+              key={tag} 
+              to={`/shop?category=${tag.toLowerCase()}`} 
+              className="px-3 py-1.5 rounded-full bg-background border border-border hover:border-secondary hover:text-secondary transition-colors text-xs font-medium"
+            >
               {tag}
-            </Link>)}
+            </Link>
+          ))}
         </div>
       </div>
-    </section>;
+    </section>
+  );
 }

@@ -1,92 +1,44 @@
-import { Palette, Printer, Building2, CreditCard, ArrowRight } from 'lucide-react';
-import { COMMISSION_RATES } from '@/lib/pricing';
+import { ArrowRight, ShieldCheck, Eye, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-const breakdown: Array<{
-  icon: typeof Printer;
-  label: string;
-  percentage: number;
-  percentageDisplay?: string;
-  color: string;
-  description: string;
-}> = [{
-  icon: Printer,
-  label: 'Maker Earnings',
-  percentage: COMMISSION_RATES.MAKER * 100,
-  color: 'accent',
-  description: 'Covers production costs and labor in your community'
-}, {
-  icon: Building2,
-  label: 'Makehug Platform',
-  percentage: COMMISSION_RATES.PLATFORM * 100,
-  color: 'secondary',
-  description: 'Service fee to keep the platform running'
-}, {
-  icon: Palette,
-  label: 'Designer Royalty',
-  percentage: COMMISSION_RATES.DESIGNER * 100,
-  percentageDisplay: '8-16%',
-  color: 'primary',
-  description: 'IP royalties to the creative mind behind the design'
-}, {
-  icon: CreditCard,
-  label: 'Payment Processing',
-  percentage: COMMISSION_RATES.PAYMENT_GATEWAY * 100,
-  color: 'muted',
-  description: 'Secure payment gateway fees'
-}];
+
 export function PricingTransparency() {
-  return <section className="py-20 md:py-28 bg-cream-dark/30">
+  return (
+    <section className="py-16 md:py-20 bg-cream-dark/30">
       <div className="container">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           {/* Section Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-display-sm font-bold mb-4">
               Transparent Pricing
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-muted-foreground max-w-2xl mx-auto">
               Every purchase supports real people — makers who craft, designers who dream, 
               and local economies that thrive.
             </p>
+            <p className="text-muted-foreground max-w-2xl mx-auto mt-3">
+              No surprises: you'll see the full breakdown as amounts before you pay.
+            </p>
           </div>
 
-          {/* Visual Breakdown */}
-          <div className="bg-card rounded-2xl p-8 shadow-card mb-8">
-            {/* Bar Chart */}
-            <div className="h-12 rounded-full overflow-hidden flex mb-8">
-              <div className="bg-accent h-full" style={{
-              width: '75%'
-            }} />
-              <div className="bg-secondary h-full" style={{
-              width: '14%'
-            }} />
-              <div className="bg-primary h-full" style={{
-              width: '8%'
-            }} />
-              <div className="bg-muted-foreground/30 h-full" style={{
-              width: '3%'
-            }} />
+          {/* Trust Badges */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border text-sm font-medium">
+              <ShieldCheck className="h-4 w-4 text-secondary" />
+              No hidden charges
             </div>
-
-            {/* Legend */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {breakdown.map(item => <div key={item.label} className="flex gap-3">
-                  <div className={`h-10 w-10 rounded-lg flex items-center justify-center shrink-0 ${item.color === 'secondary' ? 'bg-secondary/10' : item.color === 'accent' ? 'bg-accent/10' : item.color === 'primary' ? 'bg-primary/10' : 'bg-muted'}`}>
-                    <item.icon className={`h-5 w-5 ${item.color === 'secondary' ? 'text-secondary' : item.color === 'accent' ? 'text-accent' : item.color === 'primary' ? 'text-primary' : 'text-muted-foreground'}`} />
-                  </div>
-                  <div>
-                    <p className="font-semibold">{item.percentageDisplay || `${Math.round(item.percentage)}%`}</p>
-                    <p className="text-sm text-muted-foreground">{item.label}</p>
-                  </div>
-                </div>)}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border text-sm font-medium">
+              <Eye className="h-4 w-4 text-secondary" />
+              Fees shown before payment
+            </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border text-sm font-medium">
+              <Lock className="h-4 w-4 text-secondary" />
+              Secure payments & support
             </div>
           </div>
-
-          {/* Example */}
-          
 
           {/* Contact Button */}
-          <div className="text-center mt-8">
+          <div className="text-center">
             <Button variant="hero-outline" asChild>
               <Link to="/contact">
                 Contact Us
@@ -96,5 +48,6 @@ export function PricingTransparency() {
           </div>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 }

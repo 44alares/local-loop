@@ -22,7 +22,7 @@ const values = [
   {
     icon: Users,
     title: 'Community First',
-    description: '75% of every purchase stays with your local Maker. We believe in neighborhood prosperity over distant profits.',
+    description: 'The majority of every purchase stays with your local Maker. We believe in neighborhood prosperity over distant profits.',
   },
   {
     icon: Sparkles,
