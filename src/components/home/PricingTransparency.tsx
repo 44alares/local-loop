@@ -1,10 +1,8 @@
 import { ArrowRight, ShieldCheck, Eye, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-
 export function PricingTransparency() {
-  return (
-    <section className="py-16 md:py-20 bg-cream-dark/30">
+  return <section className="py-16 md:py-20 bg-cream-dark/30">
       <div className="container">
         <div className="max-w-3xl mx-auto">
           {/* Section Header */}
@@ -16,9 +14,7 @@ export function PricingTransparency() {
               Every purchase supports real people — makers who craft, designers who dream, 
               and local economies that thrive.
             </p>
-            <p className="text-muted-foreground max-w-2xl mx-auto mt-3">
-              No surprises: you'll see the full breakdown as amounts before you pay.
-            </p>
+            
           </div>
 
           {/* Trust Badges */}
@@ -48,6 +44,5 @@ export function PricingTransparency() {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 }
