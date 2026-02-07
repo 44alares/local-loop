@@ -1,18 +1,13 @@
 import { ArrowRight, MapPin, Leaf, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-
 export function HeroSection() {
-  return (
-    <section className="relative overflow-hidden bg-gradient-hero">
+  return <section className="relative overflow-hidden bg-gradient-hero">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03]">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        />
+        <div className="absolute inset-0" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }} />
       </div>
 
       <div className="container relative py-16 md:py-24">
@@ -34,8 +29,7 @@ export function HeroSection() {
 
             {/* Subheadline */}
             <p className="text-lg text-muted-foreground max-w-lg">
-              Connect with talented designers and local makers to bring beautiful,
-              sustainable objects to life in your neighborhood.
+              Discover original designs and get them made by trusted makers near you—less shipping, more community, better for the planet.
             </p>
 
             {/* CTA Buttons - Primary row */}
@@ -53,12 +47,7 @@ export function HeroSection() {
 
             {/* Founders Club CTA - Centered, separated */}
             <div className="flex justify-center md:justify-start pt-2">
-              <Button
-                variant="outline"
-                size="default"
-                className="border-accent text-accent hover:bg-accent/10"
-                asChild
-              >
+              <Button variant="outline" size="default" className="border-accent text-accent hover:bg-accent/10" asChild>
                 <Link to="/founders-club">Join Founders Club</Link>
               </Button>
             </div>
@@ -100,11 +89,7 @@ export function HeroSection() {
             <div className="relative aspect-square">
               {/* Main Image */}
               <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl animate-fade-in">
-                <img
-                  alt="3D printed sustainable design"
-                  className="h-full w-full object-cover"
-                  src="/lovable-uploads/9ef02256-46b9-4af9-983e-904d2e40ec11.png"
-                />
+                <img alt="3D printed sustainable design" className="h-full w-full object-cover" src="/lovable-uploads/9ef02256-46b9-4af9-983e-904d2e40ec11.png" />
               </div>
 
               {/* Decorative Elements */}
@@ -114,6 +99,5 @@ export function HeroSection() {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 }
