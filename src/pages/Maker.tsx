@@ -61,10 +61,6 @@ export default function Maker() {
             </div>
             <div className="relative hidden lg:block">
               <img alt="3D printer in action" className="rounded-2xl shadow-2xl" src="/lovable-uploads/3ec7ebd2-88e1-46ad-9777-00e97814d485.jpg" />
-              <div className="absolute -bottom-4 -right-4 p-4 bg-card rounded-xl shadow-card-hover">
-                <p className="text-2xl font-bold text-secondary">$10.50</p>
-                <p className="text-sm text-muted-foreground">avg. per print</p>
-              </div>
             </div>
           </div>
         </div>
