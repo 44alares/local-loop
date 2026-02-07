@@ -74,17 +74,7 @@ export function Footer() {
   return <footer className="border-t border-border bg-cream-dark/30">
       {/* Impact Stats */}
       <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12">
-          {stats.map(stat => <div key={stat.label} className="flex items-center gap-4 p-6 rounded-xl bg-background shadow-card">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-secondary/10">
-                <stat.icon className="h-6 w-6 text-secondary" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            </div>)}
-        </div>
+        
 
         {/* Links Grid */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
