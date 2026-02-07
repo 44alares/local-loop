@@ -1,51 +1,27 @@
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import {
-  Printer,
-  DollarSign,
-  Clock,
-  Globe,
-  ArrowRight,
-  Check,
-  Shield,
-  Users,
-} from 'lucide-react';
-
-const benefits = [
-  {
-    icon: DollarSign,
-    title: 'Earn Per Print',
-    description: 'Keep the majority of each print. Cover your costs and earn a healthy profit.',
-  },
-  {
-    icon: Clock,
-    title: 'Flexible Schedule',
-    description: 'Accept orders on your terms. Set your own lead times and capacity.',
-  },
-  {
-    icon: Globe,
-    title: 'Global Designs',
-    description: 'Access curated designs from talented designers worldwide.',
-  },
-  {
-    icon: Users,
-    title: 'Local Customers',
-    description: 'Connect with customers in your area who value local production.',
-  },
-];
-
-const steps = [
-  'Sign up with your printer details and location',
-  'Upload photos of your setup for verification',
-  'Select materials and colors you offer',
-  'Choose designs you want to print',
-  'Start receiving orders and earning',
-];
-
+import { Printer, DollarSign, Clock, Globe, ArrowRight, Check, Shield, Users } from 'lucide-react';
+const benefits = [{
+  icon: DollarSign,
+  title: 'Earn Per Print',
+  description: 'Keep the majority of each print. Cover your costs and earn a healthy profit.'
+}, {
+  icon: Clock,
+  title: 'Flexible Schedule',
+  description: 'Accept orders on your terms. Set your own lead times and capacity.'
+}, {
+  icon: Globe,
+  title: 'Global Designs',
+  description: 'Access curated designs from talented designers worldwide.'
+}, {
+  icon: Users,
+  title: 'Local Customers',
+  description: 'Connect with customers in your area who value local production.'
+}];
+const steps = ['Sign up with your printer details and location', 'Upload photos of your setup for verification', 'Select materials and colors you offer', 'Choose designs you want to print', 'Start receiving orders and earning'];
 export default function Maker() {
-  return (
-    <Layout>
+  return <Layout>
       {/* Hero */}
       <section className="bg-gradient-hero py-16 md:py-20">
         <div className="container">
@@ -78,22 +54,13 @@ export default function Maker() {
 
               {/* Founders Club CTA - Centered below with spacing */}
               <div className="flex justify-center md:justify-start pt-4">
-                <Button
-                  variant="outline"
-                  size="default"
-                  className="border-accent text-accent hover:bg-accent/10"
-                  asChild
-                >
+                <Button variant="outline" size="default" className="border-accent text-accent hover:bg-accent/10" asChild>
                   <Link to="/founders-club">Join Founders Club</Link>
                 </Button>
               </div>
             </div>
             <div className="relative hidden lg:block">
-              <img
-                src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&h=600&fit=crop"
-                alt="3D printer in action"
-                className="rounded-2xl shadow-2xl"
-              />
+              <img alt="3D printer in action" className="rounded-2xl shadow-2xl" src="/lovable-uploads/3ec7ebd2-88e1-46ad-9777-00e97814d485.jpg" />
               <div className="absolute -bottom-4 -right-4 p-4 bg-card rounded-xl shadow-card-hover">
                 <p className="text-2xl font-bold text-secondary">$10.50</p>
                 <p className="text-sm text-muted-foreground">avg. per print</p>
@@ -114,18 +81,13 @@ export default function Maker() {
             </p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {benefits.map((benefit) => (
-              <div
-                key={benefit.title}
-                className="p-5 rounded-xl bg-card shadow-card card-hover"
-              >
+            {benefits.map(benefit => <div key={benefit.title} className="p-5 rounded-xl bg-card shadow-card card-hover">
                 <div className="h-10 w-10 rounded-lg bg-secondary/10 flex items-center justify-center mb-3">
                   <benefit.icon className="h-5 w-5 text-secondary" />
                 </div>
                 <h3 className="font-bold mb-1 text-sm">{benefit.title}</h3>
                 <p className="text-muted-foreground text-xs">{benefit.description}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -138,19 +100,12 @@ export default function Maker() {
               <div className="bg-card rounded-xl p-6 shadow-card">
                 <h3 className="font-bold mb-4">What You'll Need</h3>
                 <ul className="space-y-3">
-                  {[
-                    'FDM, SLA, or SLS 3D printer(s)',
-                    'Photo verification of your setup',
-                    'Materials inventory (PLA, ABS, Resin, etc.)',
-                    'Space for local pickup or shipping capability',
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2">
+                  {['FDM, SLA, or SLS 3D printer(s)', 'Photo verification of your setup', 'Materials inventory (PLA, ABS, Resin, etc.)', 'Space for local pickup or shipping capability'].map((item, i) => <li key={i} className="flex items-start gap-2">
                       <div className="h-5 w-5 rounded-full bg-accent/10 flex items-center justify-center shrink-0 mt-0.5">
                         <Check className="h-3 w-3 text-accent" />
                       </div>
                       <span className="text-sm">{item}</span>
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
               </div>
             </div>
@@ -161,14 +116,12 @@ export default function Maker() {
                 your printing skills.
               </p>
               <div className="space-y-3">
-                {steps.map((step, index) => (
-                  <div key={index} className="flex items-start gap-3">
+                {steps.map((step, index) => <div key={index} className="flex items-start gap-3">
                     <div className="h-7 w-7 rounded-full bg-accent flex items-center justify-center shrink-0 text-accent-foreground text-sm font-bold">
                       {index + 1}
                     </div>
                     <p className="text-sm">{step}</p>
-                  </div>
-                ))}
+                  </div>)}
               </div>
               <Button variant="accent" size="lg" className="mt-6" asChild>
                 <Link to="/join-as-maker">
@@ -201,6 +154,5 @@ export default function Maker() {
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 }
