@@ -1,6 +1,8 @@
 import { ArrowRight, MapPin, Leaf, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+
 export function HeroSection() {
   return <section className="relative overflow-hidden bg-gradient-hero">
       {/* Background Pattern */}
@@ -10,10 +12,10 @@ export function HeroSection() {
       }} />
       </div>
 
-      <div className="container relative py-16 md:py-24">
-        <div className="grid lg:grid-cols-2 gap-10 items-center">
+      <div className="container relative py-12 md:py-24">
+        <div className="flex items-start gap-4 md:grid md:grid-cols-2 md:gap-10 md:items-center">
           {/* Content */}
-          <div className="space-y-6">
+          <div className="flex-1 space-y-4 md:space-y-6">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/10 border border-secondary/20">
               <Leaf className="h-4 w-4 text-secondary" />
@@ -28,7 +30,7 @@ export function HeroSection() {
             </h1>
 
             {/* Subheadline */}
-            <p className="text-lg text-muted-foreground max-w-lg">
+            <p className="text-base md:text-lg text-muted-foreground max-w-lg">
               Discover original designs and get them made by trusted makers near you—less shipping, more community, better for the planet.
             </p>
 
@@ -47,13 +49,13 @@ export function HeroSection() {
 
             {/* Founders Club CTA - Centered, separated */}
             <div className="flex justify-center md:justify-start pt-2">
-              <Button variant="outline" size="default" className="border-accent text-accent hover:bg-accent/10" asChild>
+              <Button variant="outline" size="default" className="border-accent text-accent hover:bg-accent/10 text-base" asChild>
                 <Link to="/founders-club">Join Founders Club</Link>
               </Button>
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap items-center gap-4 pt-4">
+            <div className="hidden md:flex flex-wrap items-center gap-4 pt-4">
               <div className="flex items-center gap-2">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary/10">
                   <MapPin className="h-4 w-4 text-secondary" />
@@ -84,8 +86,21 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Hero Image / Visual */}
-          <div className="relative hidden lg:block">
+          {/* Mobile Hero Image - Small square */}
+          <div className="w-24 shrink-0 md:hidden">
+            <div className="rounded-xl overflow-hidden shadow-card border border-border">
+              <AspectRatio ratio={1}>
+                <img 
+                  alt="3D printed sustainable design" 
+                  className="h-full w-full object-cover" 
+                  src="/lovable-uploads/9ef02256-46b9-4af9-983e-904d2e40ec11.png" 
+                />
+              </AspectRatio>
+            </div>
+          </div>
+
+          {/* Desktop Hero Image / Visual */}
+          <div className="relative hidden md:block">
             <div className="relative aspect-square">
               {/* Main Image */}
               <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl animate-fade-in">
@@ -95,6 +110,26 @@ export function HeroSection() {
               {/* Decorative Elements */}
               <div className="absolute -z-10 top-0 right-0 w-72 h-72 bg-secondary/10 rounded-full blur-3xl" />
               <div className="absolute -z-10 bottom-0 left-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Trust Indicators */}
+        <div className="flex flex-wrap items-center justify-center gap-4 pt-6 md:hidden">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/10">
+              <MapPin className="h-3.5 w-3.5 text-secondary" />
+            </div>
+            <div>
+              <p className="font-semibold text-xs">150+ Cities</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
+              <Users className="h-3.5 w-3.5 text-accent" />
+            </div>
+            <div>
+              <p className="font-semibold text-xs">2,300+ Makers</p>
             </div>
           </div>
         </div>
