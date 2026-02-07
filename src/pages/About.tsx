@@ -1,61 +1,43 @@
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { 
-  Leaf, Heart, Users, Sparkles, 
-  Upload, Printer, MapPin, ArrowRight,
-  Globe, Shield, Zap
-} from 'lucide-react';
+import { Leaf, Heart, Users, Sparkles, Upload, Printer, MapPin, ArrowRight, Globe, Shield, Zap } from 'lucide-react';
 import { SocialPillarsModal } from '@/components/about/SocialPillarsModal';
-
-const values = [
-  {
-    icon: Leaf,
-    title: 'Zero-KM Production',
-    description: 'Products travel meters, not oceans. Every item is made in your neighborhood, eliminating global shipping emissions.',
-  },
-  {
-    icon: Shield,
-    title: 'Verified Quality',
-    description: 'Every maker is verified. Every design is curated. We only accept the best because you deserve the best.',
-  },
-  {
-    icon: Users,
-    title: 'Community First',
-    description: 'The majority of every purchase stays with your local Maker. We believe in neighborhood prosperity over distant profits.',
-  },
-  {
-    icon: Sparkles,
-    title: 'Circular Design',
-    description: 'Fight planned obsolescence. Our Repair Hub provides spare parts to extend the life of what you already own.',
-  },
-];
-
-const steps = [
-  {
-    number: '01',
-    icon: Upload,
-    title: 'Designer Uploads',
-    description: 'Talented designers from around the world upload their original STL files to our platform.',
-  },
-  {
-    number: '02',
-    icon: Printer,
-    title: 'Maker Prints Locally',
-    description: 'Verified makers in your area produce the design using quality materials and expert craftsmanship.',
-  },
-  {
-    number: '03',
-    icon: MapPin,
-    title: 'You Pick Up Nearby',
-    description: 'Collect your unique piece from a nearby location — no international shipping, no waiting weeks.',
-  },
-];
-
-
+const values = [{
+  icon: Leaf,
+  title: 'Zero-KM Production',
+  description: 'Products travel meters, not oceans. Every item is made in your neighborhood, eliminating global shipping emissions.'
+}, {
+  icon: Shield,
+  title: 'Verified Quality',
+  description: 'Every maker is verified. Every design is curated. We only accept the best because you deserve the best.'
+}, {
+  icon: Users,
+  title: 'Community First',
+  description: 'The majority of every purchase stays with your local Maker. We believe in neighborhood prosperity over distant profits.'
+}, {
+  icon: Sparkles,
+  title: 'Circular Design',
+  description: 'Fight planned obsolescence. Our Repair Hub provides spare parts to extend the life of what you already own.'
+}];
+const steps = [{
+  number: '01',
+  icon: Upload,
+  title: 'Designer Uploads',
+  description: 'Talented designers from around the world upload their original STL files to our platform.'
+}, {
+  number: '02',
+  icon: Printer,
+  title: 'Maker Prints Locally',
+  description: 'Verified makers in your area produce the design using quality materials and expert craftsmanship.'
+}, {
+  number: '03',
+  icon: MapPin,
+  title: 'You Pick Up Nearby',
+  description: 'Collect your unique piece from a nearby location — no international shipping, no waiting weeks.'
+}];
 export default function About() {
-  return (
-    <Layout>
+  return <Layout>
       {/* Hero */}
       <section className="bg-gradient-hero py-20 md:py-28">
         <div className="container">
@@ -107,27 +89,10 @@ export default function About() {
                 This system creates a fair marketplace where everyone wins: designers earn royalties, 
                 makers receive fair compensation, and buyers get quality products made locally.
               </p>
-              <div className="grid grid-cols-3 gap-6 pt-6 border-t border-border">
-                <div className="text-center">
-                  <p className="text-3xl font-bold text-secondary">12,450</p>
-                  <p className="text-sm text-muted-foreground">kg CO₂ Saved</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-3xl font-bold text-accent">150+</p>
-                  <p className="text-sm text-muted-foreground">Cities</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-3xl font-bold">2,300+</p>
-                  <p className="text-sm text-muted-foreground">Makers</p>
-                </div>
-              </div>
+              
             </div>
             <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&h=500&fit=crop"
-                alt="3D printing in action"
-                className="rounded-2xl shadow-card"
-              />
+              <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&h=500&fit=crop" alt="3D printing in action" className="rounded-2xl shadow-card" />
               <div className="absolute -bottom-6 -left-6 p-6 bg-card rounded-xl shadow-card-hover">
                 <div className="flex items-center gap-3">
                   <Globe className="h-8 w-8 text-secondary" />
@@ -152,15 +117,13 @@ export default function About() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value) => (
-              <div key={value.title} className="p-6 rounded-2xl bg-card shadow-card">
+            {values.map(value => <div key={value.title} className="p-6 rounded-2xl bg-card shadow-card">
                 <div className="h-12 w-12 rounded-xl bg-secondary/10 flex items-center justify-center mb-4">
                   <value.icon className="h-6 w-6 text-secondary" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">{value.title}</h3>
                 <p className="text-muted-foreground text-sm">{value.description}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -175,11 +138,8 @@ export default function About() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {steps.map((step, index) => (
-              <div key={step.number} className="relative text-center">
-                {index < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-12 left-[60%] right-0 h-0.5 bg-border" />
-                )}
+            {steps.map((step, index) => <div key={step.number} className="relative text-center">
+                {index < steps.length - 1 && <div className="hidden md:block absolute top-12 left-[60%] right-0 h-0.5 bg-border" />}
                 <div className="relative inline-flex mb-6">
                   <div className="h-24 w-24 rounded-full bg-secondary/10 flex items-center justify-center">
                     <step.icon className="h-10 w-10 text-secondary" />
@@ -190,8 +150,7 @@ export default function About() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">{step.title}</h3>
                 <p className="text-muted-foreground max-w-xs mx-auto">{step.description}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -256,6 +215,5 @@ export default function About() {
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 }
