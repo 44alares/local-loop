@@ -77,14 +77,9 @@ export default function About() {
             <div>
               <h2 className="text-display-sm font-bold mb-6">Our Approach</h2>
               <p className="text-lg text-muted-foreground mb-6">
-                We have developed an automatic pricing method to eliminate unfair price competition. 
-                Prices are calculated based on material and time, not bidding wars.
+                We have developed a pricing method to eliminate unfair price competition. Prices are calculated based on material and time, not bidding wars.
               </p>
-              <p className="text-lg text-muted-foreground mb-6">
-                Makers are assigned based solely on proximity to the buyer to reduce carbon footprint. 
-                All Makers must be certified to ensure that the quality matches the "Real Scale Proof" 
-                photo provided by the designer.
-              </p>
+              <p className="text-lg text-muted-foreground mb-6">Makers are assigned based solely on proximity to the buyer to reduce carbon footprint. All Makers must be certified to ensure that the quality matches the "Real Scale Proof" photo provided by the designer.</p>
               <p className="text-lg text-muted-foreground mb-6">
                 This system creates a fair marketplace where everyone wins: designers earn royalties, 
                 makers receive fair compensation, and buyers get quality products made locally.
