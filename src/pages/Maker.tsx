@@ -72,7 +72,7 @@ export default function Maker() {
                   </Link>
                 </Button>
                 <Button variant="hero-outline" asChild>
-                  <Link to="/shop">See Available Designs</Link>
+                  <Link to="/shop">Available Designs</Link>
                 </Button>
               </div>
 
