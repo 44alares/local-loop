@@ -158,7 +158,7 @@ export default function FoundersClub() {
             <h1 className="text-display font-bold mb-4">
               Join the Founders Club
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Zero commitment signup to map country + ZIP/postal code and validate MakeHug's local viability. First 100 makers/designers: 0% platform fee for 6 months, permanent Founder badge, and access to the beta testers council.<strong>First 100 makers/designers: 0% platform fee for 6 months</strong>, permanent Founder badge, 
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Zero commitment signup to map country + ZIP/postal code and validate MakeHug's local viability. First 100 makers/designers: permanent Founder badge, and access to the beta testers council.<strong>First 100 makers/designers: 0% platform fee for 6 months</strong>, permanent Founder badge, 
               and access to the beta testers council.
             </p>
           </div>
