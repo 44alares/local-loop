@@ -54,35 +54,7 @@ export function HeroSection() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="hidden md:flex flex-wrap items-center gap-4 pt-4">
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary/10">
-                  <MapPin className="h-4 w-4 text-secondary" />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm">150+ Cities</p>
-                  <p className="text-xs text-muted-foreground">Worldwide</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/10">
-                  <Users className="h-4 w-4 text-accent" />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm">2,300+</p>
-                  <p className="text-xs text-muted-foreground">Local Makers</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
-                  <Leaf className="h-4 w-4 text-primary" />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm">12,450 kg</p>
-                  <p className="text-xs text-muted-foreground">CO₂ Saved</p>
-                </div>
-              </div>
-            </div>
+            
           </div>
 
           {/* Desktop Hero Image / Visual */}
