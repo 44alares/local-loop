@@ -2,7 +2,6 @@ import { ArrowRight, MapPin, Leaf, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-
 export function HeroSection() {
   return <section className="relative overflow-hidden bg-gradient-hero">
       {/* Background Pattern */}
@@ -31,7 +30,7 @@ export function HeroSection() {
 
             {/* Subheadline */}
             <p className="text-base md:text-lg text-muted-foreground max-w-lg">
-              Discover original designs and get them made by trusted makers near you—less shipping, more community, better for the planet.
+              Original designs by independent creators—made by verified makers near you. Less shipping, more neighborhood economy.
             </p>
 
             {/* CTA Buttons - Primary row */}
