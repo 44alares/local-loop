@@ -70,13 +70,13 @@ export default function Designer() {
 
               {/* Founders Club CTA - Centered below with spacing */}
               <div className="flex justify-center md:justify-start pt-4">
-                <Button
+               <Button
                   variant="outline"
                   size="default"
                   className="border-accent text-accent hover:bg-accent/10 text-base"
                   asChild
                 >
-                  <Link to="/founders-club">Join Founders Club</Link>
+                  <a href="https://forms.gle/D7eY7nSEBHEhLgzK7" target="_blank" rel="noopener noreferrer">Join Founders Club</a>
                 </Button>
               </div>
             </div>
