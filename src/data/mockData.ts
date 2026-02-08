@@ -5,6 +5,15 @@ import geometricDeskOrganizerImg from '@/assets/products/geometric-desk-organize
 import samuraiImg from '@/assets/products/samurai.jpg';
 import articulatedDragonImg from '@/assets/products/articulated-dragon.jpg';
 import honeycombWallArtImg from '@/assets/products/honeycomb-wall-art.jpg';
+// Artistic category images
+import celestialWarriorBustImg from '@/assets/products/celestial-warrior-bust.jpg';
+import novaCorpsTrooperImg from '@/assets/products/nova-corps-trooper.jpg';
+import spartanPhalanxImg from '@/assets/products/spartan-phalanx.jpg';
+import stormSpiritDragonImg from '@/assets/products/storm-spirit-dragon.jpg';
+import cyberpunkSamuraiImg from '@/assets/products/cyberpunk-samurai.jpg';
+import forestGuardianSpiritImg from '@/assets/products/forest-guardian-spirit.jpg';
+import mechaPilotImg from '@/assets/products/mecha-pilot.jpg';
+import ancientColossusImg from '@/assets/products/ancient-colossus.jpg';
 import phoneStandImg from '@/assets/products/phone-stand.jpg';
 import cableManagementSystemImg from '@/assets/products/cable-management-system.jpg';
 import precisionCaliperCaseImg from '@/assets/products/precision-caliper-case.jpg';
@@ -435,7 +444,7 @@ export const mockProducts: Product[] = [
     id: 'a1',
     name: 'Celestial Warrior Bust',
     description: 'A stunning manga-inspired character bust featuring intricate armor details and flowing hair. Original character design with exceptional detail for collectors and enthusiasts.',
-    images: ['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=600&fit=crop'],
+    images: [celestialWarriorBustImg],
     price: 85,
     currency: 'USD',
     designer: mockDesigners[2],
@@ -458,7 +467,7 @@ export const mockProducts: Product[] = [
     id: 'a2',
     name: 'Nova Corps Trooper',
     description: 'A highly detailed sci-fi soldier figure in dynamic pose. Features modular weapon attachments and detailed armor plating. Original design inspired by futuristic military aesthetics.',
-    images: ['https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=600&fit=crop'],
+    images: [novaCorpsTrooperImg],
     price: 65,
     currency: 'USD',
     designer: mockDesigners[1],
@@ -481,7 +490,7 @@ export const mockProducts: Product[] = [
     id: 'a3',
     name: 'Spartan Phalanx Formation',
     description: 'A dramatic diorama featuring a group of ancient warriors in defensive formation. Includes 5 soldiers with shields, spears, and period-accurate helmets. Original historical-inspired design.',
-    images: ['https://images.unsplash.com/photo-1599458252573-56ae36120de1?w=600&h=600&fit=crop'],
+    images: [spartanPhalanxImg],
     price: 120,
     currency: 'USD',
     designer: mockDesigners[0],
@@ -504,7 +513,7 @@ export const mockProducts: Product[] = [
     id: 'a4',
     name: 'Storm Spirit Dragon',
     description: 'A majestic Eastern-style dragon sculpture with swirling cloud base. Features intricate scales, flowing whiskers, and dynamic pose. Perfect centerpiece for any collection.',
-    images: ['https://images.unsplash.com/photo-1577493340887-b7bfff550145?w=600&h=600&fit=crop'],
+    images: [stormSpiritDragonImg],
     price: 95,
     currency: 'USD',
     designer: mockDesigners[3],
@@ -527,7 +536,7 @@ export const mockProducts: Product[] = [
     id: 'a5',
     name: 'Cyberpunk Street Samurai',
     description: 'A futuristic warrior figure blending traditional samurai aesthetics with cyberpunk elements. Features LED-compatible visor slot and detachable katana. Original character design.',
-    images: ['https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=600&fit=crop'],
+    images: [cyberpunkSamuraiImg],
     price: 75,
     currency: 'USD',
     designer: mockDesigners[2],
@@ -550,7 +559,7 @@ export const mockProducts: Product[] = [
     id: 'a6',
     name: 'Forest Guardian Spirit',
     description: 'An ethereal nature spirit sculpture with flowing organic forms. Features intricate leaf and vine details intertwined with a humanoid figure. Inspired by folklore and mythology.',
-    images: ['https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=600&fit=crop'],
+    images: [forestGuardianSpiritImg],
     price: 55,
     currency: 'USD',
     designer: mockDesigners[0],
@@ -573,7 +582,7 @@ export const mockProducts: Product[] = [
     id: 'a7',
     name: 'Mecha Pilot Figurine',
     description: 'A detailed pilot figure in flight suit with helmet. Compatible with various mecha model kits or standalone display. Original anime-inspired design with realistic proportions.',
-    images: ['https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&h=600&fit=crop'],
+    images: [mechaPilotImg],
     price: 45,
     currency: 'USD',
     designer: mockDesigners[1],
@@ -596,7 +605,7 @@ export const mockProducts: Product[] = [
     id: 'a8',
     name: 'Ancient Colossus Statue',
     description: 'A monumental stone giant sculpture in contemplative pose. Features weathered texture and ancient rune details. Perfect for tabletop gaming or display collections.',
-    images: ['https://images.unsplash.com/photo-1551524559-8af4e6624178?w=600&h=600&fit=crop'],
+    images: [ancientColossusImg],
     price: 68,
     currency: 'USD',
     designer: mockDesigners[3],
