@@ -2,6 +2,7 @@ import { Product, Designer, Maker, Review } from '@/types';
 
 // Import generated product images
 import geometricDeskOrganizerImg from '@/assets/products/geometric-desk-organizer.jpg';
+import samuraiImg from '@/assets/products/samurai.jpg';
 import articulatedDragonImg from '@/assets/products/articulated-dragon.jpg';
 import honeycombWallArtImg from '@/assets/products/honeycomb-wall-art.jpg';
 import phoneStandImg from '@/assets/products/phone-stand.jpg';
@@ -105,7 +106,7 @@ export const mockProducts: Product[] = [
     id: 'p1',
     name: 'Geometric Desk Organizer',
     description: 'A sleek, modern desk organizer with a Voronoi hexagonal pattern. Perfect for keeping your workspace tidy while adding a touch of modern design.',
-    images: [geometricDeskOrganizerImg],
+    images: [samuraiImg],
     price: 25,
     currency: 'USD',
     designer: mockDesigners[0],
