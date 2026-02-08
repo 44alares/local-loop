@@ -86,19 +86,6 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Mobile Hero Image - Small square */}
-          <div className="w-24 shrink-0 md:hidden">
-            <div className="rounded-xl overflow-hidden shadow-card border border-border">
-              <AspectRatio ratio={1}>
-                <img 
-                  alt="3D printed sustainable design" 
-                  className="h-full w-full object-cover" 
-                  src="/lovable-uploads/9ef02256-46b9-4af9-983e-904d2e40ec11.png" 
-                />
-              </AspectRatio>
-            </div>
-          </div>
-
           {/* Desktop Hero Image / Visual */}
           <div className="relative hidden md:block">
             <div className="relative aspect-square">

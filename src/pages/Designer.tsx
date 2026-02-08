@@ -81,19 +81,6 @@ export default function Designer() {
               </div>
             </div>
 
-            {/* Mobile Hero Image - Small square */}
-            <div className="w-24 shrink-0 md:hidden">
-              <div className="rounded-xl overflow-hidden shadow-card border border-border">
-                <AspectRatio ratio={1}>
-                  <img
-                    alt="3D design process"
-                    className="h-full w-full object-cover"
-                    src="/lovable-uploads/238a0a94-ff14-4890-8997-da10e32d14ba.png"
-                  />
-                </AspectRatio>
-              </div>
-            </div>
-
             {/* Desktop Hero Image */}
             <div className="relative hidden md:block">
               <img

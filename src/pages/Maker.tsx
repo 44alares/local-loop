@@ -64,19 +64,6 @@ export default function Maker() {
               </div>
             </div>
 
-            {/* Mobile Hero Image - Small square */}
-            <div className="w-24 shrink-0 md:hidden">
-              <div className="rounded-xl overflow-hidden shadow-card border border-border">
-                <AspectRatio ratio={1}>
-                  <img 
-                    alt="3D printer in action" 
-                    className="h-full w-full object-cover" 
-                    src="/lovable-uploads/3ec7ebd2-88e1-46ad-9777-00e97814d485.jpg" 
-                  />
-                </AspectRatio>
-              </div>
-            </div>
-
             {/* Desktop Hero Image */}
             <div className="relative hidden md:block">
               <img alt="3D printer in action" className="rounded-2xl shadow-2xl" src="/lovable-uploads/3ec7ebd2-88e1-46ad-9777-00e97814d485.jpg" />
