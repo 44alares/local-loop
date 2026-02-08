@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { ProductCard } from '@/components/ProductCard';
 import { Button } from '@/components/ui/button';
@@ -30,7 +30,18 @@ export default function Shop() {
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  const filteredProducts = mockProducts.filter((product) => {
+  // Shuffle products to mix categories (seeded for consistent ordering)
+  const shuffledProducts = useMemo(() => {
+    const shuffled = [...mockProducts];
+    // Fisher-Yates shuffle with a fixed seed for consistency
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor((Math.sin(i * 9301 + 49297) * 0.5 + 0.5) * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }, []);
+
+  const filteredProducts = shuffledProducts.filter((product) => {
     if (selectedCategory && product.category !== selectedCategory) return false;
     if (selectedStyle && product.style !== selectedStyle) return false;
     if (selectedMaterial && !product.materials.includes(selectedMaterial)) return false;
