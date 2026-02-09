@@ -14,6 +14,7 @@ import ancientColossusImg from '@/assets/products/ancient-colossus.jpg';
 import parametricWrenchImg from '@/assets/products/parametric-wrench.jpg';
 import customControllerGripsImg from '@/assets/products/custom-controller-grips.jpg';
 import dishwasherBasketWheelImg from '@/assets/products/dishwasher-basket-wheel.jpg';
+import vacuumAdapterImg from '@/assets/products/vacuum-adapter.jpg';
 
 export const mockDesigners: Designer[] = [
   {
@@ -267,6 +268,26 @@ export const mockProducts: Product[] = [
     rating: 4.9,
     reviewCount: 445,
     makerCount: 52,
+  },
+  {
+    id: 'p17',
+    name: 'Vacuum Adapter',
+    description: 'Universal vacuum hose adapter for connecting different diameter hoses. Step-down design fits most standard vacuum cleaners and workshop dust collection systems.',
+    images: [vacuumAdapterImg],
+    price: 20,
+    currency: 'USD',
+    designer: mockDesigners[3],
+    category: 'repair',
+    productType: 'functional',
+    style: 'industrial',
+    materials: ['ABS', 'PETG'],
+    availableColors: { default: ['Black', 'Grey', 'White'] },
+    supportedQualities: ['standard', 'premium'],
+    dimensions: { length: 60, width: 60, height: 80, unit: 'mm' },
+    leadTime: '3-5 days',
+    rating: 4.7,
+    reviewCount: 72,
+    makerCount: 28,
   },
   // ARTISTIC CATEGORY
   {
