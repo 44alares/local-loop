@@ -6,11 +6,8 @@ import samuraiImg from '@/assets/products/samurai.jpg';
 import articulatedDragonImg from '@/assets/products/articulated-dragon.jpg';
 import honeycombWallArtImg from '@/assets/products/honeycomb-wall-art.jpg';
 // Artistic category images
-import novaCorpsTrooperImg from '@/assets/products/nova-corps-trooper.jpg';
 import cyberpunkSamuraiImg from '@/assets/products/cyberpunk-samurai.jpg';
-import forestGuardianSpiritImg from '@/assets/products/forest-guardian-spirit.jpg';
 import mechaPilotImg from '@/assets/products/mecha-pilot.jpg';
-import ancientColossusImg from '@/assets/products/ancient-colossus.jpg';
 import parametricWrenchImg from '@/assets/products/parametric-wrench.jpg';
 import customControllerGripsImg from '@/assets/products/custom-controller-grips.jpg';
 import dishwasherBasketWheelImg from '@/assets/products/dishwasher-basket-wheel.jpg';
@@ -291,29 +288,6 @@ export const mockProducts: Product[] = [
   },
   // ARTISTIC CATEGORY
   {
-    id: 'a2',
-    name: 'Nova Corps Trooper',
-    description: 'A highly detailed sci-fi soldier figure in dynamic pose. Features modular weapon attachments and detailed armor plating. Original design inspired by futuristic military aesthetics.',
-    images: [novaCorpsTrooperImg],
-    price: 65,
-    currency: 'USD',
-    designer: mockDesigners[1],
-    category: 'artistic',
-    productType: 'artistic',
-    style: 'sculptural',
-    materials: ['PLA', 'Resin'],
-    availableColors: { 
-      pla: ['White', 'Black', 'Grey', 'Green', 'Orange'],
-      resin: ['Grey', 'Clear']
-    },
-    supportedQualities: ['premium', 'ultra'],
-    dimensions: { length: 80, width: 60, height: 150, unit: 'mm' },
-    leadTime: '7-10 days',
-    rating: 4.8,
-    reviewCount: 98,
-    makerCount: 12,
-  },
-  {
     id: 'a5',
     name: 'Cyberpunk Street Samurai',
     description: 'A futuristic warrior figure blending traditional samurai aesthetics with cyberpunk elements. Features LED-compatible visor slot and detachable katana. Original character design.',
@@ -337,29 +311,6 @@ export const mockProducts: Product[] = [
     makerCount: 10,
   },
   {
-    id: 'a6',
-    name: 'Forest Guardian Spirit',
-    description: 'An ethereal nature spirit sculpture with flowing organic forms. Features intricate leaf and vine details intertwined with a humanoid figure. Inspired by folklore and mythology.',
-    images: [forestGuardianSpiritImg],
-    price: 55,
-    currency: 'USD',
-    designer: mockDesigners[0],
-    category: 'artistic',
-    productType: 'artistic',
-    style: 'sculptural',
-    materials: ['PLA', 'Resin'],
-    availableColors: { 
-      pla: ['White', 'Natural', 'Green', 'Brown', 'Gold'],
-      resin: ['Clear', 'Grey']
-    },
-    supportedQualities: ['premium', 'ultra'],
-    dimensions: { length: 100, width: 100, height: 160, unit: 'mm' },
-    leadTime: '7-10 days',
-    rating: 4.7,
-    reviewCount: 89,
-    makerCount: 11,
-  },
-  {
     id: 'a7',
     name: 'Mecha Pilot Figurine',
     description: 'A detailed pilot figure in flight suit with helmet. Compatible with various mecha model kits or standalone display. Original anime-inspired design with realistic proportions.',
@@ -381,29 +332,6 @@ export const mockProducts: Product[] = [
     rating: 4.6,
     reviewCount: 67,
     makerCount: 14,
-  },
-  {
-    id: 'a8',
-    name: 'Ancient Colossus Statue',
-    description: 'A monumental stone giant sculpture in contemplative pose. Features weathered texture and ancient rune details. Perfect for tabletop gaming or display collections.',
-    images: [ancientColossusImg],
-    price: 68,
-    currency: 'USD',
-    designer: mockDesigners[3],
-    category: 'artistic',
-    productType: 'artistic',
-    style: 'sculptural',
-    materials: ['PLA', 'Resin'],
-    availableColors: { 
-      pla: ['Grey', 'Natural', 'Brown', 'White', 'Black'],
-      resin: ['Grey', 'Matte Black']
-    },
-    supportedQualities: ['premium', 'ultra'],
-    dimensions: { length: 100, width: 80, height: 180, unit: 'mm' },
-    leadTime: '7-10 days',
-    rating: 4.8,
-    reviewCount: 91,
-    makerCount: 8,
   },
 ];
 
