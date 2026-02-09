@@ -205,7 +205,7 @@ export const mockProducts: Product[] = [
   {
     id: 'p11',
     name: 'Custom Controller Grips',
-    description: 'Ergonomic grip extensions for gaming controllers. Fits PS5, Xbox, and most third-party controllers.',
+    description: 'Ergonomic grip extensions for gaming controller. Fits most third-party controllers.',
     images: [customControllerGripsImg],
     price: 15,
     currency: 'USD',
