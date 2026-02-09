@@ -17,8 +17,8 @@ import { Link } from 'react-router-dom';
 // Fixed fee ranges by complexity
 const FIXED_FEE_RANGES = {
   Functional: { min: 1, max: 3 },
-  Mixed: { min: 1, max: 10 },
-  Artistic: { min: 1, max: 20 },
+  Mixed: { min: 1, max: 6 },
+  Artistic: { min: 1, max: 10 },
 };
 
 export default function StartCreating() {
