@@ -6,24 +6,13 @@ import samuraiImg from '@/assets/products/samurai.jpg';
 import articulatedDragonImg from '@/assets/products/articulated-dragon.jpg';
 import honeycombWallArtImg from '@/assets/products/honeycomb-wall-art.jpg';
 // Artistic category images
-import celestialWarriorBustImg from '@/assets/products/celestial-warrior-bust.jpg';
 import novaCorpsTrooperImg from '@/assets/products/nova-corps-trooper.jpg';
-import spartanPhalanxImg from '@/assets/products/spartan-phalanx.jpg';
-import stormSpiritDragonImg from '@/assets/products/storm-spirit-dragon.jpg';
 import cyberpunkSamuraiImg from '@/assets/products/cyberpunk-samurai.jpg';
 import forestGuardianSpiritImg from '@/assets/products/forest-guardian-spirit.jpg';
 import mechaPilotImg from '@/assets/products/mecha-pilot.jpg';
 import ancientColossusImg from '@/assets/products/ancient-colossus.jpg';
-import phoneStandImg from '@/assets/products/phone-stand.jpg';
-import cableManagementSystemImg from '@/assets/products/cable-management-system.jpg';
-import precisionCaliperCaseImg from '@/assets/products/precision-caliper-case.jpg';
 import parametricWrenchImg from '@/assets/products/parametric-wrench.jpg';
-import drillDustCollectorImg from '@/assets/products/drill-dust-collector.jpg';
-import solderingHelpingHandsImg from '@/assets/products/soldering-helping-hands.jpg';
 import customControllerGripsImg from '@/assets/products/custom-controller-grips.jpg';
-import consoleVerticalStandImg from '@/assets/products/console-vertical-stand.jpg';
-import universalReplacementKnobImg from '@/assets/products/universal-replacement-knob.jpg';
-import zipperPullReplacementImg from '@/assets/products/zipper-pull-replacement.jpg';
 import dishwasherBasketWheelImg from '@/assets/products/dishwasher-basket-wheel.jpg';
 
 export const mockDesigners: Designer[] = [
@@ -131,53 +120,13 @@ export const mockProducts: Product[] = [
     reviewCount: 47,
     makerCount: 12,
   },
-  {
-    id: 'p2',
-    name: 'Ergonomic Phone Stand',
-    description: 'Designed for optimal viewing angle and maximum airflow. Works with all phone sizes and supports wireless charging.',
-    images: [phoneStandImg],
-    price: 15, // Minimum $15 enforced
-    currency: 'USD',
-    designer: mockDesigners[2],
-    category: 'desktop',
-    productType: 'functional',
-    style: 'geometric',
-    materials: ['PLA', 'ABS', 'PETG'],
-    availableColors: { default: ['White', 'Black', 'Natural', 'Blue'] },
-    supportedQualities: ['standard', 'premium'],
-    dimensions: { length: 80, width: 70, height: 90, unit: 'mm' },
-    leadTime: '3-5 days',
-    rating: 4.6,
-    reviewCount: 78,
-    makerCount: 21,
-  },
-  {
-    id: 'p3',
-    name: 'Cable Management System',
-    description: 'Keep your cables organized with this modular cable management system. Mounts under your desk for a clean workspace.',
-    images: [cableManagementSystemImg],
-    price: 15, // Minimum $15 enforced
-    currency: 'USD',
-    designer: mockDesigners[3],
-    category: 'desktop',
-    productType: 'functional',
-    style: 'geometric',
-    materials: ['PLA', 'ABS'],
-    availableColors: { default: ['White', 'Black', 'Grey'] },
-    supportedQualities: ['standard', 'premium'],
-    dimensions: { length: 100, width: 40, height: 30, unit: 'mm' },
-    leadTime: '3-5 days',
-    rating: 4.7,
-    reviewCount: 56,
-    makerCount: 18,
-  },
   // Decoration
   {
     id: 'p4',
     name: 'Honeycomb Wall Art',
     description: 'Modular hexagonal wall tiles that create stunning geometric patterns. Mix and match colors for your unique wall installation.',
     images: [honeycombWallArtImg],
-    price: 15, // Minimum $15 enforced
+    price: 15,
     currency: 'USD',
     designer: mockDesigners[0],
     category: 'decoration',
@@ -235,31 +184,11 @@ export const mockProducts: Product[] = [
   },
   // Functional Tools
   {
-    id: 'p7',
-    name: 'Precision Caliper Case',
-    description: 'A protective case for digital or analog calipers. Custom-fit interior prevents scratches and keeps your measuring tools organized.',
-    images: [precisionCaliperCaseImg],
-    price: 16,
-    currency: 'USD',
-    designer: mockDesigners[1],
-    category: 'functional',
-    productType: 'functional',
-    style: 'industrial',
-    materials: ['PLA', 'PETG'],
-    availableColors: { default: ['Black', 'Grey', 'Blue'] },
-    supportedQualities: ['standard', 'premium'],
-    dimensions: { length: 180, width: 80, height: 35, unit: 'mm' },
-    leadTime: '3-5 days',
-    rating: 4.7,
-    reviewCount: 42,
-    makerCount: 15,
-  },
-  {
     id: 'p8',
     name: 'Parametric Wrench',
     description: 'Adjustable parametric wrench with customizable jaw size. Perfect for light-duty tasks and emergencies.',
     images: [parametricWrenchImg],
-    price: 15, // Minimum $15 enforced
+    price: 15,
     currency: 'USD',
     designer: mockDesigners[3],
     category: 'functional',
@@ -274,53 +203,13 @@ export const mockProducts: Product[] = [
     reviewCount: 38,
     makerCount: 12,
   },
-  {
-    id: 'p9',
-    name: 'Drill Dust Collector',
-    description: 'Attaches to your drill to collect dust while drilling. Works with most standard drill bits.',
-    images: [drillDustCollectorImg],
-    price: 15, // Minimum $15 enforced
-    currency: 'USD',
-    designer: mockDesigners[0],
-    category: 'functional',
-    productType: 'functional',
-    style: 'industrial',
-    materials: ['PLA', 'ABS'],
-    availableColors: { default: ['White', 'Black', 'Orange'] },
-    supportedQualities: ['standard', 'premium'],
-    dimensions: { length: 60, width: 60, height: 40, unit: 'mm' },
-    leadTime: '3-5 days',
-    rating: 4.6,
-    reviewCount: 67,
-    makerCount: 22,
-  },
-  {
-    id: 'p10',
-    name: 'Soldering Helping Hands',
-    description: 'Articulated arms with alligator clips for holding components while soldering. Adjustable base for stability.',
-    images: [solderingHelpingHandsImg],
-    price: 22,
-    currency: 'USD',
-    designer: mockDesigners[2],
-    category: 'functional',
-    productType: 'functional',
-    style: 'industrial',
-    materials: ['PLA', 'PETG'],
-    availableColors: { default: ['Black', 'Grey', 'Blue'] },
-    supportedQualities: ['standard', 'premium'],
-    dimensions: { length: 120, width: 120, height: 180, unit: 'mm' },
-    leadTime: '5-7 days',
-    rating: 4.8,
-    reviewCount: 89,
-    makerCount: 28,
-  },
   // Gaming & Modding
   {
     id: 'p11',
     name: 'Custom Controller Grips',
     description: 'Ergonomic grip extensions for gaming controllers. Fits PS5, Xbox, and most third-party controllers.',
     images: [customControllerGripsImg],
-    price: 15, // Minimum $15 enforced
+    price: 15,
     currency: 'USD',
     designer: mockDesigners[2],
     category: 'gaming',
@@ -358,73 +247,13 @@ export const mockProducts: Product[] = [
     reviewCount: 203,
     makerCount: 18,
   },
-  {
-    id: 'p13',
-    name: 'Console Vertical Stand',
-    description: 'Sleek vertical stand for gaming consoles. Improves airflow and saves desk space.',
-    images: [consoleVerticalStandImg],
-    price: 19,
-    currency: 'USD',
-    designer: mockDesigners[1],
-    category: 'gaming',
-    productType: 'functional',
-    style: 'geometric',
-    materials: ['PLA', 'ABS'],
-    availableColors: { default: ['Black', 'White'] },
-    supportedQualities: ['standard', 'premium'],
-    dimensions: { length: 280, width: 100, height: 40, unit: 'mm' },
-    leadTime: '5-7 days',
-    rating: 4.6,
-    reviewCount: 87,
-    makerCount: 24,
-  },
   // Repair Hub
-  {
-    id: 'p14',
-    name: 'Universal Replacement Knob',
-    description: 'Parametric knob that fits most appliances. Adjustable shaft diameter for perfect fit.',
-    images: [universalReplacementKnobImg],
-    price: 15, // Minimum $15 enforced
-    currency: 'USD',
-    designer: mockDesigners[3],
-    category: 'repair',
-    productType: 'functional',
-    style: 'industrial',
-    materials: ['PLA', 'ABS'],
-    availableColors: { default: ['White', 'Black', 'Grey'] },
-    supportedQualities: ['standard', 'premium'],
-    dimensions: { length: 35, width: 35, height: 25, unit: 'mm' },
-    leadTime: '3-5 days',
-    rating: 4.8,
-    reviewCount: 312,
-    makerCount: 45,
-  },
-  {
-    id: 'p15',
-    name: 'Zipper Pull Replacement',
-    description: 'Set of 5 universal zipper pulls. Works with most clothing, bags, and outdoor gear.',
-    images: [zipperPullReplacementImg],
-    price: 15, // Minimum $15 enforced
-    currency: 'USD',
-    designer: mockDesigners[0],
-    category: 'repair',
-    productType: 'functional',
-    style: 'mixed',
-    materials: ['PLA', 'PETG'],
-    availableColors: { default: ['Black', 'Grey', 'Red', 'Blue'] },
-    supportedQualities: ['standard', 'premium'],
-    dimensions: { length: 25, width: 10, height: 5, unit: 'mm' },
-    leadTime: '3-5 days',
-    rating: 4.7,
-    reviewCount: 189,
-    makerCount: 38,
-  },
   {
     id: 'p16',
     name: 'Dishwasher Basket Wheel',
     description: 'Universal replacement wheel for dishwasher racks. Durable and heat-resistant.',
     images: [dishwasherBasketWheelImg],
-    price: 15, // Minimum $15 enforced
+    price: 15,
     currency: 'USD',
     designer: mockDesigners[1],
     category: 'repair',
@@ -439,30 +268,7 @@ export const mockProducts: Product[] = [
     reviewCount: 445,
     makerCount: 52,
   },
-  // ARTISTIC CATEGORY - Curated Sculptures
-  {
-    id: 'a1',
-    name: 'Celestial Warrior Bust',
-    description: 'A stunning manga-inspired character bust featuring intricate armor details and flowing hair. Original character design with exceptional detail for collectors and enthusiasts.',
-    images: [celestialWarriorBustImg],
-    price: 85,
-    currency: 'USD',
-    designer: mockDesigners[2],
-    category: 'artistic',
-    productType: 'artistic',
-    style: 'sculptural',
-    materials: ['PLA', 'Resin'],
-    availableColors: { 
-      pla: ['White', 'Black', 'Grey', 'Natural', 'Red', 'Blue', 'Purple', 'Pink'],
-      resin: ['Grey', 'Clear', 'Matte Black']
-    },
-    supportedQualities: ['premium', 'ultra'],
-    dimensions: { length: 120, width: 100, height: 180, unit: 'mm' },
-    leadTime: '7-10 days',
-    rating: 4.9,
-    reviewCount: 156,
-    makerCount: 8,
-  },
+  // ARTISTIC CATEGORY
   {
     id: 'a2',
     name: 'Nova Corps Trooper',
@@ -485,52 +291,6 @@ export const mockProducts: Product[] = [
     rating: 4.8,
     reviewCount: 98,
     makerCount: 12,
-  },
-  {
-    id: 'a3',
-    name: 'Spartan Phalanx Formation',
-    description: 'A dramatic diorama featuring a group of ancient warriors in defensive formation. Includes 5 soldiers with shields, spears, and period-accurate helmets. Original historical-inspired design.',
-    images: [spartanPhalanxImg],
-    price: 120,
-    currency: 'USD',
-    designer: mockDesigners[0],
-    category: 'artistic',
-    productType: 'artistic',
-    style: 'sculptural',
-    materials: ['PLA', 'Resin'],
-    availableColors: { 
-      pla: ['White', 'Black', 'Grey', 'Natural', 'Bronze', 'Gold'],
-      resin: ['Grey', 'Clear', 'Matte Black']
-    },
-    supportedQualities: ['premium', 'ultra'],
-    dimensions: { length: 200, width: 100, height: 120, unit: 'mm' },
-    leadTime: '10-14 days',
-    rating: 5.0,
-    reviewCount: 78,
-    makerCount: 6,
-  },
-  {
-    id: 'a4',
-    name: 'Storm Spirit Dragon',
-    description: 'A majestic Eastern-style dragon sculpture with swirling cloud base. Features intricate scales, flowing whiskers, and dynamic pose. Perfect centerpiece for any collection.',
-    images: [stormSpiritDragonImg],
-    price: 95,
-    currency: 'USD',
-    designer: mockDesigners[3],
-    category: 'artistic',
-    productType: 'artistic',
-    style: 'sculptural',
-    materials: ['PLA', 'Resin'],
-    availableColors: { 
-      pla: ['White', 'Black', 'Blue', 'Green', 'Gold', 'Red'],
-      resin: ['Clear', 'Matte Black']
-    },
-    supportedQualities: ['premium', 'ultra'],
-    dimensions: { length: 180, width: 80, height: 200, unit: 'mm' },
-    leadTime: '7-10 days',
-    rating: 4.9,
-    reviewCount: 134,
-    makerCount: 9,
   },
   {
     id: 'a5',
