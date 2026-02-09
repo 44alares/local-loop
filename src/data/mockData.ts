@@ -248,8 +248,8 @@ export const mockProducts: Product[] = [
   // Repair Hub
   {
     id: 'p16',
-    name: 'Dishwasher Basket Wheel',
-    description: 'Universal replacement wheel for dishwasher racks. Durable and heat-resistant.',
+    name: 'Dishwasher Basket Wheel Set (4 Units)',
+    description: 'Set of 4 universal replacement wheels for dishwasher racks. Durable and heat-resistant.',
     images: [dishwasherBasketWheelImg],
     price: 15,
     currency: 'USD',
