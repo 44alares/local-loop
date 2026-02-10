@@ -34,33 +34,33 @@ import { Link } from 'react-router-dom';
 // Materials and their required basic colors
 type MaterialType = 'PLA' | 'PETG' | 'ABS' | 'Nylon' | 'Resin';
 
-const materialBasicColors: Record<MaterialType, { name: string; hex: string }[]> = {
+const materialBasicColors: Record<MaterialType, { name: string; hex: string; ral: string }[]> = {
   PLA: [
-    { name: 'White', hex: '#F4F8F4' },
-    { name: 'Black', hex: '#0A0A0D' },
-    { name: 'Grey', hex: '#C5C7C4' },
-    { name: 'Red', hex: '#CC0605' },
-    { name: 'Blue', hex: '#007CB0' },
-    { name: 'Green', hex: '#57A639' },
+    { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
+    { name: 'Black', hex: '#0A0A0D', ral: 'RAL 9005' },
+    { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
+    { name: 'Red', hex: '#CC0605', ral: 'RAL 3020' },
+    { name: 'Blue', hex: '#007CB0', ral: 'RAL 5015' },
+    { name: 'Green', hex: '#57A639', ral: 'RAL 6018' },
   ],
   ABS: [
-    { name: 'Black', hex: '#0A0A0D' },
-    { name: 'White', hex: '#F4F8F4' },
-    { name: 'Grey', hex: '#C5C7C4' },
+    { name: 'Black', hex: '#0A0A0D', ral: 'RAL 9005' },
+    { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
+    { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
   ],
   PETG: [
-    { name: 'Black', hex: '#0A0A0D' },
-    { name: 'White', hex: '#F4F8F4' },
-    { name: 'Grey', hex: '#C5C7C4' },
+    { name: 'Black', hex: '#0A0A0D', ral: 'RAL 9005' },
+    { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
+    { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
   ],
   Resin: [
-    { name: 'Grey', hex: '#C5C7C4' },
-    { name: 'White', hex: '#F4F8F4' },
+    { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
+    { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
   ],
   Nylon: [
-    { name: 'Black', hex: '#0A0A0D' },
-    { name: 'Grey', hex: '#C5C7C4' },
-    { name: 'White', hex: '#F4F8F4' },
+    { name: 'Black', hex: '#0A0A0D', ral: 'RAL 9005' },
+    { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
+    { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
   ],
 };
 
@@ -101,6 +101,15 @@ export default function JoinAsMaker() {
   const [submitted, setSubmitted] = useState(false);
 
   const basicColors = selectedMaterial ? materialBasicColors[selectedMaterial] : [];
+  const basicRalCodes = basicColors.map(c => c.ral);
+
+  const handleMaterialChange = (v: string) => {
+    const mat = v as MaterialType;
+    setSelectedMaterial(mat);
+    // Remove any additional colors that are now basic for the new material
+    const newBasicCodes = materialBasicColors[mat].map(c => c.ral);
+    setAdditionalRalColors(prev => prev.filter(code => !newBasicCodes.includes(code)));
+  };
   
   const canSubmit = 
     fullName && 
@@ -320,7 +329,7 @@ export default function JoinAsMaker() {
               {/* Material selection */}
               <div className="space-y-2">
                 <Label>Material *</Label>
-                <Select value={selectedMaterial} onValueChange={(v) => { setSelectedMaterial(v as MaterialType); setAdditionalRalColors([]); }}>
+                <Select value={selectedMaterial} onValueChange={handleMaterialChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your material" />
                   </SelectTrigger>
@@ -346,7 +355,10 @@ export default function JoinAsMaker() {
                       {basicColors.map((color) => (
                         <Badge key={color.name} variant="secondary" className="gap-1.5 py-1 px-2.5">
                           <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
-                          {color.name}
+                          <div className="flex flex-col leading-tight">
+                            <span>{color.name}</span>
+                            <span className="text-[10px] text-muted-foreground font-normal">{color.ral} (target)</span>
+                          </div>
                         </Badge>
                       ))}
                     </div>
@@ -364,7 +376,7 @@ export default function JoinAsMaker() {
                       </SelectTrigger>
                       <SelectContent className="max-h-60">
                         {ralColors
-                          .filter(c => !additionalRalColors.includes(c.code))
+                          .filter(c => !additionalRalColors.includes(c.code) && !basicRalCodes.includes(c.code))
                           .map((color) => (
                             <SelectItem key={color.code} value={color.code}>
                               <span className="flex items-center gap-2">
