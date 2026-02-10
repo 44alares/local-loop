@@ -279,16 +279,18 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
       {/* Color Selector */}
       <div className="space-y-3">
         <Label className="flex items-center gap-2 text-sm">
-          <Palette className="h-4 w-4" />
-          Color
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs text-xs">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button type="button" className="inline-flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors">
+                <Palette className="h-4 w-4" />
+                Color
+                <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
               Color may vary slightly depending on manufacturing settings and the filament manufacturer.
-            </TooltipContent>
-          </Tooltip>
+            </PopoverContent>
+          </Popover>
         </Label>
 
         {!selectedMaterial ? (
