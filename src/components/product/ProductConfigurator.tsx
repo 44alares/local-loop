@@ -232,11 +232,10 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
     'Gold': '#FFD700',
   };
 
-  // Derive basic and optional colors for current material
+  // Basic colors always come from the global mandatory mapping, never filtered by product
   const basicColors = useMemo(() => {
-    const basics = materialBasicColors[selectedMaterial] || [];
-    return availableColors.filter(c => basics.includes(c));
-  }, [selectedMaterial, availableColors]);
+    return materialBasicColors[selectedMaterial] || [];
+  }, [selectedMaterial]);
 
   // Derive optional colors from the selected maker's additionalColorsByMaterial
   const selectedMakerData = useMemo(() => {
