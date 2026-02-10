@@ -31,13 +31,43 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Basic required colors
-const basicColors = [
-  { id: 'white', name: 'RAL 9003 - Signal White', hex: '#F4F8F4' },
-  { id: 'black', name: 'RAL 9005 - Jet Black', hex: '#0A0A0D' },
-  { id: 'grey', name: 'RAL 7035 - Light Grey', hex: '#C5C7C4' },
-  { id: 'natural', name: 'Natural PLA', hex: '#E8DCC4' },
-];
+// Materials and their required basic colors
+type MaterialType = 'PLA' | 'PETG' | 'ABS' | 'Nylon' | 'Resin';
+
+const materialBasicColors: Record<MaterialType, { name: string; hex: string }[]> = {
+  PLA: [
+    { name: 'White', hex: '#F4F8F4' },
+    { name: 'Black', hex: '#0A0A0D' },
+    { name: 'Grey', hex: '#C5C7C4' },
+    { name: 'Red', hex: '#CC0605' },
+    { name: 'Blue', hex: '#007CB0' },
+    { name: 'Green', hex: '#57A639' },
+  ],
+  ABS: [
+    { name: 'Black', hex: '#0A0A0D' },
+    { name: 'White', hex: '#F4F8F4' },
+    { name: 'Grey', hex: '#C5C7C4' },
+  ],
+  PETG: [
+    { name: 'Black', hex: '#0A0A0D' },
+    { name: 'White', hex: '#F4F8F4' },
+    { name: 'Grey', hex: '#C5C7C4' },
+  ],
+  Resin: [
+    { name: 'Grey', hex: '#C5C7C4' },
+    { name: 'White', hex: '#F4F8F4' },
+  ],
+  Nylon: [
+    { name: 'Black', hex: '#0A0A0D' },
+    { name: 'Grey', hex: '#C5C7C4' },
+    { name: 'White', hex: '#F4F8F4' },
+  ],
+};
+
+const materials: MaterialType[] = ['PLA', 'PETG', 'ABS', 'Nylon', 'Resin'];
+
+// RAL additional colors available per material (same set for all, labeled as RAL approx.)
+import { ralColors } from '@/data/ralColors';
 
 const machineTypes = [
   'FDM - Prusa i3 MK3S+',
@@ -64,20 +94,14 @@ export default function JoinAsMaker() {
   const [machineType, setMachineType] = useState('');
   const [machineCount, setMachineCount] = useState('1');
   const [dailyHours, setDailyHours] = useState('');
-  const [basicColorsChecked, setBasicColorsChecked] = useState<Record<string, boolean>>({
-    white: false,
-    black: false,
-    grey: false,
-    natural: false,
-  });
-  const [additionalColors, setAdditionalColors] = useState('');
+  const [selectedMaterial, setSelectedMaterial] = useState<MaterialType | ''>('');
+  const [additionalRalColors, setAdditionalRalColors] = useState<string[]>([]);
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [qualityAccepted, setQualityAccepted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const allBasicColorsChecked = Object.values(basicColorsChecked).every(v => v);
+  const basicColors = selectedMaterial ? materialBasicColors[selectedMaterial] : [];
   
-  // Address is now optional
   const canSubmit = 
     fullName && 
     email && 
@@ -86,15 +110,18 @@ export default function JoinAsMaker() {
     zipcode && 
     machineType && 
     dailyHours && 
-    allBasicColorsChecked && 
+    selectedMaterial &&
     ndaAccepted && 
     qualityAccepted;
 
-  const handleBasicColorToggle = (colorId: string) => {
-    setBasicColorsChecked(prev => ({
-      ...prev,
-      [colorId]: !prev[colorId]
-    }));
+  const handleRemoveAdditionalColor = (code: string) => {
+    setAdditionalRalColors(prev => prev.filter(c => c !== code));
+  };
+
+  const handleAddAdditionalColor = (code: string) => {
+    if (!additionalRalColors.includes(code)) {
+      setAdditionalRalColors(prev => [...prev, code]);
+    }
   };
 
   if (submitted) {
@@ -286,59 +313,93 @@ export default function JoinAsMaker() {
                 Materials & Colors
               </CardTitle>
               <CardDescription>
-                You must have all basic colors in stock to register
+                Select your material first, then review the required basic colors
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Label>Basic Colors in Stock (All Required) *</Label>
-                  {!allBasicColorsChecked && (
-                    <Badge variant="outline" className="text-accent border-accent">
-                      <AlertCircle className="h-3 w-3 mr-1" />
-                      All required
-                    </Badge>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {basicColors.map((color) => (
-                    <div 
-                      key={color.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
-                        basicColorsChecked[color.id] 
-                          ? 'border-secondary bg-secondary/5' 
-                          : 'border-border hover:border-muted-foreground'
-                      }`}
-                    >
-                      <Checkbox 
-                        id={color.id}
-                        checked={basicColorsChecked[color.id]}
-                        onCheckedChange={() => handleBasicColorToggle(color.id)}
-                      />
-                      <div 
-                        className="h-6 w-6 rounded-md border border-border"
-                        style={{ backgroundColor: color.hex }}
-                      />
-                      <Label htmlFor={color.id} className="cursor-pointer text-sm">
-                        {color.name}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
+              {/* Material selection */}
+              <div className="space-y-2">
+                <Label>Material *</Label>
+                <Select value={selectedMaterial} onValueChange={(v) => { setSelectedMaterial(v as MaterialType); setAdditionalRalColors([]); }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your material" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {materials.map((m) => (
+                      <SelectItem key={m} value={m}>{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="additionalColors">Additional RAL Colors (Optional)</Label>
-                <Input 
-                  id="additionalColors" 
-                  placeholder="e.g., RAL 3020 - Traffic Red, RAL 5015 - Sky Blue"
-                  value={additionalColors}
-                  onChange={(e) => setAdditionalColors(e.target.value)}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Separate multiple colors with commas
-                </p>
-              </div>
+              {selectedMaterial && (
+                <>
+                  {/* Basic colors - mandatory, single toggle always ON */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Checkbox id="basic-colors-toggle" checked={true} disabled />
+                      <Label htmlFor="basic-colors-toggle" className="font-medium">
+                        Include basic colors (required)
+                      </Label>
+                    </div>
+                    <div className="flex flex-wrap gap-2 ml-7">
+                      {basicColors.map((color) => (
+                        <Badge key={color.name} variant="secondary" className="gap-1.5 py-1 px-2.5">
+                          <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                          {color.name}
+                        </Badge>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground ml-7">
+                      Basic colors: {basicColors.length} included
+                    </p>
+                  </div>
+
+                  {/* Additional RAL colors */}
+                  <div className="space-y-3">
+                    <Label>Additional colors (RAL approx.)</Label>
+                    <Select onValueChange={handleAddAdditionalColor} value="">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Add additional RAL color…" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60">
+                        {ralColors
+                          .filter(c => !additionalRalColors.includes(c.code))
+                          .map((color) => (
+                            <SelectItem key={color.code} value={color.code}>
+                              <span className="flex items-center gap-2">
+                                <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                                {color.code} (approx.) – {color.name}
+                              </span>
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    {additionalRalColors.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {additionalRalColors.map((code) => {
+                          const c = ralColors.find(r => r.code === code);
+                          return (
+                            <Badge
+                              key={code}
+                              variant="outline"
+                              className="gap-1.5 py-1 px-2.5 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30"
+                              onClick={() => handleRemoveAdditionalColor(code)}
+                            >
+                              <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c?.hex }} />
+                              {c?.code} – {c?.name}
+                              <span className="text-muted-foreground ml-0.5">×</span>
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      Additional colors: {additionalRalColors.length} selected
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
@@ -411,8 +472,10 @@ export default function JoinAsMaker() {
                   machineType,
                   machineCount,
                   dailyHours,
-                  basicColorsChecked,
-                  additionalColors,
+                  material: selectedMaterial,
+                  basicColorsIncluded: true,
+                  basicColors: basicColors.map(c => c.name),
+                  additionalColorsRalApprox: additionalRalColors,
                 });
                 setSubmitted(true);
               }}
@@ -421,7 +484,7 @@ export default function JoinAsMaker() {
             </Button>
             {!canSubmit && (
               <p className="text-sm text-center text-muted-foreground mt-3">
-                Please complete all required fields, check all basic colors, and accept the terms
+                Please complete all required fields, select a material, and accept the terms
               </p>
             )}
           </div>
