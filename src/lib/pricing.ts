@@ -140,30 +140,16 @@ export interface PrintPricingParams {
 }
 
 export function calculatePrintPrice(params: PrintPricingParams): number {
-  const {
-    weightGrams,
-    printTimeMinutes,
-    materialCostPerKg,
-    laborRatePerHour,
-  } = params;
+  const { weightGrams, printTimeMinutes } = params;
   
-  // Material cost
-  const materialCost = (weightGrams / 1000) * materialCostPerKg;
+  // Weight component: grams × 0.02
+  const weightCost = weightGrams * 0.02;
   
-  // Labor cost (based on print time + setup)
-  const setupTimeHours = 0.25; // 15 min setup
-  const printTimeHours = printTimeMinutes / 60;
-  const laborCost = (setupTimeHours + printTimeHours) * laborRatePerHour;
+  // Time component: minutes × 0.17
+  const timeCost = printTimeMinutes * 0.17;
   
-  // Machine depreciation (roughly $0.02 per minute of print time)
-  const machineCost = printTimeMinutes * 0.02;
-  
-  // Base production cost
-  const productionCost = materialCost + laborCost + machineCost;
-  
-  // Apply markup to ensure maker gets 75% margin
-  // Final price = productionCost / 0.75
-  const finalPrice = productionCost / COMMISSION_RATES.MAKER;
+  // Final price: (weightCost + timeCost) × 4 + 5
+  const finalPrice = (weightCost + timeCost) * 4 + 5;
   
   return Math.ceil(finalPrice * 100) / 100; // Round up to nearest cent
 }

@@ -50,20 +50,12 @@ export default function PrintMyDesign() {
   // Calculate estimated price based on inputs
   const calculateEstimate = () => {
     if (!estimatedWeight || !estimatedPrintTime || !selectedMaterial) return null;
-    
-    const materialCosts: Record<string, number> = {
-      'PLA': 25,
-      'ABS': 28,
-      'PETG': 30,
-      'Resin': 45,
-      'Nylon': 50,
-    };
 
     const price = calculatePrintPrice({
       weightGrams: parseFloat(estimatedWeight),
       printTimeMinutes: parseFloat(estimatedPrintTime),
-      materialDensity: 1.24, // Average PLA density
-      materialCostPerKg: materialCosts[selectedMaterial] || 25,
+      materialDensity: 1.24,
+      materialCostPerKg: 25,
       laborRatePerHour: 15,
     });
 
@@ -432,13 +424,6 @@ export default function PrintMyDesign() {
                                 Platform fee
                               </span>
                               <span>${(estimatedPrice * COMMISSION_RATES.PLATFORM).toFixed(2)}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="flex items-center gap-2">
-                                <Palette className="h-4 w-4 text-primary" />
-                                Designer earns
-                              </span>
-                              <span>${(estimatedPrice * COMMISSION_RATES.DESIGNER).toFixed(2)}</span>
                             </div>
                             <div className="flex items-center justify-between text-muted-foreground">
                               <span className="flex items-center gap-2">
