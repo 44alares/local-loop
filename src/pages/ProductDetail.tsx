@@ -213,7 +213,7 @@ export default function ProductDetail() {
                                 <p className="font-semibold text-sm">{makerItem.name}</p>
                                 {makerItem.verified && <Badge variant="secondary" className="text-xs h-5">Verified</Badge>}
                               </div>
-                              <p className="text-xs text-muted-foreground">{makerItem.location}</p>
+                              <p className="text-xs text-muted-foreground">{index === 0 ? '0.5 km away from you' : index === 1 ? '0.8 km away from you' : '1.2 km away from you'}</p>
                               <div className="flex items-center gap-2 mt-1 text-xs">
                                 <span className="flex items-center gap-1">
                                   <Star className="h-3 w-3 fill-accent text-accent" />
