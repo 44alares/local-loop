@@ -80,7 +80,7 @@ const materialTooltips: Record<string, string> = {
 // Quality tooltip descriptions (Spanish as requested)
 const qualityTooltips: Record<string, string> = {
   standard: 'FDM, 0.32 height layer',
-  premium: 'FDM, 0.32 height layer',
+  premium: 'FDM · 0.16 mm layer height',
   ultra: 'Resin, 0.05 height layer',
 };
 
@@ -330,7 +330,7 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
             <TooltipContent className="text-xs">
               <div className="space-y-1">
                 <p><strong>Standard:</strong> FDM, 0,32 height layer</p>
-                <p><strong>Premium:</strong> FDM, 0,32 height layer</p>
+                <p><strong>Premium:</strong> FDM · 0.16 mm layer height</p>
                 <p><strong>Ultra:</strong> Resin, 0,05 height layer</p>
               </div>
             </TooltipContent>
