@@ -69,20 +69,7 @@ const materials: MaterialType[] = ['PLA', 'PETG', 'ABS', 'Nylon', 'Resin'];
 // RAL additional colors available per material (same set for all, labeled as RAL approx.)
 import { ralColors } from '@/data/ralColors';
 
-const machineTypes = [
-  'FDM - Prusa i3 MK3S+',
-  'FDM - Prusa MK4',
-  'FDM - Creality Ender 3',
-  'FDM - Creality CR-10',
-  'FDM - Bambu Lab X1',
-  'FDM - Bambu Lab P1S',
-  'FDM - Voron 2.4',
-  'SLA - Anycubic Photon',
-  'SLA - Elegoo Mars',
-  'SLA - Formlabs Form 3',
-  'SLS - Sinterit Lisa',
-  'Other',
-];
+const machineTypes = ['FDM', 'Resin', 'Both'];
 
 export default function JoinAsMaker() {
   const [fullName, setFullName] = useState('');
@@ -117,9 +104,9 @@ export default function JoinAsMaker() {
     city && 
     country && 
     zipcode && 
-    machineType && 
-    dailyHours && 
     selectedMaterial &&
+    ndaAccepted && 
+    qualityAccepted;
     ndaAccepted && 
     qualityAccepted;
 
@@ -274,7 +261,7 @@ export default function JoinAsMaker() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="machineType">Machine Type *</Label>
+                <Label htmlFor="machineType">Machine Type</Label>
                 <Select value={machineType} onValueChange={setMachineType}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your printer" />
@@ -288,7 +275,7 @@ export default function JoinAsMaker() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="machineCount">Number of Machines *</Label>
+                  <Label htmlFor="machineCount">Number of Machines</Label>
                   <Input 
                     id="machineCount" 
                     type="number"
@@ -299,7 +286,7 @@ export default function JoinAsMaker() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="dailyHours">Daily Availability (Hours/Day) *</Label>
+                  <Label htmlFor="dailyHours">Daily Availability (Hours/Day)</Label>
                   <Input 
                     id="dailyHours" 
                     type="number"
