@@ -206,6 +206,15 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
     return null;
   };
   
+  // Basic (always available) colors per material
+  const materialBasicColors: Record<string, string[]> = {
+    PLA: ['White', 'Black', 'Grey', 'Red', 'Blue', 'Green'],
+    PETG: ['White', 'Black', 'Grey'],
+    ABS: ['White', 'Black', 'Grey'],
+    Nylon: ['White', 'Black', 'Grey'],
+    Resin: ['White', 'Grey'],
+  };
+
   // Color hex map (simplified)
   const colorHexMap: Record<string, string> = {
     'White': '#FFFFFF',
@@ -226,6 +235,17 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
     'Bronze': '#CD7F32',
     'Gold': '#FFD700',
   };
+
+  // Derive basic and optional colors for current material
+  const basicColors = useMemo(() => {
+    const basics = materialBasicColors[selectedMaterial] || [];
+    return availableColors.filter(c => basics.includes(c));
+  }, [selectedMaterial, availableColors]);
+
+  const optionalColors = useMemo(() => {
+    const basics = materialBasicColors[selectedMaterial] || [];
+    return availableColors.filter(c => !basics.includes(c));
+  }, [selectedMaterial, availableColors]);
   
   return (
     <div className="space-y-5">
@@ -238,38 +258,94 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
       </div>
       
       {/* Color Selector */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         <Label className="flex items-center gap-2 text-sm">
           <Palette className="h-4 w-4" />
           Color
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs text-xs">
+              Color may vary slightly depending on manufacturing settings and the filament manufacturer.
+            </TooltipContent>
+          </Tooltip>
         </Label>
-        <div className="flex flex-wrap gap-2">
-          {availableColors.map((color) => (
-            <button
-              key={color}
-              onClick={() => setSelectedColor(color)}
-              className={cn(
-                "h-8 w-8 rounded-lg border-2 transition-all relative",
-                selectedColor === color 
-                  ? "border-secondary scale-110 shadow-md" 
-                  : "border-border hover:scale-105"
-              )}
-              style={{ backgroundColor: colorHexMap[color] || '#CCC' }}
-              title={color}
-            >
-              {selectedColor === color && (
-                <span className="absolute inset-0 flex items-center justify-center">
-                  <span className={cn(
-                    "h-2 w-2 rounded-full",
-                    ['White', 'Clear', 'Natural', 'Pearl White', 'Yellow', 'Gold'].includes(color) 
-                      ? 'bg-foreground' 
-                      : 'bg-white'
-                  )} />
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+
+        {!selectedMaterial ? (
+          <p className="text-xs text-muted-foreground">Select a material to see available colors.</p>
+        ) : (
+          <div className="space-y-3">
+            {/* Always available */}
+            {basicColors.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-xs font-medium text-muted-foreground">Always available</p>
+                <div className="flex flex-wrap gap-2">
+                  {basicColors.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={cn(
+                        "h-8 w-8 rounded-lg border-2 transition-all relative",
+                        selectedColor === color
+                          ? "border-secondary scale-110 shadow-md"
+                          : "border-border hover:scale-105"
+                      )}
+                      style={{ backgroundColor: colorHexMap[color] || '#CCC' }}
+                      title={color}
+                    >
+                      {selectedColor === color && (
+                        <span className="absolute inset-0 flex items-center justify-center">
+                          <span className={cn(
+                            "h-2 w-2 rounded-full",
+                            ['White', 'Clear', 'Natural', 'Pearl White', 'Yellow', 'Gold'].includes(color)
+                              ? 'bg-foreground'
+                              : 'bg-white'
+                          )} />
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Optional colors */}
+            {optionalColors.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-xs font-medium text-muted-foreground">Optional colors</p>
+                <div className="flex flex-wrap gap-2">
+                  {optionalColors.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={cn(
+                        "h-8 w-8 rounded-lg border-2 transition-all relative",
+                        selectedColor === color
+                          ? "border-secondary scale-110 shadow-md"
+                          : "border-border hover:scale-105"
+                      )}
+                      style={{ backgroundColor: colorHexMap[color] || '#CCC' }}
+                      title={color}
+                    >
+                      {selectedColor === color && (
+                        <span className="absolute inset-0 flex items-center justify-center">
+                          <span className={cn(
+                            "h-2 w-2 rounded-full",
+                            ['White', 'Clear', 'Natural', 'Pearl White', 'Yellow', 'Gold'].includes(color)
+                              ? 'bg-foreground'
+                              : 'bg-white'
+                          )} />
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {selectedColor && (
           <p className="text-xs text-muted-foreground">Selected: {selectedColor}</p>
         )}
