@@ -11,6 +11,24 @@ import { getShippingOptions } from '@/lib/pricing';
 import { ProductConfigurator, ConfigState } from '@/components/product/ProductConfigurator';
 import { ArrowLeft, Heart, Share2, Star, MapPin, Clock, Package, Shield, Truck, ChevronRight, Check, Leaf, Store, Search, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+// Round to nearest integer ending in 0 or 5
+function roundTo5(n: number): number {
+  const rounded = Math.round(n);
+  const lower = Math.floor(rounded / 5) * 5;
+  const upper = lower + 5;
+  // If tie, pick closer to original target
+  return (Math.abs(n - lower) <= Math.abs(n - upper)) ? lower : upper;
+}
+
+function getSizedDimensions(dim: { length: number; width: number; height: number; unit: string }, scale: number) {
+  return {
+    length: roundTo5(dim.length * scale),
+    width: roundTo5(dim.width * scale),
+    height: roundTo5(dim.height * scale),
+    unit: dim.unit,
+  };
+}
+
 export default function ProductDetail() {
   const {
     id
@@ -83,7 +101,21 @@ export default function ProductDetail() {
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-border">
                   <span className="text-muted-foreground">Dimensions</span>
-                  <span>{product.dimensions.length} × {product.dimensions.width} × {product.dimensions.height} {product.dimensions.unit}</span>
+                  {!['gaming', 'repair'].includes(product.category) ? (
+                    <div className="text-right space-y-0.5">
+                      {(['S', 'M', 'L'] as const).map(size => {
+                        const scale = size === 'S' ? 0.75 : size === 'L' ? 1.25 : 1;
+                        const d = size === 'M' ? product.dimensions : getSizedDimensions(product.dimensions, scale);
+                        return (
+                          <div key={size} className="text-sm">
+                            <span className="font-medium">{size}:</span> {d.length} × {d.width} × {d.height} {d.unit}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <span>{product.dimensions.length} × {product.dimensions.width} × {product.dimensions.height} {product.dimensions.unit}</span>
+                  )}
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-border">
                   <span className="text-muted-foreground">Available Materials</span>
