@@ -66,6 +66,7 @@ export default function PrintMyDesign() {
       materialDensity: 1.24,
       materialCostPerKg: 25,
       laborRatePerHour: 15,
+      material: selectedMaterial,
     });
 
     return price;

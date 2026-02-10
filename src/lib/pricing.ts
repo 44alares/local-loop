@@ -130,6 +130,15 @@ export function calculatePriceBreakdown(basePrice: number): PriceBreakdown {
   };
 }
 
+// Material cost rates per gram for Print My Design
+export const PRINT_MATERIAL_RATES: Record<string, number> = {
+  PLA: 0.025,
+  ABS: 0.028,
+  PETG: 0.03,
+  Resin: 0.045,
+  Nylon: 0.05,
+};
+
 // Pricing for "Print My Design" based on file specs
 export interface PrintPricingParams {
   weightGrams: number;
@@ -137,13 +146,16 @@ export interface PrintPricingParams {
   materialDensity: number; // g/cm³
   materialCostPerKg: number;
   laborRatePerHour: number;
+  material?: string;
 }
 
 export function calculatePrintPrice(params: PrintPricingParams): number {
-  const { weightGrams, printTimeMinutes } = params;
+  const { weightGrams, printTimeMinutes, material } = params;
   
-  // Weight component: grams × 0.02
-  const weightCost = weightGrams * 0.02;
+  const m = PRINT_MATERIAL_RATES[material || 'PLA'] || 0.025;
+  
+  // Weight component: grams × m
+  const weightCost = weightGrams * m;
   
   // Time component: (minutes × 0.17) / 60
   const timeCost = (printTimeMinutes * 0.17) / 60;
@@ -151,7 +163,7 @@ export function calculatePrintPrice(params: PrintPricingParams): number {
   // Final price: (weightCost + timeCost) × 4 + 5
   const finalPrice = (weightCost + timeCost) * 4 + 5;
   
-  return Math.ceil(finalPrice * 100) / 100; // Round up to nearest cent
+  return Math.ceil(finalPrice * 100) / 100;
 }
 
 // Shipping options with Zero-KM priority
