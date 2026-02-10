@@ -344,40 +344,72 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
           
           <div className="space-y-1.5 text-sm">
             <div className="flex justify-between py-1 border-b border-border/50">
-              <span className="text-muted-foreground">Buyer Price</span>
+              <span className="text-muted-foreground">Buyer price</span>
               <span className="font-semibold">${breakdown.buyerPrice.toFixed(2)}</span>
             </div>
             
-            <div className="flex justify-between py-1">
-              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                <CreditCard className="h-3 w-3" />
-                Payment processing
+            <div className="flex justify-between py-1.5 border-t border-border bg-accent/5 -mx-4 px-4">
+              <span className="flex items-center gap-1.5 font-medium text-xs">
+                <Printer className="h-3 w-3 text-accent" />
+                Maker earns
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center">ⓘ</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-xs">
+                    This amount covers file and printer setup, supervision, support removal, basic post-processing, and quality checks before shipping.
+                  </TooltipContent>
+                </Tooltip>
               </span>
-              <span className="text-xs">${breakdown.paymentProcessing.toFixed(2)}</span>
-            </div>
-            
-            <div className="flex justify-between py-1">
-              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                <Building2 className="h-3 w-3" />
-                Platform fee
-              </span>
-              <span className="text-xs">${breakdown.platformFee.toFixed(2)}</span>
+              <span className="font-bold text-accent text-sm">${breakdown.makerPayout.toFixed(2)}</span>
             </div>
             
             <div className="flex justify-between py-1">
               <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
                 <Palette className="h-3 w-3" />
                 Designer earns
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center">ⓘ</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-xs">
+                    Creative design license. It supports the designer and helps them keep creating new models.
+                  </TooltipContent>
+                </Tooltip>
               </span>
               <span className="text-xs text-primary">${breakdown.designerRoyalty.toFixed(2)}</span>
             </div>
             
-            <div className="flex justify-between py-1.5 border-t border-border bg-accent/5 -mx-4 px-4 rounded-b-lg">
-              <span className="flex items-center gap-1.5 font-medium text-xs">
-                <Printer className="h-3 w-3 text-accent" />
-                Maker earns
+            <div className="flex justify-between py-1">
+              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
+                <Building2 className="h-3 w-3" />
+                Platform fee
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center">ⓘ</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-xs">
+                    Platform service: support and mediation if issues arise, order management, and coordination between the designer and the maker. It also covers platform maintenance and development.
+                  </TooltipContent>
+                </Tooltip>
               </span>
-              <span className="font-bold text-accent text-sm">${breakdown.makerPayout.toFixed(2)}</span>
+              <span className="text-xs">${breakdown.platformFee.toFixed(2)}</span>
+            </div>
+            
+            <div className="flex justify-between py-1">
+              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
+                <CreditCard className="h-3 w-3" />
+                Payment processing
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center">ⓘ</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-xs">
+                    Charged by the payment provider to process the transaction and help prevent fraud; calculated on the order total.
+                  </TooltipContent>
+                </Tooltip>
+              </span>
+              <span className="text-xs">${breakdown.paymentProcessing.toFixed(2)}</span>
             </div>
           </div>
           
