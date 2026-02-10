@@ -320,24 +320,6 @@ export default function ProductDetail() {
                   </div>
                 </div>
 
-                {/* NDA Agreement for Makers */}
-                <div className="p-3 rounded-lg border border-accent/50 bg-accent/5">
-                  <div className="flex items-start gap-2">
-                    <Checkbox 
-                      id="nda" 
-                      checked={ndaAccepted}
-                      onCheckedChange={(checked) => setNdaAccepted(checked as boolean)}
-                    />
-                    <div className="space-y-1">
-                      <Label htmlFor="nda" className="font-medium text-sm cursor-pointer">
-                        IP Protection Agreement
-                      </Label>
-                      <p className="text-xs text-muted-foreground">
-                        The Maker agrees to a Non-Disclosure Agreement and cannot commercialize, share, or distribute the designer's files without explicit written permission.
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
             )}
 
@@ -347,7 +329,7 @@ export default function ProductDetail() {
                 variant="accent"
                 size="lg"
                 className="flex-1"
-                disabled={!selectedMaker || !config?.selectedColor || !ndaAccepted}
+                disabled={!selectedMaker || !config?.selectedColor}
               >
                 Add to Cart — ${totalPrice.toFixed(2)}
               </Button>
