@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { mockProducts, mockMakers, mockReviews } from '@/data/mockData';
 import { getShippingOptions } from '@/lib/pricing';
 import { ProductConfigurator, ConfigState } from '@/components/product/ProductConfigurator';
-import { ArrowLeft, Heart, Share2, Star, MapPin, Clock, Package, Shield, Truck, ChevronRight, Check, Leaf, Store } from 'lucide-react';
+import { ArrowLeft, Heart, Share2, Star, MapPin, Clock, Package, Shield, Truck, ChevronRight, Check, Leaf, Store, Search, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 export default function ProductDetail() {
   const {
@@ -21,6 +21,8 @@ export default function ProductDetail() {
   const [selectedShipping, setSelectedShipping] = useState('direct-pickup');
   const [quantity, setQuantity] = useState(1);
   const [locationSearch, setLocationSearch] = useState('');
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [buyerPrice, setBuyerPrice] = useState(product.price);
   const [config, setConfig] = useState<ConfigState | null>(null);
@@ -142,7 +144,45 @@ export default function ProductDetail() {
               </h3>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Enter your zipcode or city..." value={locationSearch} onChange={e => setLocationSearch(e.target.value)} className="pl-9 h-10 text-sm" />
+                <Input
+                  placeholder="Enter your zipcode or city..."
+                  value={locationSearch}
+                  onChange={e => {
+                    setLocationSearch(e.target.value);
+                    if (searchSubmitted) {
+                      setSearchSubmitted(false);
+                      setSelectedMaker(null);
+                    }
+                  }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && locationSearch.trim().length >= 3 && !isSearching) {
+                      setIsSearching(true);
+                      setSearchSubmitted(false);
+                      setSelectedMaker(null);
+                      setTimeout(() => { setIsSearching(false); setSearchSubmitted(true); }, 600);
+                    }
+                  }}
+                  className="pl-9 pr-10 h-10 text-sm"
+                />
+                <button
+                  type="button"
+                  disabled={locationSearch.trim().length < 3 || isSearching}
+                  onClick={() => {
+                    setIsSearching(true);
+                    setSearchSubmitted(false);
+                    setSelectedMaker(null);
+                    setTimeout(() => { setIsSearching(false); setSearchSubmitted(true); }, 600);
+                  }}
+                  className={cn(
+                    "absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 rounded-md flex items-center justify-center transition-colors",
+                    locationSearch.trim().length >= 3 && !isSearching
+                      ? "text-secondary hover:bg-secondary/10 cursor-pointer"
+                      : "text-muted-foreground/40 cursor-not-allowed"
+                  )}
+                  aria-label="Search for makers"
+                >
+                  {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                </button>
               </div>
               
               <p className="text-xs text-muted-foreground flex items-center gap-1">
@@ -150,37 +190,50 @@ export default function ProductDetail() {
                 Closest makers shown first for zero-KM delivery
               </p>
 
-              {/* Maker Cards */}
-              <div className="space-y-2">
-                {sortedMakers.slice(0, 3).map((makerItem, index) => <button key={makerItem.id} onClick={() => setSelectedMaker(makerItem.id)} className={cn("w-full p-3 rounded-lg border-2 text-left transition-all", selectedMaker === makerItem.id ? "border-secondary bg-secondary/5" : "border-border hover:border-secondary/50")}>
-                    <div className="flex items-start gap-3">
-                      <div className="relative">
-                        <img src={makerItem.avatar} alt={makerItem.name} className="h-10 w-10 rounded-full" />
-                        {index === 0 && <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center text-xs">
-                            1
-                          </span>}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold text-sm">{makerItem.name}</p>
-                          {makerItem.verified && <Badge variant="secondary" className="text-xs h-5">Verified</Badge>}
-                        </div>
-                        <p className="text-xs text-muted-foreground">{makerItem.location}</p>
-                        <div className="flex items-center gap-2 mt-1 text-xs">
-                          <span className="flex items-center gap-1">
-                            <Star className="h-3 w-3 fill-accent text-accent" />
-                            {makerItem.rating}
-                          </span>
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <Clock className="h-3 w-3" />
-                            {makerItem.leadTime}
-                          </span>
-                        </div>
-                      </div>
-                      {selectedMaker === makerItem.id && <Check className="h-4 w-4 text-secondary shrink-0" />}
-                    </div>
-                  </button>)}
-              </div>
+              {isSearching && (
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Searching…
+                </p>
+              )}
+
+              {searchSubmitted && !isSearching && (
+                <div className="space-y-2">
+                  {sortedMakers.length > 0 ? (
+                    <>
+                      <p className="text-xs font-medium text-muted-foreground">Select one</p>
+                      {sortedMakers.slice(0, 3).map((makerItem, index) => <button key={makerItem.id} onClick={() => setSelectedMaker(makerItem.id)} className={cn("w-full p-3 rounded-lg border-2 text-left transition-all", selectedMaker === makerItem.id ? "border-secondary bg-secondary/5" : "border-border hover:border-secondary/50")}>
+                          <div className="flex items-start gap-3">
+                            <div className="relative">
+                              <img src={makerItem.avatar} alt={makerItem.name} className="h-10 w-10 rounded-full" />
+                              {index === 0 && <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center text-xs">1</span>}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="font-semibold text-sm">{makerItem.name}</p>
+                                {makerItem.verified && <Badge variant="secondary" className="text-xs h-5">Verified</Badge>}
+                              </div>
+                              <p className="text-xs text-muted-foreground">{makerItem.location}</p>
+                              <div className="flex items-center gap-2 mt-1 text-xs">
+                                <span className="flex items-center gap-1">
+                                  <Star className="h-3 w-3 fill-accent text-accent" />
+                                  {makerItem.rating}
+                                </span>
+                                <span className="flex items-center gap-1 text-muted-foreground">
+                                  <Clock className="h-3 w-3" />
+                                  {makerItem.leadTime}
+                                </span>
+                              </div>
+                            </div>
+                            {selectedMaker === makerItem.id && <Check className="h-4 w-4 text-secondary shrink-0" />}
+                          </div>
+                        </button>)}
+                    </>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No makers found near this location.</p>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Additional Options (if maker selected) */}
