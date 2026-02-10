@@ -82,7 +82,9 @@ export default function JoinAsMaker() {
   const [machineCount, setMachineCount] = useState('1');
   const [dailyHours, setDailyHours] = useState('');
   const [selectedMaterials, setSelectedMaterials] = useState<MaterialType[]>([]);
-  const [additionalRalColors, setAdditionalRalColors] = useState<string[]>([]);
+  const [additionalRalColors, setAdditionalRalColors] = useState<Record<MaterialType, string[]>>({
+    PLA: [], PETG: [], ABS: [], Nylon: [], Resin: [],
+  });
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [qualityAccepted, setQualityAccepted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -94,9 +96,10 @@ export default function JoinAsMaker() {
   const handleMaterialToggle = (mat: MaterialType) => {
     setSelectedMaterials(prev => {
       const next = prev.includes(mat) ? prev.filter(m => m !== mat) : [...prev, mat];
-      // Remove additional colors that become basic in the new selection
-      const newBasicCodes = next.flatMap(m => materialBasicColors[m].map(c => c.ral));
-      setAdditionalRalColors(ar => ar.filter(code => !newBasicCodes.includes(code)));
+      // Clear additional colors for unchecked material
+      if (!next.includes(mat)) {
+        setAdditionalRalColors(ar => ({ ...ar, [mat]: [] }));
+      }
       return next;
     });
   };
@@ -111,13 +114,13 @@ export default function JoinAsMaker() {
     ndaAccepted && 
     qualityAccepted;
 
-  const handleRemoveAdditionalColor = (code: string) => {
-    setAdditionalRalColors(prev => prev.filter(c => c !== code));
+  const handleRemoveAdditionalColor = (mat: MaterialType, code: string) => {
+    setAdditionalRalColors(prev => ({ ...prev, [mat]: prev[mat].filter(c => c !== code) }));
   };
 
-  const handleAddAdditionalColor = (code: string) => {
-    if (!additionalRalColors.includes(code)) {
-      setAdditionalRalColors(prev => [...prev, code]);
+  const handleAddAdditionalColor = (mat: MaterialType, code: string) => {
+    if (!additionalRalColors[mat].includes(code)) {
+      setAdditionalRalColors(prev => ({ ...prev, [mat]: [...prev[mat], code] }));
     }
   };
 
@@ -375,49 +378,55 @@ export default function JoinAsMaker() {
                     );
                   })}
 
-                  {/* Additional RAL colors */}
-                  <div className="space-y-3">
-                    <Label>Additional colors (RAL approx.)</Label>
-                    <Select onValueChange={handleAddAdditionalColor} value="">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Add additional RAL color…" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-60">
-                        {ralColors
-                          .filter(c => !additionalRalColors.includes(c.code) && !allBasicRalCodes.includes(c.code))
-                          .map((color) => (
-                            <SelectItem key={color.code} value={color.code}>
-                              <span className="flex items-center gap-2">
-                                <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
-                                {color.code} (approx.) – {color.name}
-                              </span>
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                    {additionalRalColors.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {additionalRalColors.map((code) => {
-                          const c = ralColors.find(r => r.code === code);
-                          return (
-                            <Badge
-                              key={code}
-                              variant="outline"
-                              className="gap-1.5 py-1 px-2.5 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30"
-                              onClick={() => handleRemoveAdditionalColor(code)}
-                            >
-                              <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c?.hex }} />
-                              {c?.code} – {c?.name}
-                              <span className="text-muted-foreground ml-0.5">×</span>
-                            </Badge>
-                          );
-                        })}
+                  {/* Additional RAL colors per material */}
+                  {selectedMaterials.map((mat) => {
+                    const matBasicCodes = materialBasicColors[mat].map(c => c.ral);
+                    const matAdditional = additionalRalColors[mat];
+                    return (
+                      <div key={`additional-${mat}`} className="space-y-3">
+                        <Label>{mat} — Additional colors (RAL approx.)</Label>
+                        <Select onValueChange={(code) => handleAddAdditionalColor(mat, code)} value="">
+                          <SelectTrigger>
+                            <SelectValue placeholder={`Add RAL color for ${mat}…`} />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-60">
+                            {ralColors
+                              .filter(c => !matAdditional.includes(c.code) && !matBasicCodes.includes(c.code))
+                              .map((color) => (
+                                <SelectItem key={color.code} value={color.code}>
+                                  <span className="flex items-center gap-2">
+                                    <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                                    {color.code} (approx.) – {color.name}
+                                  </span>
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                        {matAdditional.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {matAdditional.map((code) => {
+                              const c = ralColors.find(r => r.code === code);
+                              return (
+                                <Badge
+                                  key={code}
+                                  variant="outline"
+                                  className="gap-1.5 py-1 px-2.5 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30"
+                                  onClick={() => handleRemoveAdditionalColor(mat, code)}
+                                >
+                                  <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c?.hex }} />
+                                  {c?.code} – {c?.name}
+                                  <span className="text-muted-foreground ml-0.5">×</span>
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                          Additional colors: {matAdditional.length} selected
+                        </p>
                       </div>
-                    )}
-                    <p className="text-xs text-muted-foreground">
-                      Additional colors: {additionalRalColors.length} selected
-                    </p>
-                  </div>
+                    );
+                  })}
                 </>
               )}
             </CardContent>
@@ -495,7 +504,9 @@ export default function JoinAsMaker() {
                   materials: selectedMaterials,
                   basicColorsIncluded: true,
                   basicColors: allBasicColors.map(c => c.name),
-                  additionalColorsRalApprox: additionalRalColors,
+                  additionalColorsRalApprox: Object.fromEntries(
+                    selectedMaterials.map(m => [m, additionalRalColors[m]])
+                  ),
                 });
                 setSubmitted(true);
               }}
