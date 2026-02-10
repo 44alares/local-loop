@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Product, ProductType } from '@/types';
+import { Product, ProductType, Maker } from '@/types';
+import { mockMakers } from '@/data/mockData';
 import { 
   calculateBuyerPrice, 
   calculateFullBreakdown,
@@ -25,6 +26,7 @@ export type SizeOption = 'S' | 'M' | 'L';
 
 interface ProductConfiguratorProps {
   product: Product;
+  selectedMakerId?: string | null;
   onPriceChange?: (price: number) => void;
   onConfigChange?: (config: ConfigState) => void;
 }
@@ -84,7 +86,7 @@ const qualityTooltips: Record<string, string> = {
   ultra: 'Resin, 0.05 height layer',
 };
 
-export function ProductConfigurator({ product, onPriceChange, onConfigChange }: ProductConfiguratorProps) {
+export function ProductConfigurator({ product, selectedMakerId, onPriceChange, onConfigChange }: ProductConfiguratorProps) {
   const isArtistic = product.category === 'artistic';
   
   // Get available materials based on product type
@@ -164,12 +166,6 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
     return product.availableColors.default || product.availableColors.pla || [];
   }, [selectedMaterial, product.availableColors, isArtistic]);
   
-  // Reset color when material changes
-  useEffect(() => {
-    if (availableColors.length > 0 && !availableColors.includes(selectedColor || '')) {
-      setSelectedColor(availableColors[0]);
-    }
-  }, [availableColors, selectedColor]);
   
   // Calculate buyer price (enforcing $15 minimum), applying size factor
   const buyerPrice = useMemo(() => {
@@ -242,10 +238,29 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
     return availableColors.filter(c => basics.includes(c));
   }, [selectedMaterial, availableColors]);
 
+  // Derive optional colors from the selected maker's additionalColorsByMaterial
+  const selectedMakerData = useMemo(() => {
+    if (!selectedMakerId) return null;
+    return mockMakers.find(m => m.id === selectedMakerId) || null;
+  }, [selectedMakerId]);
+
   const optionalColors = useMemo(() => {
+    if (!selectedMakerData) return [];
     const basics = materialBasicColors[selectedMaterial] || [];
-    return availableColors.filter(c => !basics.includes(c));
-  }, [selectedMaterial, availableColors]);
+    const makerAdditional = selectedMakerData.additionalColorsByMaterial?.[selectedMaterial] || [];
+    // Filter out any that duplicate basic colors
+    return makerAdditional.filter(c => !basics.includes(c));
+  }, [selectedMaterial, selectedMakerData]);
+
+  // Reset color when material or maker changes
+  useEffect(() => {
+    const allAvailable = [...basicColors, ...optionalColors];
+    if (selectedColor && !allAvailable.includes(selectedColor)) {
+      setSelectedColor(basicColors[0] || null);
+    } else if (!selectedColor && basicColors.length > 0) {
+      setSelectedColor(basicColors[0]);
+    }
+  }, [basicColors, optionalColors, selectedColor]);
   
   return (
     <div className="space-y-5">
@@ -311,38 +326,47 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
             )}
 
             {/* Optional colors */}
-            {optionalColors.length > 0 && (
-              <div className="space-y-1.5">
-                <p className="text-xs font-medium text-muted-foreground">Optional colors</p>
-                <div className="flex flex-wrap gap-2">
-                  {optionalColors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={cn(
-                        "h-8 w-8 rounded-lg border-2 transition-all relative",
-                        selectedColor === color
-                          ? "border-secondary scale-110 shadow-md"
-                          : "border-border hover:scale-105"
-                      )}
-                      style={{ backgroundColor: colorHexMap[color] || '#CCC' }}
-                      title={color}
-                    >
-                      {selectedColor === color && (
-                        <span className="absolute inset-0 flex items-center justify-center">
-                          <span className={cn(
-                            "h-2 w-2 rounded-full",
-                            ['White', 'Clear', 'Natural', 'Pearl White', 'Yellow', 'Gold'].includes(color)
-                              ? 'bg-foreground'
-                              : 'bg-white'
-                          )} />
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            <div className="space-y-1.5">
+              <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                Optional colors
+                {!selectedMakerId && (
+                  <span className="text-xs italic text-muted-foreground/70">— To see all optional colors, select a maker.</span>
+                )}
+              </p>
+              {selectedMakerId ? (
+                optionalColors.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {optionalColors.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={cn(
+                          "h-8 w-8 rounded-lg border-2 transition-all relative",
+                          selectedColor === color
+                            ? "border-secondary scale-110 shadow-md"
+                            : "border-border hover:scale-105"
+                        )}
+                        style={{ backgroundColor: colorHexMap[color] || '#CCC' }}
+                        title={color}
+                      >
+                        {selectedColor === color && (
+                          <span className="absolute inset-0 flex items-center justify-center">
+                            <span className={cn(
+                              "h-2 w-2 rounded-full",
+                              ['White', 'Clear', 'Natural', 'Pearl White', 'Yellow', 'Gold'].includes(color)
+                                ? 'bg-foreground'
+                                : 'bg-white'
+                            )} />
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground italic">No optional colors available for this maker.</p>
+                )
+              ) : null}
+            </div>
           </div>
         )}
 

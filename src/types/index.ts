@@ -19,6 +19,7 @@ export interface Maker {
   reviewCount: number;
   materials: string[];
   colors: string[];
+  additionalColorsByMaterial?: Record<string, string[]>;
   leadTime: string;
   verified: boolean;
 }
