@@ -32,7 +32,7 @@ export default function Contact() {
     setIsSubmitting(true);
 
     // Create mailto link with form data
-    const mailtoLink = `mailto:alaresinnova@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+    const mailtoLink = `mailto:hello@makehug.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
       `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
     )}`;
 
@@ -53,7 +53,7 @@ export default function Contact() {
             </div>
             <h1 className="text-display-sm font-bold mb-4">Message Sent!</h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Your email client should have opened with your message. If not, please send an email directly to alaresinnova@gmail.com
+              Your email client should have opened with your message. If not, please send an email directly to hello@makehug.com
             </p>
             <Button variant="hero" onClick={() => setSubmitted(false)}>
               Send Another Message
