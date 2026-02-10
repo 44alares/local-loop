@@ -145,8 +145,8 @@ export function calculatePrintPrice(params: PrintPricingParams): number {
   // Weight component: grams × 0.02
   const weightCost = weightGrams * 0.02;
   
-  // Time component: minutes × 0.17
-  const timeCost = printTimeMinutes * 0.17;
+  // Time component: (minutes × 0.17) / 60
+  const timeCost = (printTimeMinutes * 0.17) / 60;
   
   // Final price: (weightCost + timeCost) × 4 + 5
   const finalPrice = (weightCost + timeCost) * 4 + 5;
