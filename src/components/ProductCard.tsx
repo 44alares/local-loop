@@ -1,9 +1,11 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, MapPin, Star, Clock } from 'lucide-react';
 import { Product } from '@/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { getCheapestCombo } from '@/lib/cheapestCombo';
 
 interface ProductCardProps {
   product: Product;
@@ -12,6 +14,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, className, compact = false }: ProductCardProps) {
+  const cheapest = useMemo(() => getCheapestCombo(product), [product]);
   return (
     <Link
       to={`/product/${product.id}`}
@@ -103,7 +106,7 @@ export function ProductCard({ product, className, compact = false }: ProductCard
         {/* Price & CTA */}
         <div className="flex items-center justify-between">
           <div>
-            <span className={cn("font-bold", compact ? "text-base" : "text-xl")}>${product.price}</span>
+            <span className={cn("font-bold", compact ? "text-base" : "text-xl")}>${cheapest.displayPrice.toFixed(0)}</span>
             <span className={cn("text-muted-foreground ml-1", compact ? "text-xs" : "text-sm")}>{product.currency}</span>
           </div>
           {!compact && (

@@ -13,6 +13,7 @@ import {
   ARTISTIC_QUALITY_SURCHARGES,
   MIN_PRODUCT_PRICE
 } from '@/lib/pricing';
+import { getCheapestCombo } from '@/lib/cheapestCombo';
 import { productTypeLabels } from '@/data/categories';
 import { Palette, Layers, Sparkles, Info, Printer, Building2, CreditCard, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -111,12 +112,12 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
     return product.supportedQualities.filter(q => ['standard', 'premium'].includes(q)) as ('standard' | 'premium')[];
   }, [product.supportedQualities, isArtistic]);
   
-  const [selectedMaterial, setSelectedMaterial] = useState<string>(availableMaterials[0] || 'PLA');
-  const [selectedQuality, setSelectedQuality] = useState<'standard' | 'premium' | 'ultra'>(
-    isArtistic ? 'premium' : (availableQualities[0] || 'standard')
-  );
+  const cheapest = useMemo(() => getCheapestCombo(product), [product]);
+  
+  const [selectedMaterial, setSelectedMaterial] = useState<string>(cheapest.material);
+  const [selectedQuality, setSelectedQuality] = useState<'standard' | 'premium' | 'ultra'>(cheapest.quality);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [selectedSize, setSelectedSize] = useState<SizeOption>('M');
+  const [selectedSize, setSelectedSize] = useState<SizeOption>(cheapest.size);
   
   const showSizeOptions = hasSizeOptions(product.category);
   
