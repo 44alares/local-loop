@@ -96,27 +96,56 @@ export const DESIGNER_FIXED_FEE: Record<ProductType, number> = {
 export function calculateFullBreakdown(buyerPrice: number, productType: ProductType): FullPriceBreakdown {
   const fixedFee = DESIGNER_FIXED_FEE[productType];
   const totalBuyerPrice = buyerPrice + fixedFee;
-  
   const designerRate = DESIGNER_RATES[productType];
+
+  if (productType === 'functional') {
+    // Functional: fixed 75% maker, 3% payment, then balance designer+platform
+    const paymentProcessing = Math.round(totalBuyerPrice * 0.03 * 100) / 100;
+    const makerPayout = Math.round(totalBuyerPrice * 0.75 * 100) / 100;
+    const baseDesignerRoyalty = Math.round((buyerPrice * designerRate + fixedFee) * 100) / 100;
+    let designerRoyalty = baseDesignerRoyalty;
+    let platformFee = Math.round((totalBuyerPrice - paymentProcessing - makerPayout - designerRoyalty) * 100) / 100;
+
+    // If platform fee went negative, reduce designer earns
+    if (platformFee < 0) {
+      designerRoyalty = Math.round((designerRoyalty + platformFee) * 100) / 100;
+      platformFee = 0;
+    }
+
+    // Final cent adjustment on platform fee to ensure exact reconciliation
+    const diff = Math.round((totalBuyerPrice - makerPayout - designerRoyalty - platformFee - paymentProcessing) * 100) / 100;
+    if (diff !== 0) {
+      platformFee = Math.round((platformFee + diff) * 100) / 100;
+    }
+
+    return {
+      buyerPrice: totalBuyerPrice,
+      paymentProcessing,
+      platformFee,
+      designerRoyalty,
+      designerRate,
+      makerPayout,
+      makerRate: makerPayout / totalBuyerPrice,
+    };
+  }
+
+  // Non-functional: existing logic
   const paymentProcessing = totalBuyerPrice * COMMISSION_RATES.PAYMENT_GATEWAY;
-  
-  // Designer earns: percentage of base buyer price + fixed fee
   const baseDesignerRoyalty = buyerPrice * designerRate + fixedFee;
   const basePlatformFee = totalBuyerPrice * COMMISSION_RATES.PLATFORM;
   const baseMakerPayout = totalBuyerPrice - paymentProcessing - basePlatformFee - baseDesignerRoyalty;
   const baseMakerRate = baseMakerPayout / totalBuyerPrice;
-  
-  // If maker would get less than 70%, reduce platform fee
+
   let platformFee = basePlatformFee;
   let makerPayout = baseMakerPayout;
   let makerRate = baseMakerRate;
-  
+
   if (baseMakerRate < 0.70) {
     makerRate = 0.70;
     makerPayout = totalBuyerPrice * 0.70;
     platformFee = totalBuyerPrice - paymentProcessing - baseDesignerRoyalty - makerPayout;
   }
-  
+
   return {
     buyerPrice: totalBuyerPrice,
     paymentProcessing,
