@@ -86,15 +86,25 @@ export interface FullPriceBreakdown {
   makerRate: number;
 }
 
+// Fixed designer fee added to Functional and Mixed products
+export const DESIGNER_FIXED_FEE: Record<ProductType, number> = {
+  functional: 1.00,
+  mixed: 1.00,
+  artistic: 0,
+};
+
 export function calculateFullBreakdown(buyerPrice: number, productType: ProductType): FullPriceBreakdown {
-  const designerRate = DESIGNER_RATES[productType];
-  const paymentProcessing = buyerPrice * COMMISSION_RATES.PAYMENT_GATEWAY;
+  const fixedFee = DESIGNER_FIXED_FEE[productType];
+  const totalBuyerPrice = buyerPrice + fixedFee;
   
-  // Calculate maker payout ensuring minimum 70%
-  const baseDesignerRoyalty = buyerPrice * designerRate;
-  const basePlatformFee = buyerPrice * COMMISSION_RATES.PLATFORM;
-  const baseMakerPayout = buyerPrice - paymentProcessing - basePlatformFee - baseDesignerRoyalty;
-  const baseMakerRate = baseMakerPayout / buyerPrice;
+  const designerRate = DESIGNER_RATES[productType];
+  const paymentProcessing = totalBuyerPrice * COMMISSION_RATES.PAYMENT_GATEWAY;
+  
+  // Designer earns: percentage of base buyer price + fixed fee
+  const baseDesignerRoyalty = buyerPrice * designerRate + fixedFee;
+  const basePlatformFee = totalBuyerPrice * COMMISSION_RATES.PLATFORM;
+  const baseMakerPayout = totalBuyerPrice - paymentProcessing - basePlatformFee - baseDesignerRoyalty;
+  const baseMakerRate = baseMakerPayout / totalBuyerPrice;
   
   // If maker would get less than 70%, reduce platform fee
   let platformFee = basePlatformFee;
@@ -102,14 +112,13 @@ export function calculateFullBreakdown(buyerPrice: number, productType: ProductT
   let makerRate = baseMakerRate;
   
   if (baseMakerRate < 0.70) {
-    // Adjust platform fee to ensure maker gets 70%
     makerRate = 0.70;
-    makerPayout = buyerPrice * 0.70;
-    platformFee = buyerPrice - paymentProcessing - baseDesignerRoyalty - makerPayout;
+    makerPayout = totalBuyerPrice * 0.70;
+    platformFee = totalBuyerPrice - paymentProcessing - baseDesignerRoyalty - makerPayout;
   }
   
   return {
-    buyerPrice,
+    buyerPrice: totalBuyerPrice,
     paymentProcessing,
     platformFee,
     designerRoyalty: baseDesignerRoyalty,
