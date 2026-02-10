@@ -318,11 +318,11 @@ export default function PrintMyDesign() {
                           <SelectValue placeholder="Select material" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="PLA">PLA - Standard ($25/kg)</SelectItem>
-                          <SelectItem value="ABS">ABS - Heat Resistant ($28/kg)</SelectItem>
-                          <SelectItem value="PETG">PETG - Durable ($30/kg)</SelectItem>
-                          <SelectItem value="Resin">Resin - High Detail ($45/kg)</SelectItem>
-                          <SelectItem value="Nylon">Nylon - Industrial ($50/kg)</SelectItem>
+                          <SelectItem value="PLA">PLA - Standard</SelectItem>
+                          <SelectItem value="ABS">ABS - Heat Resistant</SelectItem>
+                          <SelectItem value="PETG">PETG - Durable</SelectItem>
+                          <SelectItem value="Resin">Resin - High Detail</SelectItem>
+                          <SelectItem value="Nylon">Nylon - Industrial</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
