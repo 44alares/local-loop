@@ -389,11 +389,6 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
         <div className="flex items-baseline gap-2 mb-3">
           <span className="text-2xl font-bold">${buyerPrice.toFixed(2)}</span>
           <span className="text-muted-foreground text-sm">{product.currency}</span>
-          {buyerPrice !== product.price && (
-            <span className="text-sm text-muted-foreground line-through">
-              ${product.price.toFixed(2)}
-            </span>
-          )}
         </div>
         
         {/* Fees & Payout Breakdown - Amounts only, no percentages */}
