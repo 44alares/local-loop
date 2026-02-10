@@ -31,9 +31,16 @@ import {
   Building2,
   CreditCard,
   CheckCircle2,
+  MapPin,
+  Star,
+  Clock,
+  Leaf,
+  Check,
 } from 'lucide-react';
 import { ralColors, RALColor } from '@/data/ralColors';
 import { calculatePrintPrice, COMMISSION_RATES } from '@/lib/pricing';
+import { mockMakers } from '@/data/mockData';
+import { cn } from '@/lib/utils';
 
 type FlowType = 'idea' | 'file' | null;
 
@@ -46,8 +53,10 @@ export default function PrintMyDesign() {
   const [estimatedPrintTime, setEstimatedPrintTime] = useState('');
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [ideaSubmitted, setIdeaSubmitted] = useState(false);
+  const [showMakers, setShowMakers] = useState(false);
+  const [selectedMaker, setSelectedMaker] = useState<string | null>(null);
 
-  // Calculate estimated price based on inputs
+  const sortedMakers = [...mockMakers].sort((a, b) => (a.rating > b.rating ? -1 : 1));
   const calculateEstimate = () => {
     if (!estimatedWeight || !estimatedPrintTime || !selectedMaterial) return null;
 
@@ -436,13 +445,85 @@ export default function PrintMyDesign() {
                           <p className="text-xs text-muted-foreground mt-2">You'll see exact amounts before paying.</p>
                         </div>
 
-                        <Button 
-                          variant="hero" 
-                          className="w-full" 
-                          disabled={!uploadedFile || !ndaAccepted}
-                        >
-                          Find Local Makers
-                        </Button>
+                        {!showMakers ? (
+                          <Button 
+                            variant="hero" 
+                            className="w-full" 
+                            disabled={!uploadedFile || !ndaAccepted}
+                            onClick={() => setShowMakers(true)}
+                          >
+                            Find Local Makers
+                          </Button>
+                        ) : (
+                          <div className="space-y-3">
+                            <h3 className="font-semibold text-sm flex items-center gap-2">
+                              <MapPin className="h-4 w-4 text-secondary" />
+                              Select a Maker
+                            </h3>
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Leaf className="h-3 w-3 text-secondary" />
+                              Closest makers shown first for zero-KM delivery
+                            </p>
+                            <div className="space-y-2">
+                              {sortedMakers.slice(0, 3).map((makerItem, index) => (
+                                <button
+                                  key={makerItem.id}
+                                  onClick={() => setSelectedMaker(makerItem.id)}
+                                  className={cn(
+                                    "w-full p-3 rounded-lg border-2 text-left transition-all",
+                                    selectedMaker === makerItem.id 
+                                      ? "border-secondary bg-secondary/5" 
+                                      : "border-border hover:border-secondary/50"
+                                  )}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className="relative">
+                                      <img
+                                        src={makerItem.avatar}
+                                        alt={makerItem.name}
+                                        className="h-10 w-10 rounded-full"
+                                      />
+                                      {index === 0 && (
+                                        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center text-xs">
+                                          1
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2">
+                                        <p className="font-semibold text-sm">{makerItem.name}</p>
+                                        {makerItem.verified && (
+                                          <Badge variant="secondary" className="text-xs h-5">Verified</Badge>
+                                        )}
+                                      </div>
+                                      <p className="text-xs text-muted-foreground">{makerItem.location}</p>
+                                      <div className="flex items-center gap-2 mt-1 text-xs">
+                                        <span className="flex items-center gap-1">
+                                          <Star className="h-3 w-3 fill-accent text-accent" />
+                                          {makerItem.rating}
+                                        </span>
+                                        <span className="flex items-center gap-1 text-muted-foreground">
+                                          <Clock className="h-3 w-3" />
+                                          {makerItem.leadTime}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    {selectedMaker === makerItem.id && (
+                                      <Check className="h-4 w-4 text-secondary shrink-0" />
+                                    )}
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                            <Button 
+                              variant="hero" 
+                              className="w-full"
+                              disabled={!selectedMaker}
+                            >
+                              Confirm Order
+                            </Button>
+                          </div>
+                        )}
                       </>
                     ) : (
                       <div className="text-center py-8 text-muted-foreground">
