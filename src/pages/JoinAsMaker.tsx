@@ -81,21 +81,24 @@ export default function JoinAsMaker() {
   const [machineType, setMachineType] = useState('');
   const [machineCount, setMachineCount] = useState('1');
   const [dailyHours, setDailyHours] = useState('');
-  const [selectedMaterial, setSelectedMaterial] = useState<MaterialType | ''>('');
+  const [selectedMaterials, setSelectedMaterials] = useState<MaterialType[]>([]);
   const [additionalRalColors, setAdditionalRalColors] = useState<string[]>([]);
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [qualityAccepted, setQualityAccepted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const basicColors = selectedMaterial ? materialBasicColors[selectedMaterial] : [];
-  const basicRalCodes = basicColors.map(c => c.ral);
+  // Collect all basic colors and RAL codes across selected materials
+  const allBasicColors = selectedMaterials.flatMap(m => materialBasicColors[m]);
+  const allBasicRalCodes = [...new Set(allBasicColors.map(c => c.ral))];
 
-  const handleMaterialChange = (v: string) => {
-    const mat = v as MaterialType;
-    setSelectedMaterial(mat);
-    // Remove any additional colors that are now basic for the new material
-    const newBasicCodes = materialBasicColors[mat].map(c => c.ral);
-    setAdditionalRalColors(prev => prev.filter(code => !newBasicCodes.includes(code)));
+  const handleMaterialToggle = (mat: MaterialType) => {
+    setSelectedMaterials(prev => {
+      const next = prev.includes(mat) ? prev.filter(m => m !== mat) : [...prev, mat];
+      // Remove additional colors that become basic in the new selection
+      const newBasicCodes = next.flatMap(m => materialBasicColors[m].map(c => c.ral));
+      setAdditionalRalColors(ar => ar.filter(code => !newBasicCodes.includes(code)));
+      return next;
+    });
   };
   
   const canSubmit = 
@@ -104,9 +107,7 @@ export default function JoinAsMaker() {
     city && 
     country && 
     zipcode && 
-    selectedMaterial &&
-    ndaAccepted && 
-    qualityAccepted;
+    selectedMaterials.length > 0 &&
     ndaAccepted && 
     qualityAccepted;
 
@@ -313,46 +314,66 @@ export default function JoinAsMaker() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Material selection */}
-              <div className="space-y-2">
+              {/* Material selection - multi-select checkboxes */}
+              <div className="space-y-3">
                 <Label>Material *</Label>
-                <Select value={selectedMaterial} onValueChange={handleMaterialChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your material" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {materials.map((m) => (
-                      <SelectItem key={m} value={m}>{m}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {materials.map((m) => (
+                    <div
+                      key={m}
+                      className={`flex items-center gap-3 p-3 rounded-lg border transition-colors cursor-pointer ${
+                        selectedMaterials.includes(m)
+                          ? 'border-secondary bg-secondary/5'
+                          : 'border-border hover:border-muted-foreground'
+                      }`}
+                      onClick={() => handleMaterialToggle(m)}
+                    >
+                      <Checkbox
+                        checked={selectedMaterials.includes(m)}
+                        onCheckedChange={() => handleMaterialToggle(m)}
+                      />
+                      <Label className="cursor-pointer text-sm font-medium">{m}</Label>
+                    </div>
+                  ))}
+                </div>
+                {selectedMaterials.length === 0 && (
+                  <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    Select at least one material.
+                  </p>
+                )}
               </div>
 
-              {selectedMaterial && (
+              {selectedMaterials.length > 0 && (
                 <>
-                  {/* Basic colors - mandatory, single toggle always ON */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <Checkbox id="basic-colors-toggle" checked={true} disabled />
-                      <Label htmlFor="basic-colors-toggle" className="font-medium">
-                        Include basic colors (required)
-                      </Label>
-                    </div>
-                    <div className="flex flex-wrap gap-2 ml-7">
-                      {basicColors.map((color) => (
-                        <Badge key={color.name} variant="secondary" className="gap-1.5 py-1 px-2.5">
-                          <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
-                          <div className="flex flex-col leading-tight">
-                            <span>{color.name}</span>
-                            <span className="text-[10px] text-white font-normal">{color.ral}</span>
-                          </div>
-                        </Badge>
-                      ))}
-                    </div>
-                    <p className="text-xs text-muted-foreground ml-7">
-                      Basic colors: {basicColors.length} included
-                    </p>
-                  </div>
+                  {/* Basic colors per material */}
+                  {selectedMaterials.map((mat) => {
+                    const matColors = materialBasicColors[mat];
+                    return (
+                      <div key={mat} className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Checkbox id={`basic-${mat}`} checked={true} disabled />
+                          <Label htmlFor={`basic-${mat}`} className="font-medium">
+                            {mat} — basic colors (required)
+                          </Label>
+                        </div>
+                        <div className="flex flex-wrap gap-2 ml-7">
+                          {matColors.map((color) => (
+                            <Badge key={`${mat}-${color.name}`} variant="secondary" className="gap-1.5 py-1 px-2.5">
+                              <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                              <div className="flex flex-col leading-tight">
+                                <span>{color.name}</span>
+                                <span className="text-[10px] text-white font-normal">{color.ral}</span>
+                              </div>
+                            </Badge>
+                          ))}
+                        </div>
+                        <p className="text-xs text-muted-foreground ml-7">
+                          Basic colors: {matColors.length} included
+                        </p>
+                      </div>
+                    );
+                  })}
 
                   {/* Additional RAL colors */}
                   <div className="space-y-3">
@@ -363,7 +384,7 @@ export default function JoinAsMaker() {
                       </SelectTrigger>
                       <SelectContent className="max-h-60">
                         {ralColors
-                          .filter(c => !additionalRalColors.includes(c.code) && !basicRalCodes.includes(c.code))
+                          .filter(c => !additionalRalColors.includes(c.code) && !allBasicRalCodes.includes(c.code))
                           .map((color) => (
                             <SelectItem key={color.code} value={color.code}>
                               <span className="flex items-center gap-2">
@@ -471,9 +492,9 @@ export default function JoinAsMaker() {
                   machineType,
                   machineCount,
                   dailyHours,
-                  material: selectedMaterial,
+                  materials: selectedMaterials,
                   basicColorsIncluded: true,
-                  basicColors: basicColors.map(c => c.name),
+                  basicColors: allBasicColors.map(c => c.name),
                   additionalColorsRalApprox: additionalRalColors,
                 });
                 setSubmitted(true);
