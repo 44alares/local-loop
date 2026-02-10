@@ -21,6 +21,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 export type SizeOption = 'S' | 'M' | 'L';
 
@@ -377,20 +382,22 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
       {/* Material Selector */}
       <div className="space-y-2">
         <Label className="flex items-center gap-2 text-sm">
-          <Layers className="h-4 w-4" />
-          Material
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs text-xs">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button type="button" className="inline-flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors">
+                <Layers className="h-4 w-4" />
+                Material
+                <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
               <div className="space-y-1.5">
                 {Object.entries(materialTooltips).map(([mat, desc]) => (
                   <p key={mat}><strong>{mat}:</strong> {desc}</p>
                 ))}
               </div>
-            </TooltipContent>
-          </Tooltip>
+            </PopoverContent>
+          </Popover>
         </Label>
         <div className="flex flex-wrap gap-2">
           {availableMaterials.map((material, index) => {
@@ -420,20 +427,22 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
       {/* Quality Selector */}
       <div className="space-y-2">
         <Label className="flex items-center gap-2 text-sm">
-          <Sparkles className="h-4 w-4" />
-          Quality
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
-            </TooltipTrigger>
-            <TooltipContent className="text-xs">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button type="button" className="inline-flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors">
+                <Sparkles className="h-4 w-4" />
+                Quality
+                <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
               <div className="space-y-1">
                 <p><strong>Standard:</strong> FDM, 0,32 height layer</p>
                 <p><strong>Premium:</strong> FDM · 0.16 mm layer height</p>
                 <p><strong>Ultra:</strong> Resin, 0,05 height layer</p>
               </div>
-            </TooltipContent>
-          </Tooltip>
+            </PopoverContent>
+          </Popover>
         </Label>
         <div className="flex flex-wrap gap-2">
           {availableQualities.map((quality, index) => {
