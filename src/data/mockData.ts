@@ -327,7 +327,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: 'a7',
-    name: 'Mecha Pilot Figurine',
+    name: 'Mecha Pilot Figure',
     description: 'A detailed pilot figure in flight suit with helmet. Compatible with various mecha model kits or standalone display. Original anime-inspired design with realistic proportions.',
     images: [mechaPilotImg],
     price: 45,
