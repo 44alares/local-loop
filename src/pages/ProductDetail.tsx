@@ -67,6 +67,41 @@ export default function ProductDetail() {
           <span className="text-foreground line-clamp-1">{product.name}</span>
         </nav>
 
+        {/* Product Header - Above Image */}
+        <div className="space-y-3 mb-6">
+          <Badge variant="secondary" className="capitalize text-xs">
+            {product.category}
+          </Badge>
+          <h1 className="text-2xl font-bold">{product.name}</h1>
+          <p className="text-sm text-muted-foreground">{product.description}</p>
+          
+          {/* Designer */}
+          <Link to={`/designer/${product.designer.id}`} className="inline-flex items-center gap-2 group">
+            <img src={product.designer.avatar} alt={product.designer.name} className="h-8 w-8 rounded-full" />
+            <div>
+              <p className="text-sm font-medium group-hover:text-secondary transition-colors">
+                {product.designer.name}
+              </p>
+              <p className="text-xs text-muted-foreground">{product.designer.location}</p>
+            </div>
+          </Link>
+
+          {/* Rating */}
+          <div className="flex items-center gap-3 text-sm">
+            <div className="flex items-center gap-1">
+              <Star className="h-4 w-4 fill-accent text-accent" />
+              <span className="font-semibold">{product.rating}</span>
+            </div>
+            <span className="text-muted-foreground">
+              ({product.reviewCount} reviews)
+            </span>
+            <span className="text-muted-foreground">•</span>
+            <span className="text-muted-foreground">
+              {product.makerCount} makers
+            </span>
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Left: Images */}
           <div className="space-y-3">
@@ -81,15 +116,6 @@ export default function ProductDetail() {
                     <img src={image} alt="" className="h-full w-full object-cover" />
                   </button>)}
               </div>}
-            
-            {/* About This Design */}
-            <div className="pt-3">
-              <h2 className="text-lg font-bold mb-2">About This Design</h2>
-              <p className="text-sm text-muted-foreground">{product.description}</p>
-              
-              {/* AI Generated Image placeholder for Artistic products */}
-              {product.category === 'artistic'}
-            </div>
 
             {/* Specifications - Now directly below About This Design */}
             <div className="pt-3">
@@ -131,39 +157,6 @@ export default function ProductDetail() {
 
           {/* Right: Details */}
           <div className="space-y-6">
-            {/* Header */}
-            <div>
-              <Badge variant="secondary" className="mb-2 capitalize text-xs">
-                {product.category}
-              </Badge>
-              <h1 className="text-2xl font-bold mb-3">{product.name}</h1>
-              
-              {/* Designer */}
-              <Link to={`/designer/${product.designer.id}`} className="inline-flex items-center gap-2 group">
-                <img src={product.designer.avatar} alt={product.designer.name} className="h-8 w-8 rounded-full" />
-                <div>
-                  <p className="text-sm font-medium group-hover:text-secondary transition-colors">
-                    {product.designer.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{product.designer.location}</p>
-                </div>
-              </Link>
-
-              {/* Rating */}
-              <div className="flex items-center gap-3 mt-3 text-sm">
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-accent text-accent" />
-                  <span className="font-semibold">{product.rating}</span>
-                </div>
-                <span className="text-muted-foreground">
-                  ({product.reviewCount} reviews)
-                </span>
-                <span className="text-muted-foreground">•</span>
-                <span className="text-muted-foreground">
-                  {product.makerCount} makers
-                </span>
-              </div>
-            </div>
 
             {/* Product Configurator - Material, Color, Quality with Live Pricing */}
             <ProductConfigurator product={product} selectedMakerId={selectedMaker} onPriceChange={setBuyerPrice} onConfigChange={setConfig} />
