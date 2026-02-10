@@ -13,13 +13,15 @@ import {
   MIN_PRODUCT_PRICE
 } from '@/lib/pricing';
 import { productTypeLabels } from '@/data/categories';
-import { Palette, Layers, Sparkles, Info, Printer, Building2, CreditCard } from 'lucide-react';
+import { Palette, Layers, Sparkles, Info, Printer, Building2, CreditCard, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+
+export type SizeOption = 'S' | 'M' | 'L';
 
 interface ProductConfiguratorProps {
   product: Product;
@@ -31,6 +33,38 @@ export interface ConfigState {
   selectedColor: string | null;
   selectedMaterial: string;
   selectedQuality: 'standard' | 'premium' | 'ultra';
+  selectedSize: SizeOption;
+}
+
+// Size scaling factors
+const SIZE_PRICE_FACTORS: Record<SizeOption, number> = { S: 0.75, M: 1, L: 1.35 };
+const SIZE_DIM_FACTORS: Record<SizeOption, number> = { S: 0.75, M: 1, L: 1.25 };
+
+/** Round to nearest integer ending in 0 or 5 */
+export function roundDimTo5(val: number): number {
+  const rounded = Math.round(val);
+  const lower = Math.floor(rounded / 5) * 5;
+  const upper = lower + 5;
+  const dLower = Math.abs(rounded - lower);
+  const dUpper = Math.abs(rounded - upper);
+  return dLower <= dUpper ? lower : upper;
+}
+
+export function getSizeDimensions(
+  base: { length: number; width: number; height: number; unit: string },
+  size: SizeOption
+) {
+  const f = SIZE_DIM_FACTORS[size];
+  return {
+    length: roundDimTo5(base.length * f),
+    width: roundDimTo5(base.width * f),
+    height: roundDimTo5(base.height * f),
+    unit: base.unit,
+  };
+}
+
+export function hasSizeOptions(category: string): boolean {
+  return !['gaming', 'repair'].includes(category);
 }
 
 // Material tooltip descriptions
@@ -75,6 +109,9 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
     isArtistic ? 'premium' : (availableQualities[0] || 'standard')
   );
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<SizeOption>('M');
+  
+  const showSizeOptions = hasSizeOptions(product.category);
   
   // Handle Resin ↔ Ultra pairing for Artistic products
   useEffect(() => {
@@ -134,7 +171,7 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
     }
   }, [availableColors, selectedColor]);
   
-  // Calculate buyer price (enforcing $15 minimum)
+  // Calculate buyer price (enforcing $15 minimum), applying size factor
   const buyerPrice = useMemo(() => {
     const calculated = calculateBuyerPrice({
       basePrice: product.price,
@@ -142,8 +179,9 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
       quality: selectedQuality,
       isArtistic,
     });
-    return Math.max(calculated, MIN_PRODUCT_PRICE);
-  }, [product.price, selectedMaterial, selectedQuality, isArtistic]);
+    const sizeFactor = showSizeOptions ? SIZE_PRICE_FACTORS[selectedSize] : 1;
+    return Math.max(Math.round(calculated * sizeFactor), MIN_PRODUCT_PRICE);
+  }, [product.price, selectedMaterial, selectedQuality, isArtistic, selectedSize, showSizeOptions]);
   
   // Calculate full breakdown
   const breakdown = useMemo(() => {
@@ -153,8 +191,8 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
   // Notify parent of price changes
   useEffect(() => {
     onPriceChange?.(buyerPrice);
-    onConfigChange?.({ selectedColor, selectedMaterial, selectedQuality });
-  }, [buyerPrice, selectedColor, selectedMaterial, selectedQuality, onPriceChange, onConfigChange]);
+    onConfigChange?.({ selectedColor, selectedMaterial, selectedQuality, selectedSize });
+  }, [buyerPrice, selectedColor, selectedMaterial, selectedQuality, selectedSize, onPriceChange, onConfigChange]);
   
   // Get surcharge label for material - show "Base" for first material
   const getMaterialLabel = (material: string, index: number) => {
@@ -322,6 +360,29 @@ export function ProductConfigurator({ product, onPriceChange, onConfigChange }: 
           })}
         </div>
       </div>
+
+      {/* Size Selector (not for gaming/repair) */}
+      {showSizeOptions && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-sm">
+            <Maximize2 className="h-4 w-4" />
+            Size
+          </Label>
+          <div className="flex flex-wrap gap-2">
+            {(['S', 'M', 'L'] as SizeOption[]).map((size) => (
+              <Button
+                key={size}
+                variant={selectedSize === size ? "secondary" : "outline"}
+                size="sm"
+                onClick={() => setSelectedSize(size)}
+                className="h-8 text-xs min-w-[3rem]"
+              >
+                {size}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
       
       {/* Live Price Display */}
       <div className="p-4 rounded-xl bg-card border border-border">

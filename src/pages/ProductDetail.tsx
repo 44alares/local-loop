@@ -8,7 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { mockProducts, mockMakers, mockReviews } from '@/data/mockData';
 import { getShippingOptions } from '@/lib/pricing';
-import { ProductConfigurator, ConfigState } from '@/components/product/ProductConfigurator';
+import { ProductConfigurator, ConfigState, hasSizeOptions, getSizeDimensions, type SizeOption } from '@/components/product/ProductConfigurator';
 import { 
   ArrowLeft, Heart, Share2, Star, MapPin, Clock, 
   Package, Shield, Truck, ChevronRight, Check,
@@ -110,7 +110,20 @@ export default function ProductDetail() {
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-border">
                   <span className="text-muted-foreground">Dimensions</span>
-                  <span>{product.dimensions.length} × {product.dimensions.width} × {product.dimensions.height} {product.dimensions.unit}</span>
+                  {hasSizeOptions(product.category) ? (
+                    <div className="text-right space-y-0.5">
+                      {(['S', 'M', 'L'] as SizeOption[]).map((size) => {
+                        const d = getSizeDimensions(product.dimensions, size);
+                        return (
+                          <div key={size} className="text-xs">
+                            <span className="font-semibold">{size}:</span> {d.length} × {d.width} × {d.height} {d.unit}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <span>{product.dimensions.length} × {product.dimensions.width} × {product.dimensions.height} {product.dimensions.unit}</span>
+                  )}
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-border">
                   <span className="text-muted-foreground">Available Materials</span>
