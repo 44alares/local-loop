@@ -184,16 +184,19 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
     return Math.max(Math.round(calculated * sizeFactor), MIN_PRODUCT_PRICE);
   }, [product.price, selectedMaterial, selectedQuality, isArtistic, selectedSize, showSizeOptions]);
   
-  // Calculate full breakdown
+  // Calculate full breakdown (includes +$1 fixed fee for functional/mixed)
   const breakdown = useMemo(() => {
     return calculateFullBreakdown(buyerPrice, product.productType);
   }, [buyerPrice, product.productType]);
   
+  // Use breakdown.buyerPrice as the displayed price (includes fixed fee)
+  const displayPrice = breakdown.buyerPrice;
+  
   // Notify parent of price changes
   useEffect(() => {
-    onPriceChange?.(buyerPrice);
+    onPriceChange?.(displayPrice);
     onConfigChange?.({ selectedColor, selectedMaterial, selectedQuality, selectedSize });
-  }, [buyerPrice, selectedColor, selectedMaterial, selectedQuality, selectedSize, onPriceChange, onConfigChange]);
+  }, [displayPrice, selectedColor, selectedMaterial, selectedQuality, selectedSize, onPriceChange, onConfigChange]);
   
   // Get surcharge label for material - show "Base" for first material
   const getMaterialLabel = (material: string, index: number) => {
@@ -497,7 +500,7 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
       {/* Live Price Display */}
       <div className="p-4 rounded-xl bg-card border border-border">
         <div className="flex items-baseline gap-2 mb-3">
-          <span className="text-2xl font-bold">${buyerPrice.toFixed(2)}</span>
+          <span className="text-2xl font-bold">${displayPrice.toFixed(2)}</span>
           <span className="text-muted-foreground text-sm">{product.currency}</span>
         </div>
         
