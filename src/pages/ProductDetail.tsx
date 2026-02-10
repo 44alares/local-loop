@@ -166,7 +166,7 @@ export default function ProductDetail() {
             </div>
 
             {/* Product Configurator - Material, Color, Quality with Live Pricing */}
-            <ProductConfigurator product={product} onPriceChange={setBuyerPrice} onConfigChange={setConfig} />
+            <ProductConfigurator product={product} selectedMakerId={selectedMaker} onPriceChange={setBuyerPrice} onConfigChange={setConfig} />
 
             {/* Smart Maker Search with Geofencing */}
             <div className="space-y-3">
