@@ -68,32 +68,23 @@ export default function ProductDetail() {
         </nav>
 
         {/* Product Header - Above Image */}
-        <div className="space-y-3 mb-6">
-          <Badge variant="secondary" className="capitalize text-xs">
-            {product.category}
-          </Badge>
+        <div className="space-y-1 mb-6">
           <h1 className="text-2xl font-bold">{product.name}</h1>
           <p className="text-sm text-muted-foreground">{product.description}</p>
           
-          {/* Designer */}
-          <Link to={`/designer/${product.designer.id}`} className="inline-flex items-center gap-2 group">
-            <img src={product.designer.avatar} alt={product.designer.name} className="h-8 w-8 rounded-full" />
-            <div>
-              <p className="text-sm font-medium group-hover:text-secondary transition-colors">
+          {/* Designer + Rating + Makers — compact inline row */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm pt-1">
+            <Link to={`/designer/${product.designer.id}`} className="inline-flex items-center gap-1.5 group">
+              <img src={product.designer.avatar} alt={product.designer.name} className="h-6 w-6 rounded-full" />
+              <span className="font-medium group-hover:text-secondary transition-colors">
                 {product.designer.name}
-              </p>
-              <p className="text-xs text-muted-foreground">{product.designer.location}</p>
-            </div>
-          </Link>
-
-          {/* Rating */}
-          <div className="flex items-center gap-3 text-sm">
-            <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 fill-accent text-accent" />
+              </span>
+            </Link>
+            <span className="text-muted-foreground">•</span>
+            <span className="flex items-center gap-1">
+              <Star className="h-3.5 w-3.5 fill-accent text-accent" />
               <span className="font-semibold">{product.rating}</span>
-            </div>
-            <span className="text-muted-foreground">
-              ({product.reviewCount} reviews)
+              <span className="text-muted-foreground">({product.reviewCount})</span>
             </span>
             <span className="text-muted-foreground">•</span>
             <span className="text-muted-foreground">
