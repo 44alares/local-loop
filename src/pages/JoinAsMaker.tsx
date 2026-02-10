@@ -357,7 +357,7 @@ export default function JoinAsMaker() {
                           <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
                           <div className="flex flex-col leading-tight">
                             <span>{color.name}</span>
-                            <span className="text-[10px] text-muted-foreground font-normal">{color.ral} (target)</span>
+                            <span className="text-[10px] text-white font-normal">{color.ral}</span>
                           </div>
                         </Badge>
                       ))}
