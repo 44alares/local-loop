@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -91,6 +91,89 @@ const qualityTooltips: Record<string, string> = {
   premium: 'FDM · 0.16 mm layer height',
   ultra: 'Resin, 0.05 height layer',
 };
+
+// Breakdown row config
+const breakdownRowConfig = [
+  {
+    key: 'maker',
+    label: 'Maker earns',
+    icon: Printer,
+    iconClass: 'text-accent',
+    tooltip: 'This amount covers file and printer setup, supervision, support removal, basic post-processing, and quality checks before shipping.',
+    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.makerPayout,
+    rowClass: 'py-1.5 border-t border-border bg-accent/5 -mx-4 px-4',
+    valueClass: 'font-bold text-accent text-sm',
+    labelClass: 'font-medium text-xs',
+  },
+  {
+    key: 'designer',
+    label: 'Designer earns',
+    icon: Palette,
+    iconClass: '',
+    tooltip: 'Creative design license. It supports the designer and helps them keep creating new models.',
+    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.designerRoyalty,
+    rowClass: 'py-1',
+    valueClass: 'text-xs text-primary',
+    labelClass: 'text-muted-foreground text-xs',
+  },
+  {
+    key: 'platform',
+    label: 'Platform fee',
+    icon: Building2,
+    iconClass: '',
+    tooltip: 'Platform service: support and mediation if issues arise, order management, and coordination between the designer and the maker. It also covers platform maintenance and development.',
+    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.platformFee,
+    rowClass: 'py-1',
+    valueClass: 'text-xs',
+    labelClass: 'text-muted-foreground text-xs',
+  },
+  {
+    key: 'payment',
+    label: 'Payment processing',
+    icon: CreditCard,
+    iconClass: '',
+    tooltip: 'Charged by the payment provider to process the transaction and help prevent fraud; calculated on the order total.',
+    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.paymentProcessing,
+    rowClass: 'py-1',
+    valueClass: 'text-xs',
+    labelClass: 'text-muted-foreground text-xs',
+  },
+] as const;
+
+function BreakdownRows({ breakdown, productType }: { breakdown: ReturnType<typeof calculateFullBreakdown>; productType: string }) {
+  const [openRow, setOpenRow] = useState<string | null>(null);
+
+  return (
+    <div className="space-y-1.5 text-sm">
+      <div className="flex justify-between py-1 border-b border-border/50">
+        <span className="text-muted-foreground">Buyer price</span>
+        <span className="font-semibold">${breakdown.buyerPrice.toFixed(2)}</span>
+      </div>
+
+      {breakdownRowConfig.map((row) => {
+        const IconComp = row.icon;
+        const value = row.getValue(breakdown);
+        return (
+          <div key={row.key} className={`flex justify-between ${row.rowClass}`}>
+            <Popover open={openRow === row.key} onOpenChange={(open) => setOpenRow(open ? row.key : null)}>
+              <PopoverTrigger asChild>
+                <button type="button" className={`flex items-center gap-1.5 ${row.labelClass} cursor-pointer hover:text-foreground transition-colors`}>
+                  <IconComp className={`h-3 w-3 ${row.iconClass}`} />
+                  {row.label}
+                  <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center">ⓘ</span>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
+                {row.tooltip}
+              </PopoverContent>
+            </Popover>
+            <span className={row.valueClass}>${value.toFixed(2)}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export function ProductConfigurator({ product, selectedMakerId, onPriceChange, onConfigChange }: ProductConfiguratorProps) {
   const isArtistic = product.category === 'artistic';
@@ -512,76 +595,7 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
             Fees & Payout Breakdown
           </div>
           
-          <div className="space-y-1.5 text-sm">
-            <div className="flex justify-between py-1 border-b border-border/50">
-              <span className="text-muted-foreground">Buyer price</span>
-              <span className="font-semibold">${breakdown.buyerPrice.toFixed(2)}</span>
-            </div>
-            
-            <div className="flex justify-between py-1.5 border-t border-border bg-accent/5 -mx-4 px-4">
-              <span className="flex items-center gap-1.5 font-medium text-xs">
-                <Printer className="h-3 w-3 text-accent" />
-                Maker earns
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center">ⓘ</span>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs text-xs">
-                    This amount covers file and printer setup, supervision, support removal, basic post-processing, and quality checks before shipping.
-                  </TooltipContent>
-                </Tooltip>
-              </span>
-              <span className="font-bold text-accent text-sm">${breakdown.makerPayout.toFixed(2)}</span>
-            </div>
-            
-            <div className="flex justify-between py-1">
-              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                <Palette className="h-3 w-3" />
-                Designer earns
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center">ⓘ</span>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs text-xs">
-                    Creative design license. It supports the designer and helps them keep creating new models.
-                  </TooltipContent>
-                </Tooltip>
-              </span>
-              <span className="text-xs text-primary">${breakdown.designerRoyalty.toFixed(2)}</span>
-            </div>
-            
-            <div className="flex justify-between py-1">
-              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                <Building2 className="h-3 w-3" />
-                Platform fee
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center">ⓘ</span>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs text-xs">
-                    Platform service: support and mediation if issues arise, order management, and coordination between the designer and the maker. It also covers platform maintenance and development.
-                  </TooltipContent>
-                </Tooltip>
-              </span>
-              <span className="text-xs">${breakdown.platformFee.toFixed(2)}</span>
-            </div>
-            
-            <div className="flex justify-between py-1">
-              <span className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                <CreditCard className="h-3 w-3" />
-                Payment processing
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center">ⓘ</span>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs text-xs">
-                    Charged by the payment provider to process the transaction and help prevent fraud; calculated on the order total.
-                  </TooltipContent>
-                </Tooltip>
-              </span>
-              <span className="text-xs">${breakdown.paymentProcessing.toFixed(2)}</span>
-            </div>
-          </div>
+          <BreakdownRows breakdown={breakdown} productType={product.productType} />
           
           <p className="text-xs text-muted-foreground mt-2">
             Product type ({productTypeLabels[product.productType]}) is set by the designer.
