@@ -10,7 +10,7 @@ const values = [{
 }, {
   icon: Shield,
   title: 'Verified Quality',
-  description: 'Every maker is verified. Every design is curated. We only accept the best because you deserve the best.'
+  description: 'Every maker is verified. Every design is curated. We prioritize quality and transparency over volume.'
 }, {
   icon: Users,
   title: 'Community First',
