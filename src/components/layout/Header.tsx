@@ -9,6 +9,7 @@ const navItems = [
   { label: "I'm a Designer", href: '/designer' },
   { label: "I'm a Maker", href: '/maker' },
   { label: 'Make My Design', href: '/make-my-design' },
+  { label: 'Member Hub', href: '/hub' },
   { label: 'Our Why', href: '/about' },
 ];
 
