@@ -178,54 +178,54 @@ export default function StartCreating() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Slot 1: Render Image */}
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2 text-sm">
-                      <Camera className="h-3 w-3" />
-                      Slot 1: Render/Promotional Image (Optional)
-                    </Label>
-                    <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-secondary transition-colors">
-                      <input type="file" accept="image/*" onChange={handleRenderUpload} className="hidden" id="render-upload" />
-                      <label htmlFor="render-upload" className="cursor-pointer">
-                        {renderImage ? (
-                          <p className="font-medium text-secondary text-sm">{renderImage.name}</p>
-                        ) : (
-                          <>
-                            <Image className="h-6 w-6 mx-auto text-muted-foreground mb-1" />
-                            <p className="text-xs">Upload a render or promotional photo</p>
-                          </>
-                        )}
-                      </label>
-                    </div>
-                  </div>
+                   {/* Slot 1: Real Scale Proof (Mandatory) */}
+                   <div className="space-y-2">
+                     <Label className="flex items-center gap-2 text-sm">
+                       <Camera className="h-3 w-3 text-accent" />
+                       Slot 1: Real Scale Proof (Mandatory) *
+                     </Label>
+                     <div className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${scaleProofImage ? 'border-secondary bg-secondary/5' : 'border-accent/50 hover:border-accent'}`}>
+                       <input type="file" accept="image/*" onChange={handleScaleProofUpload} className="hidden" id="scale-proof-upload" />
+                       <label htmlFor="scale-proof-upload" className="cursor-pointer">
+                         {scaleProofImage ? (
+                           <div className="flex items-center justify-center gap-2">
+                             <CheckCircle2 className="h-4 w-4 text-secondary" />
+                             <p className="font-medium text-secondary text-sm">{scaleProofImage.name}</p>
+                           </div>
+                         ) : (
+                           <>
+                             <AlertCircle className="h-6 w-6 mx-auto text-accent mb-1" />
+                             <p className="text-xs font-medium mb-1">Upload a photo of the printed object</p>
+                             <p className="text-xs text-muted-foreground">
+                               Must include a standard object for scale (pen, coin, headphones, etc.)
+                             </p>
+                           </>
+                         )}
+                       </label>
+                     </div>
+                   </div>
 
-                  {/* Slot 2: Scale Proof (Mandatory) */}
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2 text-sm">
-                      <Camera className="h-3 w-3 text-accent" />
-                      Slot 2: Real Scale Proof (Mandatory) *
-                    </Label>
-                    <div className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${scaleProofImage ? 'border-secondary bg-secondary/5' : 'border-accent/50 hover:border-accent'}`}>
-                      <input type="file" accept="image/*" onChange={handleScaleProofUpload} className="hidden" id="scale-proof-upload" />
-                      <label htmlFor="scale-proof-upload" className="cursor-pointer">
-                        {scaleProofImage ? (
-                          <div className="flex items-center justify-center gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-secondary" />
-                            <p className="font-medium text-secondary text-sm">{scaleProofImage.name}</p>
-                          </div>
-                        ) : (
-                          <>
-                            <AlertCircle className="h-6 w-6 mx-auto text-accent mb-1" />
-                            <p className="text-xs font-medium mb-1">Upload a photo of the printed object</p>
-                            <p className="text-xs text-muted-foreground">
-                              Must include a standard object for scale (pen, coin, headphones, etc.)
-                            </p>
-                          </>
-                        )}
-                      </label>
-                    </div>
-                  </div>
-                </CardContent>
+                   {/* Slot 2: Render Image */}
+                   <div className="space-y-2">
+                     <Label className="flex items-center gap-2 text-sm">
+                       <Camera className="h-3 w-3" />
+                       Slot 2: Render/Promotional Image (Optional)
+                     </Label>
+                     <div className="border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-secondary transition-colors">
+                       <input type="file" accept="image/*" onChange={handleRenderUpload} className="hidden" id="render-upload" />
+                       <label htmlFor="render-upload" className="cursor-pointer">
+                         {renderImage ? (
+                           <p className="font-medium text-secondary text-sm">{renderImage.name}</p>
+                         ) : (
+                           <>
+                             <Image className="h-6 w-6 mx-auto text-muted-foreground mb-1" />
+                             <p className="text-xs">Upload a render or promotional photo</p>
+                           </>
+                         )}
+                       </label>
+                     </div>
+                   </div>
+                 </CardContent>
               </Card>
 
               {/* Print Settings */}
