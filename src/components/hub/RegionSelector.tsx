@@ -27,10 +27,9 @@ export function RegionSelector({ macroArea, region, onMacroAreaChange, onRegionC
 
       <Select value={region ?? ''} onValueChange={onRegionChange}>
         <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder="All regions" />
+          <SelectValue placeholder="Select your region" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All regions</SelectItem>
           {filteredRegions.map((r) => (
             <SelectItem key={r.id} value={r.id}>{r.label}</SelectItem>
           ))}
