@@ -6,7 +6,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 const benefits = [{
   icon: DollarSign,
   title: 'Earn Per Print',
-  description: 'Earn passive income every time your design is printed anywhere in the world.'
+  description: 'Get paid when your design is printed anywhere in the world.'
 }, {
   icon: Globe,
   title: 'Global Reach',
