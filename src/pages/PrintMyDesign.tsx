@@ -158,7 +158,7 @@ export default function PrintMyDesign() {
                 </div>
                 <CardTitle className="text-xl">I Have a File</CardTitle>
                 <CardDescription>
-                  Upload your STL or STEP file and get instant pricing based on material and print time
+                  Upload an STL or STEP file and get a price estimate based on material, print time, and complexity—then choose a nearby maker to produce it.
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
