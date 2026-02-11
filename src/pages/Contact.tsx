@@ -4,39 +4,54 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Mail, Send, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+const ROLES = ['Maker', 'Designer', 'Buyer'] as const;
+
 export default function Contact() {
   const [name, setName] = useState('');
+  const [country, setCountry] = useState('');
+  const [zip, setZip] = useState('');
+  const [roles, setRoles] = useState<string[]>([]);
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
+
+  const toggleRole = (role: string) => {
+    setRoles(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]);
+  };
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!name.trim()) e.name = 'Please enter your name.';
+    if (!country.trim()) e.country = 'Please enter your country.';
+    if (!zip.trim()) e.zip = 'Please enter your ZIP / postal code.';
+    if (roles.length === 0) e.roles = 'Please select at least one role.';
+    if (!email.trim()) e.email = 'Please enter your email.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Please enter a valid email address.';
+    if (!subject.trim()) e.subject = 'Please enter a subject.';
+    if (!message.trim()) e.message = 'Please enter a message.';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!name || !email || !subject || !message) {
-      toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!validate()) return;
 
     setIsSubmitting(true);
 
-    // Create mailto link with form data
     const mailtoLink = `mailto:hello@makehug.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+      `Name: ${name}\nCountry: ${country}\nZIP / Postal code: ${zip}\nRoles: ${roles.join(', ')}\nEmail: ${email}\n\nMessage:\n${message}`
     )}`;
 
-    // Open mail client
     window.location.href = mailtoLink;
 
     setIsSubmitting(false);
@@ -97,57 +112,56 @@ export default function Contact() {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    placeholder="Your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
+                  <Label htmlFor="name">Name <span className="text-destructive">*</span></Label>
+                  <Input id="name" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
+                  {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="country">Country <span className="text-destructive">*</span></Label>
+                    <Input id="country" placeholder="e.g., Spain" value={country} onChange={(e) => setCountry(e.target.value)} />
+                    {errors.country && <p className="text-sm text-destructive">{errors.country}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="zip">ZIP / Postal code <span className="text-destructive">*</span></Label>
+                    <Input id="zip" placeholder="e.g., 28001" value={zip} onChange={(e) => setZip(e.target.value)} />
+                    {errors.zip && <p className="text-sm text-destructive">{errors.zip}</p>}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
+                  <Label>Role <span className="text-destructive">*</span></Label>
+                  <div className="flex flex-wrap items-center gap-4">
+                    {ROLES.map((role) => (
+                      <label key={role} className="flex items-center gap-2 cursor-pointer">
+                        <Checkbox checked={roles.includes(role)} onCheckedChange={() => toggleRole(role)} />
+                        <span className="text-sm font-medium">{role}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {errors.roles && <p className="text-sm text-destructive">{errors.roles}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="subject">Subject</Label>
-                  <Input
-                    id="subject"
-                    placeholder="What is this about?"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    required
-                  />
+                  <Label htmlFor="email">Email <span className="text-destructive">*</span></Label>
+                  <Input id="email" type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message">Message</Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Your message..."
-                    rows={5}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    required
-                  />
+                  <Label htmlFor="subject">Subject <span className="text-destructive">*</span></Label>
+                  <Input id="subject" placeholder="What is this about?" value={subject} onChange={(e) => setSubject(e.target.value)} />
+                  {errors.subject && <p className="text-sm text-destructive">{errors.subject}</p>}
                 </div>
 
-                <Button 
-                  type="submit" 
-                  variant="hero" 
-                  className="w-full"
-                  disabled={isSubmitting}
-                >
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message <span className="text-destructive">*</span></Label>
+                  <Textarea id="message" placeholder="Your message..." rows={5} value={message} onChange={(e) => setMessage(e.target.value)} />
+                  {errors.message && <p className="text-sm text-destructive">{errors.message}</p>}
+                </div>
+
+                <Button type="submit" variant="hero" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? 'Sending...' : 'Send Message'}
                   <Send className="ml-2 h-4 w-4" />
                 </Button>
