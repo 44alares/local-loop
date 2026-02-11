@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useHub } from '@/components/hub/HubContext';
 import { RoleSelector } from '@/components/hub/RoleSelector';
-import { RegionSelector } from '@/components/hub/RegionSelector';
+
 import { GroupBuyProgressBar } from '@/components/hub/GroupBuyProgressBar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -175,9 +175,6 @@ export default function HubOverview() {
             <p className="text-sm text-muted-foreground">
               Offers from suppliers and partners. Claim what's useful, ignore the rest.
             </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <RegionSelector macroArea={macroArea} region={region} onMacroAreaChange={setMacroArea} onRegionChange={setRegion} />
           </div>
 
           {filteredDeals.length === 0 ? (
