@@ -16,7 +16,6 @@ export default function Contact() {
   const [country, setCountry] = useState('');
   const [zip, setZip] = useState('');
   const [roles, setRoles] = useState<string[]>([]);
-  const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,10 +33,6 @@ export default function Contact() {
     if (!country.trim()) e.country = 'Please enter your country.';
     if (!zip.trim()) e.zip = 'Please enter your ZIP / postal code.';
     if (roles.length === 0) e.roles = 'Please select at least one role.';
-    if (!email.trim()) e.email = 'Please enter your email.';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Please enter a valid email address.';
-    if (!subject.trim()) e.subject = 'Please enter a subject.';
-    if (!message.trim()) e.message = 'Please enter a message.';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -48,9 +43,8 @@ export default function Contact() {
 
     setIsSubmitting(true);
 
-    const mailtoLink = `mailto:hello@makehug.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-      `Name: ${name}\nCountry: ${country}\nZIP / Postal code: ${zip}\nRoles: ${roles.join(', ')}\nEmail: ${email}\n\nMessage:\n${message}`
-    )}`;
+    const bodyContent = `Name: ${name}\nCountry: ${country}\nZIP / Postal code: ${zip}\nRoles: ${roles.join(', ')}\n${subject ? `Subject: ${subject}\n` : ''}${message ? `\nMessage:\n${message}` : ''}`;
+    const mailtoLink = `mailto:hello@makehug.com?subject=${encodeURIComponent(subject || 'New Contact Form Submission')}&body=${encodeURIComponent(bodyContent)}`;
 
     window.location.href = mailtoLink;
 
@@ -144,21 +138,13 @@ export default function Contact() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email <span className="text-destructive">*</span></Label>
-                  <Input id="email" type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-                  {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Subject <span className="text-destructive">*</span></Label>
+                  <Label htmlFor="subject">Subject</Label>
                   <Input id="subject" placeholder="What is this about?" value={subject} onChange={(e) => setSubject(e.target.value)} />
-                  {errors.subject && <p className="text-sm text-destructive">{errors.subject}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message">Message <span className="text-destructive">*</span></Label>
+                  <Label htmlFor="message">Message</Label>
                   <Textarea id="message" placeholder="Your message..." rows={5} value={message} onChange={(e) => setMessage(e.target.value)} />
-                  {errors.message && <p className="text-sm text-destructive">{errors.message}</p>}
                 </div>
 
                 <Button type="submit" variant="hero" className="w-full" disabled={isSubmitting}>
