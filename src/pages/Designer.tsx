@@ -10,7 +10,7 @@ const benefits = [{
 }, {
   icon: Globe,
   title: 'Global Reach',
-  description: 'Your designs reach customers in 150+ cities without managing logistics.'
+  description: 'Your designs can be produced wherever there are makers available'
 }, {
   icon: Users,
   title: 'Maker Network',
