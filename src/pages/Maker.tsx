@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Printer, DollarSign, Clock, Globe, ArrowRight, Check, Shield, Users } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-
 const benefits = [{
   icon: DollarSign,
   title: 'Earn Per Print',
@@ -21,9 +20,7 @@ const benefits = [{
   title: 'Local Customers',
   description: 'Connect with customers in your area who value local production.'
 }];
-
 const steps = ['Sign up with your printer details and location', 'Upload photos of your setup for verification', 'Select materials and colors you offer', 'Choose designs you want to print', 'Start receiving orders and earning'];
-
 export default function Maker() {
   return <Layout>
       {/* Hero */}
@@ -39,8 +36,7 @@ export default function Maker() {
                 Print Locally. <span className="text-accent">Earn Globally.</span>
               </h1>
               <p className="text-base md:text-lg text-muted-foreground mb-6">
-                Your skills, your rules. Print designs you love, serve customers
-                in your area, and earn on every print.
+                Your skills, your rules. Print verified designs, serve customers in your area, and earn on every print.
               </p>
               
               {/* Primary CTA row - same row on mobile */}
@@ -78,8 +74,7 @@ export default function Maker() {
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-2xl font-bold mb-3">Why Makers Love MakeHug</h2>
             <p className="text-muted-foreground">
-              Turn your 3D printing hobby into a business. We bring you customers,
-              you focus on quality.
+              No bidding wars. Clear pricing. Local-first orders. We bring the order flow—you focus on making reliable parts.
             </p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
