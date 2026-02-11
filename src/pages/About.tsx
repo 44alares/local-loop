@@ -5,7 +5,7 @@ import { Leaf, Heart, Users, Sparkles, Upload, Printer, MapPin, ArrowRight, Glob
 import { SocialPillarsModal } from '@/components/about/SocialPillarsModal';
 const values = [{
   icon: Leaf,
-  title: 'Zero-KM Production',
+  title: 'Local‑first production',
   description: 'Products travel meters, not oceans. Every item is made in your neighborhood, eliminating global shipping emissions.'
 }, {
   icon: Shield,
