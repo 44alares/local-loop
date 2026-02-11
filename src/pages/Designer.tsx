@@ -14,7 +14,7 @@ const benefits = [{
 }, {
   icon: Users,
   title: 'Maker Network',
-  description: 'Access our network of 2,300+ verified makers who bring your designs to life.'
+  description: 'Work with reviewed makers who can manufacture your designs locally.'
 }, {
   icon: BarChart3,
   title: 'Analytics Dashboard',
