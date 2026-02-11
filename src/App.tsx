@@ -19,6 +19,17 @@ import Contact from "./pages/Contact";
 import FoundersClub from "./pages/FoundersClub";
 import NotFound from "./pages/NotFound";
 
+// Hub pages
+import HubLayout from "./pages/hub/HubLayout";
+import HubOverview from "./pages/hub/HubOverview";
+import HubGroupBuys from "./pages/hub/HubGroupBuys";
+import HubDeals from "./pages/hub/HubDeals";
+import HubSuppliers from "./pages/hub/HubSuppliers";
+import HubResources from "./pages/hub/HubResources";
+import HubCommunity from "./pages/hub/HubCommunity";
+import HubMembership from "./pages/hub/HubMembership";
+import HubFaq from "./pages/hub/HubFaq";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -42,6 +53,17 @@ const App = () => (
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/founders-club" element={<FoundersClub />} />
+          {/* Member Hub */}
+          <Route path="/hub" element={<HubLayout />}>
+            <Route index element={<HubOverview />} />
+            <Route path="group-buys" element={<HubGroupBuys />} />
+            <Route path="deals" element={<HubDeals />} />
+            <Route path="suppliers" element={<HubSuppliers />} />
+            <Route path="resources" element={<HubResources />} />
+            <Route path="community" element={<HubCommunity />} />
+            <Route path="membership" element={<HubMembership />} />
+            <Route path="faq" element={<HubFaq />} />
+          </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
