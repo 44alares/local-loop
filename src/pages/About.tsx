@@ -24,7 +24,7 @@ const steps = [{
   number: '01',
   icon: Upload,
   title: 'Designer Uploads',
-  description: 'Talented designers from around the world upload their original STL files to our platform.'
+  description: 'Talented designers from around the world upload their original STL files to our platform. Every file is reviewed before it\'s listed.'
 }, {
   number: '02',
   icon: Printer,
