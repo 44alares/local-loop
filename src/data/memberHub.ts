@@ -96,7 +96,6 @@ export interface CommunityEvent {
 // ── Static Data ──
 
 export const macroAreas: MacroArea[] = [
-  { id: 'eu', label: 'European Union' },
   { id: 'us', label: 'United States' },
   { id: 'uk', label: 'UK / Europe' },
 ];
