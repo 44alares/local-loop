@@ -134,7 +134,7 @@ export default function PrintMyDesign() {
                 </div>
                 <CardTitle className="text-xl">I Have an Idea</CardTitle>
                 <CardDescription>
-                  Describe your concept and connect with a designer and a maker to bring it to life
+                  Describe what you need and we'll match you with a designer (to model it) and a maker (to produce it).
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center space-y-3">
