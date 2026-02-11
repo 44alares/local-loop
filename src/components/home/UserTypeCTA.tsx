@@ -17,7 +17,7 @@ const userTypes = [
     id: 'maker',
     icon: Printer,
     title: "I'm a Maker",
-    description: "Print designs you love. Earn per print from local orders. Your skills, your rules.",
+    description: "Print great designs. Earn per print from local orders. Your skills, your rules.",
     cta: 'Join as Maker',
     href: '/maker',
     highlight: 'Majority of each print',
