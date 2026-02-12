@@ -144,8 +144,7 @@ export default function Designer() {
               Ready to Turn Your Designs Into Income?
             </h2>
             <p className="text-muted-foreground mb-6">
-              Join thousands of designers who are already earning royalties
-              on MakeHug. Your creativity deserves to reach the world.
+              Join the community of designers earning royalties on MakeHug. Your creativity deserves to reach the world.
             </p>
             <Button variant="hero-accent" asChild>
               <Link to="/start-creating">
