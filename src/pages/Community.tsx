@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
 import dskOrganizerImg from '@/assets/community/dsk_organizer-2.jpg';
+import organizadorCablesImg from '@/assets/community/organizador_cables-2.jpg';
 
 const blogPosts = [
   {
@@ -55,8 +56,8 @@ const communityPosts = [
     authorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=50&h=50&fit=crop',
     location: 'Berlin, Germany',
     content: 'New design uploaded! Modular cable management system. Clean lines, functional design. What colors would you like to see?',
-    image: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&h=600&fit=crop',
-    likes: 89,
+    image: organizadorCablesImg,
+     likes: 89,
     comments: 23,
     time: '5 hours ago',
   },
