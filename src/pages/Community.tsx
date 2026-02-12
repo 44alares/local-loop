@@ -2,6 +2,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
+import dskOrganizerImg from '@/assets/community/dsk-organizer.jpg';
 
 const blogPosts = [
   {
@@ -43,7 +44,7 @@ const communityPosts = [
     authorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop',
     location: 'Berlin, Germany',
     content: 'Just finished printing this geometric desk organizer for a local customer. The white PLA came out perfect!',
-    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=600&fit=crop',
+    image: dskOrganizerImg,
     likes: 47,
     comments: 12,
     time: '2 hours ago',
