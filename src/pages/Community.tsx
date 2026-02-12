@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
 import dskOrganizerImg from '@/assets/community/dsk_organizer-2.jpg';
 import organizadorCablesImg from '@/assets/community/organizador_cables-2.jpg';
-import dragonPrintImg from '@/assets/community/dragon-print.jpg';
+import dragonPrintImg from '@/assets/community/dragones.jpg';
 
 const blogPosts = [
   {
