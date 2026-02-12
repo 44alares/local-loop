@@ -22,7 +22,7 @@ const blogPosts = [
   {
     id: '2',
     title: 'Maker Spotlight: Maria Santos from Madrid',
-    excerpt: 'Meet Maria, one of our top-rated makers who has printed over 500 designs for customers in Spain.',
+    excerpt: 'Meet Maria, one of our top-rated makers who has printed over 500 designs for local customers.',
     image: mariaImg,
     author: 'MakeHug Team',
     authorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=50&h=50&fit=crop',
@@ -31,7 +31,7 @@ const blogPosts = [
   },
   {
     id: '3',
-    title: 'Design Trends 2024: What is Hot in 3D Printed Products',
+    title: 'Design Trends 2026: What is Hot in 3D Printed Products',
     excerpt: 'From geometric minimalism to functional art - explore the design trends shaping our marketplace.',
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop',
     author: 'James Park',
