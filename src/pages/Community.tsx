@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
 import dskOrganizerImg from '@/assets/community/dsk_organizer-2.jpg';
 import organizadorCablesImg from '@/assets/community/organizador_cables-2.jpg';
+import dragonPrintImg from '@/assets/community/dragon-print.jpg';
 
 const blogPosts = [
   {
@@ -67,7 +68,7 @@ const communityPosts = [
     authorImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop',
     location: 'Tokyo, Japan',
     content: 'Behind the scenes at my print studio. Getting ready for a batch of articulated dragons! These are so fun to make.',
-    image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&h=600&fit=crop',
+    image: dragonPrintImg,
     likes: 156,
     comments: 34,
     time: '1 day ago',
