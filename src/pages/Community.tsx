@@ -5,13 +5,14 @@ import { Heart, MessageCircle, Share2, Bookmark } from 'lucide-react';
 import dskOrganizerImg from '@/assets/community/dsk_organizer-2.jpg';
 import organizadorCablesImg from '@/assets/community/organizador_cables-2.jpg';
 import dragonPrintImg from '@/assets/community/dragones.jpg';
+import sustainabilityImg from '@/assets/community/3d-printing-sustainability.png';
 
 const blogPosts = [
   {
     id: '1',
     title: '3D Printing for Sustainability: How Local Production Saves the Planet',
     excerpt: 'Discover how on-demand, local 3D printing is revolutionizing manufacturing and reducing carbon emissions.',
-    image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&h=400&fit=crop',
+    image: sustainabilityImg,
     author: 'Alex Chen',
     authorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop',
     date: 'Jan 15, 2024',
