@@ -6,6 +6,7 @@ import dskOrganizerImg from '@/assets/community/dsk_organizer-2.jpg';
 import organizadorCablesImg from '@/assets/community/organizador_cables-2.jpg';
 import dragonPrintImg from '@/assets/community/dragones.jpg';
 import sustainabilityImg from '@/assets/community/3d-printing-sustainability.png';
+import mariaImg from '@/assets/community/blog_maria.jpg';
 
 const blogPosts = [
   {
@@ -22,7 +23,7 @@ const blogPosts = [
     id: '2',
     title: 'Maker Spotlight: Maria Santos from Madrid',
     excerpt: 'Meet Maria, one of our top-rated makers who has printed over 500 designs for customers in Spain.',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&h=400&fit=crop',
+    image: mariaImg,
     author: 'MakeHug Team',
     authorImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=50&h=50&fit=crop',
     date: 'Jan 10, 2024',
