@@ -59,11 +59,11 @@ export function UserTypeCTA() {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {userTypes.map((type) => (
             <div
               key={type.id}
-              className="group relative rounded-xl p-5 bg-card shadow-card card-hover border border-border/50"
+              className="group relative rounded-xl p-3 sm:p-5 bg-card shadow-card card-hover border border-border/50"
             >
               {/* Icon + Content - horizontal layout on mobile */}
               <div className="flex items-start gap-4 md:block">
@@ -88,8 +88,8 @@ export function UserTypeCTA() {
                 </div>
 
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold mb-1">{type.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-3">{type.description}</p>
+                  <h3 className="text-lg font-bold mb-0.5 sm:mb-1">{type.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-1 sm:mb-3">{type.description}</p>
                 </div>
               </div>
 
@@ -102,7 +102,7 @@ export function UserTypeCTA() {
                     ? 'sage'
                     : 'default'
                 }
-                className="w-full mt-2 md:mt-0 group-hover:shadow-md transition-shadow"
+                className="w-full mt-1 sm:mt-2 md:mt-0 group-hover:shadow-md transition-shadow"
                 asChild
               >
                 <Link to={type.href}>
