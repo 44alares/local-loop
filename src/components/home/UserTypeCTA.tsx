@@ -1,17 +1,27 @@
 import { Link } from 'react-router-dom';
-import { Palette, Printer, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Palette, Printer, ShoppingBag, ArrowRight, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const userTypes = [
   {
-    id: 'designer',
-    icon: Palette,
-    title: "I'm a Designer",
-    description: "Upload your STL. Earn royalties when it's printed worldwide. You focus on creativity, we handle the rest.",
-    cta: 'Start Creating',
-    href: '/designer',
-    highlight: 'Earn royalties per print',
-    color: 'secondary' as const,
+    id: 'buyer',
+    icon: ShoppingBag,
+    title: 'I Want to Buy',
+    description: 'Find designs you love, printed in your city. Support local makers. Zero-mile delivery.',
+    cta: 'Browse Shop',
+    href: '/shop',
+    highlight: 'Local pickup available',
+    color: 'primary' as const,
+  },
+  {
+    id: 'make-my-design',
+    icon: Wrench,
+    title: 'Make My Design',
+    description: "Got an idea or a file? We'll match you with a local maker to bring it to life.",
+    cta: 'Get Started',
+    href: '/make-my-design',
+    highlight: 'Custom production',
+    color: 'accent' as const,
   },
   {
     id: 'maker',
@@ -24,14 +34,14 @@ const userTypes = [
     color: 'accent' as const,
   },
   {
-    id: 'buyer',
-    icon: ShoppingBag,
-    title: 'I Want to Buy',
-    description: 'Find designs you love, printed in your city. Support local makers. Zero-mile delivery.',
-    cta: 'Browse Shop',
-    href: '/shop',
-    highlight: 'Local pickup available',
-    color: 'primary' as const,
+    id: 'designer',
+    icon: Palette,
+    title: "I'm a Designer",
+    description: "Upload your STL. Earn royalties when it's printed worldwide. You focus on creativity, we handle the rest.",
+    cta: 'Start Creating',
+    href: '/designer',
+    highlight: 'Earn royalties per print',
+    color: 'secondary' as const,
   },
 ];
 
@@ -49,7 +59,7 @@ export function UserTypeCTA() {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {userTypes.map((type) => (
             <div
               key={type.id}

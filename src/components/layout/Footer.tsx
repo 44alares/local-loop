@@ -19,10 +19,7 @@ const footerLinks = {
     href: '/about'
   }, {
     label: 'Blog',
-    href: '/community'
-  }, {
-    label: 'Careers',
-    href: '/careers'
+    href: '/blog'
   }, {
     label: 'Press',
     href: '/press'
@@ -31,17 +28,11 @@ const footerLinks = {
     label: 'FAQ',
     href: '/faq'
   }, {
-    label: 'Help Center',
-    href: '/help'
-  }, {
     label: 'Contact',
     href: '/contact'
   }, {
     label: 'Shipping',
     href: '/shipping'
-  }, {
-    label: 'Returns',
-    href: '/returns'
   }],
   legal: [{
     label: 'Terms',

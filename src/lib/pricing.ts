@@ -226,7 +226,7 @@ export const SHIPPING_OPTIONS: ShippingOption[] = [
   {
     id: 'local-point',
     name: 'Local Pickup Point',
-    description: 'Pick up at a partner neighborhood shop (café, bookstore)',
+    description: 'Pick up at a partner neighborhood shop (café, bookstore) or locker.',
     price: 2.00,
     priority: 2,
     isRecommended: false,

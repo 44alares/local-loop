@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ScrollToTop } from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
@@ -10,6 +11,7 @@ import About from "./pages/About";
 import Designer from "./pages/Designer";
 import Maker from "./pages/Maker";
 import Community from "./pages/Community";
+import Blog from "./pages/Blog";
 import PrintMyDesign from "./pages/PrintMyDesign";
 import StartCreating from "./pages/StartCreating";
 import JoinAsMaker from "./pages/JoinAsMaker";
@@ -17,6 +19,7 @@ import NDATerms from "./pages/NDATerms";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import FoundersClub from "./pages/FoundersClub";
+import Shipping from "./pages/Shipping";
 import NotFound from "./pages/NotFound";
 
 // Hub pages
@@ -31,6 +34,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/shop" element={<Shop />} />
@@ -39,6 +43,7 @@ const App = () => (
           <Route path="/designer" element={<Designer />} />
           <Route path="/maker" element={<Maker />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/make-my-design" element={<PrintMyDesign />} />
           <Route path="/start-creating" element={<StartCreating />} />
           <Route path="/join-as-maker" element={<JoinAsMaker />} />
@@ -46,6 +51,7 @@ const App = () => (
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/founders-club" element={<FoundersClub />} />
+          <Route path="/shipping" element={<Shipping />} />
           {/* Member Hub */}
           <Route path="/hub" element={<HubLayout />}>
             <Route index element={<HubOverview />} />

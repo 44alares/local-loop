@@ -16,9 +16,9 @@ import { Link } from 'react-router-dom';
 
 // Fixed fee ranges by complexity
 const FIXED_FEE_RANGES = {
-  Functional: { min: 1, max: 3 },
-  Mixed: { min: 1, max: 6 },
-  Artistic: { min: 1, max: 10 },
+  Functional: { min: 1, max: 2 },
+  Mixed: { min: 1, max: 4 },
+  Artistic: { min: 1, max: 6 },
 };
 
 export default function StartCreating() {
@@ -62,8 +62,19 @@ export default function StartCreating() {
 
   const estimatedPrice = calculateEstimate();
 
+  // Part count surcharge
+  const partCountNum = parseInt(partCount) || 1;
+  const partCountSurcharge = partCountNum >= 4 ? 0.15 : partCountNum >= 3 ? 0.10 : partCountNum >= 2 ? 0.05 : 0;
+  // Supports surcharge
+  const supportsSurcharge = hasSupports ? 0.10 : 0;
+  // Total surcharge (stacking)
+  const totalSurcharge = partCountSurcharge + supportsSurcharge;
+  
+  // Apply surcharges to estimated price
+  const adjustedPrice = estimatedPrice ? estimatedPrice * (1 + totalSurcharge) : null;
+
   // Calculate variable fee (internal 5% rule, but not displayed as %)
-  const variableFee = estimatedPrice ? estimatedPrice * 0.05 : 0;
+  const variableFee = adjustedPrice ? adjustedPrice * 0.05 : 0;
   const totalFees = fixedFee + variableFee;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -438,18 +449,40 @@ export default function StartCreating() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {estimatedPrice && complexity ? (
+                  {adjustedPrice && complexity ? (
                     <>
                       <div className="text-center py-3">
-                        <p className="text-3xl font-bold">${estimatedPrice.toFixed(2)}</p>
+                        <p className="text-3xl font-bold">€{adjustedPrice.toFixed(2)}</p>
                         <p className="text-muted-foreground text-sm mt-1">Suggested retail price</p>
                       </div>
+
+                      {totalSurcharge > 0 && (
+                        <div className="space-y-1 text-sm bg-accent/5 rounded-lg p-3">
+                          <p className="text-xs font-medium text-muted-foreground">Surcharges applied:</p>
+                          {partCountSurcharge > 0 && (
+                            <div className="flex justify-between text-xs">
+                              <span className="text-muted-foreground">Part count ({partCountNum} parts)</span>
+                              <span className="font-medium">+{(partCountSurcharge * 100).toFixed(0)}%</span>
+                            </div>
+                          )}
+                          {supportsSurcharge > 0 && (
+                            <div className="flex justify-between text-xs">
+                              <span className="text-muted-foreground">Supports needed</span>
+                              <span className="font-medium">+10%</span>
+                            </div>
+                          )}
+                          <div className="flex justify-between text-xs border-t border-border pt-1">
+                            <span className="font-medium">Total surcharge</span>
+                            <span className="font-bold">+{(totalSurcharge * 100).toFixed(0)}%</span>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="space-y-2 pt-3 border-t border-border">
                         <p className="text-sm font-medium text-muted-foreground">Fee Preview (amounts only):</p>
                         <div className="space-y-1.5 text-sm">
                           <div className="flex items-center justify-between py-1">
-                            <span className="text-muted-foreground">Fixed fee</span>
+                            <span className="text-muted-foreground">Fixed fee (EUR)</span>
                             <span className="font-medium">€{fixedFee.toFixed(2)}</span>
                           </div>
                           <div className="flex items-center justify-between py-1">
@@ -466,7 +499,7 @@ export default function StartCreating() {
                       <div className="bg-secondary/10 rounded-lg p-3 text-center">
                         <p className="text-xs text-muted-foreground">Your royalty per print</p>
                         <p className="text-xl font-bold text-secondary">
-                          ${(estimatedPrice - totalFees - (estimatedPrice * 0.7)).toFixed(2)}
+                          €{(adjustedPrice - totalFees - (adjustedPrice * 0.7)).toFixed(2)}
                         </p>
                       </div>
 
