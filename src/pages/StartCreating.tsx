@@ -499,7 +499,7 @@ export default function StartCreating() {
                       <div className="bg-secondary/10 rounded-lg p-3 text-center">
                         <p className="text-xs text-muted-foreground">Your royalty per print</p>
                         <p className="text-xl font-bold text-secondary">
-                          €{(adjustedPrice - totalFees - (adjustedPrice * 0.7)).toFixed(2)}
+                          €{totalFees.toFixed(2)}
                         </p>
                       </div>
 
