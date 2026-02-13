@@ -129,15 +129,15 @@ export default function JoinAsMaker() {
       <Layout>
         <div className="container py-20">
           <div className="max-w-lg mx-auto text-center">
-            <div className="h-20 w-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="h-10 w-10 text-accent" />
+            <div className="h-20 w-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="h-10 w-10 text-secondary" />
             </div>
-            <h1 className="text-display-sm font-bold mb-4">Application Submitted!</h1>
+            <h1 className="text-display-sm font-bold mb-4">Message Sent!</h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Thank you for applying to become a MakeHug Maker! Our team will review your application and verify your equipment within 48-72 hours.
+              Your email client should have opened with your message. If not, please send an email directly to hello@makehug.com
             </p>
-            <Button variant="hero-accent" asChild>
-              <Link to="/">Return to Home</Link>
+            <Button variant="hero" onClick={() => setSubmitted(false)}>
+              Send Another Message
             </Button>
           </div>
         </div>
@@ -490,24 +490,9 @@ export default function JoinAsMaker() {
               size="xl"
               disabled={!canSubmit}
               onClick={() => {
-                // Log submission data (in production, would send email to alaresinnova@gmail.com)
-                console.log('Maker application submitted:', {
-                  fullName,
-                  email,
-                  address,
-                  city,
-                  country,
-                  zipcode,
-                  machineType,
-                  machineCount,
-                  dailyHours,
-                  materials: selectedMaterials,
-                  basicColorsIncluded: true,
-                  basicColors: allBasicColors.map(c => c.name),
-                  additionalColorsRalApprox: Object.fromEntries(
-                    selectedMaterials.map(m => [m, additionalRalColors[m]])
-                  ),
-                });
+                const bodyContent = `Name: ${fullName}\nEmail: ${email}\nAddress: ${address}\nCity: ${city}\nCountry: ${country}\nZipcode: ${zipcode}\nMachine Type: ${machineType}\nMachine Count: ${machineCount}\nDaily Hours: ${dailyHours}\nMaterials: ${selectedMaterials.join(', ')}\nBasic Colors: ${allBasicColors.map(c => c.name).join(', ')}\nAdditional Colors: ${JSON.stringify(Object.fromEntries(selectedMaterials.map(m => [m, additionalRalColors[m]])))}`;
+                const mailtoLink = `mailto:hello@makehug.com?subject=${encodeURIComponent('join as maker')}&body=${encodeURIComponent(bodyContent)}`;
+                window.location.href = mailtoLink;
                 setSubmitted(true);
               }}
             >

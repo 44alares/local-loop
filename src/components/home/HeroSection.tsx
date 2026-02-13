@@ -72,25 +72,6 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Mobile Trust Indicators */}
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-6 md:hidden">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary/10">
-              <MapPin className="h-3.5 w-3.5 text-secondary" />
-            </div>
-            <div>
-              <p className="font-semibold text-xs">150+ Cities</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
-              <Users className="h-3.5 w-3.5 text-accent" />
-            </div>
-            <div>
-              <p className="font-semibold text-xs">2,300+ Makers</p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>;
 }

@@ -6,9 +6,9 @@ import { cn } from '@/lib/utils';
 
 const navItems = [
   { label: 'Shop', href: '/shop' },
-  { label: "I'm a Designer", href: '/designer' },
-  { label: "I'm a Maker", href: '/maker' },
   { label: 'Make My Design', href: '/make-my-design' },
+  { label: "I'm a Maker", href: '/maker' },
+  { label: "I'm a Designer", href: '/designer' },
   { label: 'Member Hub', href: '/hub' },
   { label: 'Our Why', href: '/about' },
 ];

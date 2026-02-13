@@ -15,8 +15,9 @@ interface RoleSelectorProps {
 
 export function RoleSelector({ value, onChange }: RoleSelectorProps) {
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-medium text-muted-foreground mr-1">I am a:</span>
+    <div className="flex flex-col items-center gap-2 md:flex-row">
+      <span className="text-base font-semibold text-muted-foreground md:text-sm md:font-medium md:mr-1">I am a:</span>
+      <div className="flex items-center gap-2">
       {(Object.keys(roleLabels) as MemberRole[]).map((role) => (
         <button
           key={role}
@@ -32,6 +33,7 @@ export function RoleSelector({ value, onChange }: RoleSelectorProps) {
           {roleLabels[role]}
         </button>
       ))}
+      </div>
     </div>
   );
 }
