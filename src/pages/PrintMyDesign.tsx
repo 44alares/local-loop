@@ -393,7 +393,7 @@ export default function PrintMyDesign() {
                           Design Ownership Certification (Required)
                         </Label>
                         <p className="text-sm text-muted-foreground">
-                          I certify that I am the original designer or that I have express written permission to create and distribute this design. I acknowledge that any intellectual property infringement is my sole responsibility.
+                          I certify that I am the original designer or that I have express permission to print this design. I acknowledge that any intellectual property infringement is my sole responsibility.
                         </p>
                       </div>
                     </div>
