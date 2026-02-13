@@ -37,7 +37,7 @@ const capacityOptions = [{
   label: 'High (daily)'
 }];
 const handoffRadiusOptions = ['1–3 km', '5 km', '10+ km'];
-const designTypes = ['Functional', 'Artistic', 'Mixed'];
+const designTypes = ['Functional', 'Artistic', 'Hybrid'];
 const buyerInterests = ['Functional spare parts', 'Home accessories', 'Gaming accessories', 'Organization / mounts', 'Decoration', 'Figures / collectibles'];
 const deliveryPreferences = ['In-person', 'Pickup point', 'Shipping'];
 const payMoreOptions = ['Yes', 'No', 'Depends'];

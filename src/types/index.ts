@@ -24,7 +24,7 @@ export interface Maker {
   verified: boolean;
 }
 
-export type ProductType = 'functional' | 'mixed' | 'artistic';
+export type ProductType = 'functional' | 'hybrid' | 'artistic';
 
 export interface ProductColorSpec {
   pla?: string[];
@@ -59,7 +59,7 @@ export interface Product {
 }
 
 export type ProductCategory = 'functional' | 'desktop' | 'decoration' | 'kids' | 'gaming' | 'repair' | 'artistic' | 'other';
-export type ProductStyle = 'geometric' | 'colorful' | 'mixed' | 'industrial' | 'sculptural';
+export type ProductStyle = 'geometric' | 'colorful' | 'hybrid' | 'industrial' | 'sculptural';
 
 export interface Review {
   id: string;

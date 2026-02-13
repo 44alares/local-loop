@@ -109,16 +109,16 @@ const makerFaqs = [
 // Designer FAQs
 const designerFaqs = [
   {
-    question: 'What does it mean if I set my design as Functional, Mixed, or Artistic?',
+    question: 'What does it mean if I set my design as Functional, Hybrid, or Artistic?',
     answer: `This label helps set the right expectations for production and review.
 
 • Functional object: Utilitarian/spare/accessory focused on real-world use—tolerances, fit, and performance matter most.
 
 • Artistic object: Mainly aesthetic (sculpture/decor), where visual quality is the priority.
 
-• Mixed object: Function + aesthetics, where both usability and appearance matter.
+• Hybrid object: Function + aesthetics, where both usability and appearance matter.
 
-Review note: Mixed and Artistic objects always require manual team validation before publishing.
+Review note: Hybrid and Artistic objects always require manual team validation before publishing.
 
 Fees note: The designer can set a fixed fee that varies by design type. On top of that fixed fee, a small variable fee is added based on the final sale price (you'll see the exact breakdown as amounts before publishing).`,
   },

@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom';
 // Fixed fee ranges by complexity
 const FIXED_FEE_RANGES = {
   Functional: { min: 1, max: 2 },
-  Mixed: { min: 1, max: 4 },
+  Hybrid: { min: 1, max: 4 },
   Artistic: { min: 1, max: 6 },
 };
 
@@ -34,7 +34,7 @@ export default function StartCreating() {
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [originalWorkCertified, setOriginalWorkCertified] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [complexity, setComplexity] = useState<'Functional' | 'Mixed' | 'Artistic' | ''>('');
+  const [complexity, setComplexity] = useState<'Functional' | 'Hybrid' | 'Artistic' | ''>('');
   const [fixedFee, setFixedFee] = useState(2);
 
   // Get fee range based on complexity
@@ -296,13 +296,13 @@ export default function StartCreating() {
                         <span className="absolute left-0 bottom-full mb-2 w-64 p-3 bg-popover border border-border rounded-lg shadow-lg text-xs text-left opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                           <strong>Functional object:</strong> utilitarian/spare/accessory focused on use, tolerances, fit<br/><br/>
                           <strong>Artistic object:</strong> mainly aesthetic/sculpture/decor<br/><br/>
-                          <strong>Mixed object:</strong> function + aesthetics<br/><br/>
-                          <em className="text-accent">Mixed and Artistic objects always require manual team validation before publishing.</em>
+                          <strong>Hybrid object:</strong> function + aesthetics<br/><br/>
+                          <em className="text-accent">Hybrid and Artistic objects always require manual team validation before publishing.</em>
                         </span>
                       </span>
                     </Label>
                     <div className="grid grid-cols-3 gap-2">
-                      {(['Functional', 'Mixed', 'Artistic'] as const).map((option) => (
+                      {(['Functional', 'Hybrid', 'Artistic'] as const).map((option) => (
                         <button
                           key={option}
                           type="button"

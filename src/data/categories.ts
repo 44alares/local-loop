@@ -63,13 +63,13 @@ export const categoryLabels: Record<string, string> = {
 
 export const productTypeLabels: Record<string, string> = {
   functional: 'Functional',
-  mixed: 'Mixed',
+  hybrid: 'Hybrid',
   artistic: 'Artistic',
 };
 
 export const styleLabels: Record<string, string> = {
   geometric: 'Geometric',
   colorful: 'Colorful',
-  mixed: 'Mixed',
+  hybrid: 'Hybrid',
   industrial: 'Industrial',
 };
