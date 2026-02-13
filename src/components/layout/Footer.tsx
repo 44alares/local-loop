@@ -35,9 +35,6 @@ const footerLinks = {
     href: '/shipping'
   }],
   legal: [{
-    label: 'Terms',
-    href: '/terms'
-  }, {
     label: 'Privacy',
     href: '/privacy'
   }, {
