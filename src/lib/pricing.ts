@@ -23,7 +23,7 @@ export const COMMISSION_RATES = {
 // Designer commission rates based on product type
 export const DESIGNER_RATES: Record<ProductType, number> = {
   functional: 0.08,  // 8%
-  mixed: 0.12,       // 12%
+  hybrid: 0.12,      // 12%
   artistic: 0.16,    // 16%
 };
 
@@ -86,10 +86,10 @@ export interface FullPriceBreakdown {
   makerRate: number;
 }
 
-// Fixed designer fee added to Functional and Mixed products
+// Fixed designer fee added to Functional and Hybrid products
 export const DESIGNER_FIXED_FEE: Record<ProductType, number> = {
   functional: 1.00,
-  mixed: 1.00,
+  hybrid: 1.00,
   artistic: 0,
 };
 
