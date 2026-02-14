@@ -158,7 +158,7 @@ export default function PrintMyDesign() {
                 </div>
                 <CardTitle className="text-xl">I Have a File</CardTitle>
                 <CardDescription>
-                  Upload an STL or STEP file and get the final price based on material, print time, and complexity—then choose a nearby maker to produce it.
+                  Upload an STL file and get the final price based on material, print time, and complexity—then choose a nearby maker to produce it.
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
@@ -278,14 +278,14 @@ export default function PrintMyDesign() {
                       Upload Your File
                     </CardTitle>
                     <CardDescription>
-                      Supported formats: STL, STEP, OBJ, 3MF
+                      Supported formats: STL
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-accent transition-colors">
                       <input
                         type="file"
-                        accept=".stl,.step,.stp,.obj,.3mf"
+                        accept=".stl"
                         onChange={handleFileUpload}
                         className="hidden"
                         id="file-upload"
@@ -297,7 +297,7 @@ export default function PrintMyDesign() {
                         ) : (
                           <>
                             <p className="font-medium mb-1">Drop your file here or click to browse</p>
-                            <p className="text-sm text-muted-foreground">Maximum file size: 100MB</p>
+                            <p className="text-sm text-muted-foreground">Maximum file size: 25MB</p>
                           </>
                         )}
                       </label>
