@@ -53,6 +53,15 @@ export default function DesignerTerms() {
               <strong className="text-foreground">Rights confirmation.</strong> You confirm you own the rights to upload the file, or you have sufficient permission to license it for manufacturing and sale as a physical product on MakeHug.
             </p>
             <p className="text-muted-foreground mb-3">
+              <strong className="text-foreground">Originality &amp; third-party uploads (No re-uploads).</strong> You are expressly prohibited from uploading, listing, reselling, or monetizing files obtained from third-party repositories (such as Thingiverse, Printables, Cults3D, etc.) or from other individual designers, including files provided under open licenses (e.g., Creative Commons) or through membership/subscription programs (e.g., Patreon), for commercial exploitation on MakeHug.
+            </p>
+            <p className="text-muted-foreground mb-3">
+              <strong className="text-foreground">Duplicate / substantially similar uploads + Generic Geometry Designs.</strong> You may not upload designs that are identical to, or substantially similar to, any design already available on the Platform. Potential copies, derivatives, or remixes may be identified through automated similarity checks and, if flagged, may be hidden, suspended, or removed; repeated violations may result in account suspension. Certain uploads may be classified as "Generic Geometry Designs" (designs primarily based on basic/common geometric forms). Generic Geometry Designs may be listed and sold, but are not eligible for exclusivity; comparable generic listings may be allowed provided they are not identical or near-identical to an existing listing (cosmetic-only changes do not qualify).
+            </p>
+            <p className="text-muted-foreground mb-3">
+              <strong className="text-foreground">Proof of authorship (audit right).</strong> MakeHug may request reasonable proof of authorship at any time. Such proof may include, but is not limited to: editable source files (e.g., CAD, STEP, F3D), version history, preliminary sketches, or screenshots documenting the design process. If not provided within a reasonable timeframe, MakeHug may suspend the listing and place payouts on hold during investigation.
+            </p>
+            <p className="text-muted-foreground mb-3">
               <strong className="text-foreground">License to MakeHug (to operate the platform).</strong> You grant MakeHug a non-exclusive license to host, technically copy, convert formats as needed, generate previews, display, and provide the file only to the assigned Maker(s) for valid MakeHug orders, solely to manufacture the ordered quantity.
             </p>
             <p className="text-muted-foreground mb-3">
@@ -180,13 +189,22 @@ export default function DesignerTerms() {
               <strong className="text-foreground">No redistribution / no reuse.</strong> You may not redistribute, publish, sell, or share the file (or derivatives) and may not reuse it for other orders or clients.
             </p>
             <p className="text-muted-foreground mb-3">
-              <strong className="text-foreground">Security & deletion.</strong> You must take reasonable steps to secure the file while you have it and delete it once the order is completed or cancelled (unless required by law).
+              <strong className="text-foreground">Security &amp; deletion.</strong> You must take reasonable steps to secure the file while you have it. Once the order is completed or cancelled and the dispute window has closed, you must permanently delete all digital copies of the Design from your computers, SD cards, and any cloud storage. Exceptions apply only where retention is required by law.
+            </p>
+            <p className="text-muted-foreground mb-3">
+              <strong className="text-foreground">No extra prints / no marketing use.</strong> You may not print additional copies for personal use, direct sale, gifts, display, marketing, or portfolio purposes without the Designer's express prior written consent.
             </p>
             <p className="text-muted-foreground mb-3">
               <strong className="text-foreground">Enforcement.</strong> Violations may result in suspension and loss of access to orders and payouts.
             </p>
             <p className="text-muted-foreground mb-6">
               <strong className="text-foreground">Acceptance.</strong> You must actively accept these terms (checkbox) before proceeding.
+            </p>
+
+            {/* ── Indemnification ── */}
+            <h2 className="text-2xl font-bold mt-12 mb-4">Indemnification</h2>
+            <p className="text-muted-foreground mb-6">
+              The User (whether Maker or Designer) agrees to indemnify, defend, and hold MakeHug harmless from and against any claim, loss, damage, liability, or expense (including reasonable legal fees) arising out of or relating to any breach of these intellectual property, confidentiality, and quality warranties.
             </p>
           </div>
         </div>

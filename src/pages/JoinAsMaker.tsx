@@ -88,7 +88,7 @@ export default function JoinAsMaker() {
   const [additionalRalColors, setAdditionalRalColors] = useState<Record<MaterialType, string[]>>({
     PLA: [], PETG: [], ABS: [], Nylon: [], Resin: [],
   });
-  const [ndaAccepted, setNdaAccepted] = useState(false);
+  // ndaAccepted removed — covered by makerTermsAccepted
   const [qualityAccepted, setQualityAccepted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [makerTermsOpened, setMakerTermsOpened] = useState(false);
@@ -117,7 +117,7 @@ export default function JoinAsMaker() {
     country && 
     zipcode && 
     selectedMaterials.length > 0 &&
-    ndaAccepted && 
+    makerTermsAccepted && 
     qualityAccepted;
 
   const handleRemoveAdditionalColor = (mat: MaterialType, code: string) => {
@@ -473,7 +473,8 @@ export default function JoinAsMaker() {
                     <p><strong className="text-foreground">Scope.</strong> These terms apply only to orders accepted and fulfilled on MakeHug. External contracts are separate and do not change MakeHug's platform rules unless MakeHug explicitly agrees in writing.</p>
                     <p><strong className="text-foreground">Order-limited license.</strong> For each accepted MakeHug order, you may download and use the provided STL/3MF only to prepare and manufacture the ordered quantity for that specific order.</p>
                     <p><strong className="text-foreground">No redistribution / no reuse.</strong> You may not redistribute, publish, sell, or share the file (or derivatives) and may not reuse it for other orders or clients.</p>
-                    <p><strong className="text-foreground">Security &amp; deletion.</strong> You must take reasonable steps to secure the file while you have it and delete it once the order is completed or cancelled (unless required by law).</p>
+                    <p><strong className="text-foreground">Security &amp; deletion.</strong> You must take reasonable steps to secure the file while you have it. Once the order is completed or cancelled and the dispute window has closed, you must permanently delete all digital copies from your computers, SD cards, and any cloud storage. Exceptions apply only where retention is required by law.</p>
+                    <p><strong className="text-foreground">No extra prints / no marketing use.</strong> You may not print additional copies for personal use, direct sale, gifts, display, marketing, or portfolio purposes without the Designer's express prior written consent.</p>
                     <p><strong className="text-foreground">Enforcement.</strong> Violations may result in suspension and loss of access to orders and payouts.</p>
                     <p><strong className="text-foreground">Acceptance.</strong> You must actively accept these terms (checkbox) before proceeding.</p>
                   </div>
@@ -496,23 +497,8 @@ export default function JoinAsMaker() {
                 </div>
               </div>
 
-              {/* Existing NDA + Quality checkboxes */}
+              {/* Quality checkbox */}
               <div className="pt-2 border-t border-border space-y-4">
-                <div className="flex items-start gap-3">
-                  <Checkbox 
-                    id="nda" 
-                    checked={ndaAccepted}
-                    onCheckedChange={(checked) => setNdaAccepted(checked as boolean)}
-                  />
-                  <div className="space-y-1">
-                    <Label htmlFor="nda" className="font-medium cursor-pointer">
-                      I accept the Non-Disclosure Agreement *
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      I agree not to commercialize, share, or distribute any designer files I receive through MakeHug.
-                    </p>
-                  </div>
-                </div>
 
                 <div className="flex items-start gap-3">
                   <Checkbox 

@@ -41,8 +41,8 @@ const footerLinks = {
     label: 'Cookies',
     href: '/cookies'
   }, {
-    label: 'NDA Agreement',
-    href: '/nda-terms'
+    label: 'Terms',
+    href: '/designer-terms'
   }]
 };
 const stats = [{

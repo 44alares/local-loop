@@ -34,7 +34,7 @@ export default function StartCreating() {
   const [hasSupports, setHasSupports] = useState(false);
   const [estimatedWeight, setEstimatedWeight] = useState('');
   const [estimatedPrintTime, setEstimatedPrintTime] = useState('');
-  const [ndaAccepted, setNdaAccepted] = useState(false);
+  // ndaAccepted removed — covered by creatorTermsAccepted
   const [originalWorkCertified, setOriginalWorkCertified] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [complexity, setComplexity] = useState<'Functional' | 'Hybrid' | 'Artistic' | ''>('');
@@ -105,7 +105,7 @@ export default function StartCreating() {
     }
   };
 
-  const canSubmit = uploadedFile && scaleProofImage && ndaAccepted && originalWorkCertified && selectedMaterial;
+  const canSubmit = uploadedFile && scaleProofImage && creatorTermsAccepted && originalWorkCertified && selectedMaterial;
 
   if (submitted) {
     return (
@@ -450,6 +450,9 @@ export default function StartCreating() {
                         <p><strong className="text-foreground">Scope.</strong> These terms apply only to activity on MakeHug (listings, orders, manufacturing, and payouts). External contracts are separate and do not change MakeHug's obligations or payout rules unless MakeHug explicitly agrees in writing.</p>
                         <p><strong className="text-foreground">Ownership.</strong> You (the Designer) keep ownership of your designs and files.</p>
                         <p><strong className="text-foreground">Rights confirmation.</strong> You confirm you own the rights to upload the file, or you have sufficient permission to license it for manufacturing and sale as a physical product on MakeHug.</p>
+                        <p><strong className="text-foreground">Originality &amp; third-party uploads (No re-uploads).</strong> You are expressly prohibited from uploading, listing, reselling, or monetizing files obtained from third-party repositories or other designers, including files under open licenses or subscription programs, for commercial exploitation on MakeHug.</p>
+                        <p><strong className="text-foreground">Duplicate / substantially similar uploads.</strong> You may not upload designs identical or substantially similar to existing Platform listings. Flagged uploads may be hidden, suspended, or removed. "Generic Geometry Designs" may be listed but are not eligible for exclusivity.</p>
+                        <p><strong className="text-foreground">Proof of authorship (audit right).</strong> MakeHug may request proof of authorship (CAD/STEP/F3D, version history, sketches). Failure to provide within a reasonable timeframe may result in listing suspension and payout hold.</p>
                         <p><strong className="text-foreground">License to MakeHug (to operate the platform).</strong> You grant MakeHug a non-exclusive license to host, technically copy, convert formats as needed, generate previews, display, and provide the file only to the assigned Maker(s) for valid MakeHug orders, solely to manufacture the ordered quantity.</p>
                         <p><strong className="text-foreground">File protection (default).</strong> Unless you choose otherwise, Makers and buyers may not redistribute, publish, resell, or share the file, and may not use it for other orders.</p>
                         <p><strong className="text-foreground">Royalties ("Royalty pool").</strong> For each sale/print on MakeHug, the royalty pool equals: (a) the fixed "Designer Fee" you set for that design, plus (b) a percentage of the physical product sale price. MakeHug pays royalties according to the selected license option and Annex I.</p>
@@ -530,20 +533,8 @@ export default function StartCreating() {
                     )}
                   </div>
 
-                  {/* Original work + NDA kept */}
+                  {/* Original work certification */}
                   <div className="flex items-start gap-2 pt-2 border-t border-border">
-                    <Checkbox id="nda" checked={ndaAccepted} onCheckedChange={(checked) => setNdaAccepted(checked as boolean)} />
-                    <div className="space-y-0.5">
-                      <Label htmlFor="nda" className="font-medium cursor-pointer text-sm">
-                        I accept the NDA terms
-                      </Label>
-                      <p className="text-xs text-muted-foreground">
-                        I understand that Makers are bound by our Non-Disclosure Agreement and cannot commercialize my design files.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-2">
                     <Checkbox id="original" checked={originalWorkCertified} onCheckedChange={(checked) => setOriginalWorkCertified(checked as boolean)} />
                     <div className="space-y-0.5">
                       <Label htmlFor="original" className="font-medium cursor-pointer text-sm">
