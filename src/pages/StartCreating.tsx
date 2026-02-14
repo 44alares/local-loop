@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import StlPreview from '@/components/StlPreview';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -180,6 +181,14 @@ export default function StartCreating() {
                       )}
                     </label>
                   </div>
+                  {uploadedFile && uploadedFile.name.toLowerCase().endsWith('.stl') ? (
+                    <div className="mt-4 space-y-2">
+                      <p className="text-xs text-muted-foreground">Drag to rotate · Scroll to zoom</p>
+                      <StlPreview file={uploadedFile} />
+                    </div>
+                  ) : uploadedFile && !uploadedFile.name.toLowerCase().endsWith('.3mf') ? (
+                    <p className="mt-3 text-xs text-muted-foreground">3D preview is available for STL files in this beta.</p>
+                  ) : null}
                 </CardContent>
               </Card>
 
