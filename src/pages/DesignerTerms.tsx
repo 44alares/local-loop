@@ -41,7 +41,7 @@ export default function DesignerTerms() {
             </p>
 
             {/* ── Creator Terms ── */}
-            <h2 className="text-2xl font-bold mt-10 mb-4">MakeHug Creator Terms (Platform-only)</h2>
+            <h2 className="text-2xl font-bold mt-10 mb-4">MakeHug Designer Terms (Platform-only)</h2>
 
             <p className="text-muted-foreground mb-3">
               <strong className="text-foreground">Scope.</strong> These terms apply only to activity on MakeHug (listings, orders, manufacturing, and payouts). External contracts are separate and do not change MakeHug's obligations or payout rules unless MakeHug explicitly agrees in writing.
@@ -67,10 +67,12 @@ export default function DesignerTerms() {
             <p className="text-muted-foreground mb-6">
               <strong className="text-foreground">Acceptance.</strong> You must actively accept these terms (checkbox) before continuing.
             </p>
-
+<h2 id="license-types" className="text-xl font-bold mt-10 mb-4 scroll-mt-24">
+              License Types:
+            </h2>
             {/* ── License: Artistic ── */}
             <h2 id="license-artistic" className="text-xl font-bold mt-10 mb-4 scroll-mt-24">
-              Artistic — No Remixes
+              -Artistic — No Remixes
             </h2>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-6">
               <li><strong className="text-foreground">Category:</strong> Artistic only</li>
@@ -80,7 +82,7 @@ export default function DesignerTerms() {
 
             {/* ── License: Functional/Hybrid Delayed ── */}
             <h2 id="license-functional-delayed" className="text-xl font-bold mt-10 mb-4 scroll-mt-24">
-              Functional/Hybrid — Remixes after 6 months
+              -Functional/Hybrid — Remixes after 6 months
             </h2>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-3">
               <li><strong className="text-foreground">Category:</strong> Functional or Hybrid</li>
@@ -90,13 +92,13 @@ export default function DesignerTerms() {
             <p className="text-muted-foreground mb-1 font-medium text-foreground">Revenue share (platform-only):</p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-6">
               <li>Months 0–6: no remixes allowed.</li>
-              <li>Months 6–12: 50% of the royalty pool goes to the Original Creator; 50% is split equally among eligible remix creators.</li>
-              <li>After month 12: the royalty pool is split equally among all eligible actors (Original Creator + eligible remix creators).</li>
+              <li>Months 6–12: 50% of the royalty pool goes to the Original Designer; 50% is split equally among eligible remix creators.</li>
+              <li>After month 12: the royalty pool is split equally among all eligible actors (Original Designer + eligible remix creators).</li>
             </ul>
 
             {/* ── License: Functional/Hybrid Immediate ── */}
             <h2 id="license-functional-immediate" className="text-xl font-bold mt-10 mb-4 scroll-mt-24">
-              Functional/Hybrid — Remixes from day 1
+              -Functional/Hybrid — Remixes from day 1
             </h2>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-3">
               <li><strong className="text-foreground">Category:</strong> Functional or Hybrid</li>
@@ -105,8 +107,8 @@ export default function DesignerTerms() {
             </ul>
             <p className="text-muted-foreground mb-1 font-medium text-foreground">Revenue share (platform-only):</p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-6">
-              <li>Months 0–12: 50% of the royalty pool goes to the Original Creator; 50% is split equally among eligible remix creators.</li>
-              <li>After month 12: the royalty pool is split equally among all eligible actors (Original Creator + eligible remix creators).</li>
+              <li>Months 0–12: 50% of the royalty pool goes to the Original Designer; 50% is split equally among eligible remix creators.</li>
+              <li>After month 12: the royalty pool is split equally among all eligible actors (Original Designer + eligible remix creators).</li>
             </ul>
 
             {/* ── Annex I ── */}
