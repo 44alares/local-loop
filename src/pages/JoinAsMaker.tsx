@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Printer,
   User,
@@ -28,6 +29,8 @@ import {
   FileText,
   CheckCircle2,
   AlertCircle,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -88,6 +91,9 @@ export default function JoinAsMaker() {
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [qualityAccepted, setQualityAccepted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [makerTermsOpened, setMakerTermsOpened] = useState(false);
+  const [makerTermsAccepted, setMakerTermsAccepted] = useState(false);
+  const [makerTermsOpen, setMakerTermsOpen] = useState(false);
 
   // Collect all basic colors and RAL codes across selected materials
   const allBasicColors = selectedMaterials.flatMap(m => materialBasicColors[m]);
@@ -432,51 +438,96 @@ export default function JoinAsMaker() {
             </CardContent>
           </Card>
 
-          {/* Legal Section */}
+          {/* Maker terms */}
           <Card className="border-accent/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-accent" />
-                Legal Terms
+                Maker terms
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Link 
-                to="/nda-terms" 
-                className="text-secondary underline hover:text-secondary/80 text-sm font-medium"
-              >
-                Read full Non-Disclosure Agreement →
-              </Link>
+              {/* Summary bullets */}
+              <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                <li>Platform-only terms: applies only to MakeHug orders and payouts.</li>
+                <li>Use STL/3MF only for the assigned order and quantity.</li>
+                <li>No redistribution or reuse for other orders.</li>
+                <li>Keep files secure and delete after completion/cancellation.</li>
+                <li>Violations can lead to suspension and payout loss.</li>
+              </ul>
 
+              {/* Collapsible full terms */}
+              <Collapsible open={makerTermsOpen} onOpenChange={(open) => {
+                setMakerTermsOpen(open);
+                if (open) setMakerTermsOpened(true);
+              }}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm" className="w-full justify-between text-sm">
+                    {makerTermsOpen ? 'Hide full terms' : 'Show full terms'}
+                    {makerTermsOpen ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="mt-3 p-4 bg-muted/50 rounded-lg text-sm text-muted-foreground space-y-3 max-h-[400px] overflow-y-auto">
+                    <p className="font-bold text-foreground">MakeHug Maker Manufacturing Terms (Platform-only)</p>
+                    <p><strong className="text-foreground">Scope.</strong> These terms apply only to orders accepted and fulfilled on MakeHug. External contracts are separate and do not change MakeHug's platform rules unless MakeHug explicitly agrees in writing.</p>
+                    <p><strong className="text-foreground">Order-limited license.</strong> For each accepted MakeHug order, you may download and use the provided STL/3MF only to prepare and manufacture the ordered quantity for that specific order.</p>
+                    <p><strong className="text-foreground">No redistribution / no reuse.</strong> You may not redistribute, publish, sell, or share the file (or derivatives) and may not reuse it for other orders or clients.</p>
+                    <p><strong className="text-foreground">Security &amp; deletion.</strong> You must take reasonable steps to secure the file while you have it and delete it once the order is completed or cancelled (unless required by law).</p>
+                    <p><strong className="text-foreground">Enforcement.</strong> Violations may result in suspension and loss of access to orders and payouts.</p>
+                    <p><strong className="text-foreground">Acceptance.</strong> You must actively accept these terms (checkbox) before proceeding.</p>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Checkbox */}
               <div className="flex items-start gap-3">
-                <Checkbox 
-                  id="nda" 
-                  checked={ndaAccepted}
-                  onCheckedChange={(checked) => setNdaAccepted(checked as boolean)}
+                <Checkbox
+                  id="maker-terms"
+                  checked={makerTermsAccepted}
+                  onCheckedChange={(checked) => setMakerTermsAccepted(checked as boolean)}
+                  disabled={!makerTermsOpened}
                 />
                 <div className="space-y-1">
-                  <Label htmlFor="nda" className="font-medium cursor-pointer">
-                    I accept the Non-Disclosure Agreement *
+                  <Label htmlFor="maker-terms" className={`font-medium cursor-pointer ${!makerTermsOpened ? 'text-muted-foreground/50' : ''}`}>
+                    I agree to the Maker Manufacturing Terms (platform-only). *
+                    {!makerTermsOpened && <span className="block text-xs text-muted-foreground mt-0.5">Open "Show full terms" first to enable this.</span>}
                   </Label>
-                  <p className="text-sm text-muted-foreground">
-                    I agree not to commercialize, share, or distribute any designer files I receive through MakeHug.
-                  </p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <Checkbox 
-                  id="quality" 
-                  checked={qualityAccepted}
-                  onCheckedChange={(checked) => setQualityAccepted(checked as boolean)}
-                />
-                <div className="space-y-1">
-                  <Label htmlFor="quality" className="font-medium cursor-pointer">
-                    I certify I meet the quality standards *
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    I confirm my equipment is properly calibrated (±0.2mm tolerance) and I will use materials consistent with the designer's "Real-Scale Proof".
-                  </p>
+              {/* Existing NDA + Quality checkboxes */}
+              <div className="pt-2 border-t border-border space-y-4">
+                <div className="flex items-start gap-3">
+                  <Checkbox 
+                    id="nda" 
+                    checked={ndaAccepted}
+                    onCheckedChange={(checked) => setNdaAccepted(checked as boolean)}
+                  />
+                  <div className="space-y-1">
+                    <Label htmlFor="nda" className="font-medium cursor-pointer">
+                      I accept the Non-Disclosure Agreement *
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      I agree not to commercialize, share, or distribute any designer files I receive through MakeHug.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Checkbox 
+                    id="quality" 
+                    checked={qualityAccepted}
+                    onCheckedChange={(checked) => setQualityAccepted(checked as boolean)}
+                  />
+                  <div className="space-y-1">
+                    <Label htmlFor="quality" className="font-medium cursor-pointer">
+                      I certify I meet the quality standards *
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      I confirm my equipment is properly calibrated (±0.2mm tolerance) and I will use materials consistent with the designer's "Real-Scale Proof".
+                    </p>
+                  </div>
                 </div>
               </div>
             </CardContent>

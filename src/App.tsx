@@ -21,6 +21,7 @@ import Contact from "./pages/Contact";
 import FoundersClub from "./pages/FoundersClub";
 import Shipping from "./pages/Shipping";
 import NotFound from "./pages/NotFound";
+import DesignerTerms from "./pages/DesignerTerms";
 
 // Hub pages
 import HubLayout from "./pages/hub/HubLayout";
@@ -48,6 +49,7 @@ const App = () => (
           <Route path="/start-creating" element={<StartCreating />} />
           <Route path="/join-as-maker" element={<JoinAsMaker />} />
           <Route path="/nda-terms" element={<NDATerms />} />
+          <Route path="/designer-terms" element={<DesignerTerms />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/founders-club" element={<FoundersClub />} />
