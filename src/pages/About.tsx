@@ -62,7 +62,7 @@ export default function About() {
                 </Link>
               </Button>
               <SocialPillarsModal />
-              <Link to="/nda-terms" className="text-sm text-muted-foreground hover:text-secondary underline underline-offset-2 transition-colors">
+              <Link to="/designer-terms" className="text-sm text-muted-foreground hover:text-secondary underline underline-offset-2 transition-colors">
                 Learn More
               </Link>
             </div>
