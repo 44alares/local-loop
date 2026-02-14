@@ -34,9 +34,7 @@ export default function DesignerTerms() {
               MakeHug Terms (Platform-only)
             </h1>
           </div>
-<h1 className="text-display-sm font-bold">
-              MakeHug Terms (Platform-only)
-            </h1>
+
           <div className="prose prose-lg max-w-none">
             <p className="text-lg text-muted-foreground mb-10">
               These terms apply only to listings, orders, manufacturing, and payouts processed on MakeHug. Any agreements made outside MakeHug are separate and do not modify these platform terms unless MakeHug explicitly agrees in writing.
