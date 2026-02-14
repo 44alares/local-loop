@@ -9,7 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
-import { Upload, Image, Camera, Settings, Calculator, Printer, Building2, Palette, CreditCard, CheckCircle2, FileText, AlertCircle } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Upload, Image, Camera, Settings, Calculator, Printer, Building2, Palette, CreditCard, CheckCircle2, FileText, AlertCircle, Info, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { ralColors, RALColor } from '@/data/ralColors';
 import { calculatePrintPrice } from '@/lib/pricing';
 import { Link } from 'react-router-dom';
@@ -36,6 +38,10 @@ export default function StartCreating() {
   const [submitted, setSubmitted] = useState(false);
   const [complexity, setComplexity] = useState<'Functional' | 'Hybrid' | 'Artistic' | ''>('');
   const [fixedFee, setFixedFee] = useState(2);
+  const [creatorTermsOpened, setCreatorTermsOpened] = useState(false);
+  const [creatorTermsAccepted, setCreatorTermsAccepted] = useState(false);
+  const [creatorTermsOpen, setCreatorTermsOpen] = useState(false);
+  const [selectedLicense, setSelectedLicense] = useState('');
 
   // Get fee range based on complexity
   const feeRange = complexity ? FIXED_FEE_RANGES[complexity] : { min: 1, max: 3 };
@@ -399,20 +405,124 @@ export default function StartCreating() {
                 </CardContent>
               </Card>
 
-              {/* Legal Section */}
+              {/* Designer terms & license */}
               <Card className="border-accent/50">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
                     <FileText className="h-4 w-4 text-accent" />
-                    Legal & IP Terms
+                    Designer terms &amp; license
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <Link to="/nda-terms" className="text-secondary underline hover:text-secondary/80 text-sm font-medium">
-                    Read full Non-Disclosure Agreement & IP Terms →
-                  </Link>
+                <CardContent className="space-y-4">
+                  {/* Summary bullets */}
+                  <ul className="list-disc pl-5 space-y-1 text-sm text-muted-foreground">
+                    <li>Platform-only terms: applies only to MakeHug orders and payouts.</li>
+                    <li>You keep ownership of your files.</li>
+                    <li>Makers may use the file only to fulfill MakeHug orders.</li>
+                    <li>No file redistribution by default.</li>
+                    <li>Royalties = Designer Fee + % of sale price.</li>
+                    <li>Remix rules depend on your selected license and Annex I.</li>
+                  </ul>
 
+                  {/* Collapsible full terms */}
+                  <Collapsible open={creatorTermsOpen} onOpenChange={(open) => {
+                    setCreatorTermsOpen(open);
+                    if (open) setCreatorTermsOpened(true);
+                  }}>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="sm" className="w-full justify-between text-sm">
+                        {creatorTermsOpen ? 'Hide full terms' : 'Show full terms'}
+                        {creatorTermsOpen ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="mt-3 p-4 bg-muted/50 rounded-lg text-sm text-muted-foreground space-y-3 max-h-[400px] overflow-y-auto">
+                        <p className="font-bold text-foreground">MakeHug Creator Terms (Platform-only)</p>
+                        <p><strong className="text-foreground">Scope.</strong> These terms apply only to activity on MakeHug (listings, orders, manufacturing, and payouts). External contracts are separate and do not change MakeHug's obligations or payout rules unless MakeHug explicitly agrees in writing.</p>
+                        <p><strong className="text-foreground">Ownership.</strong> You (the Designer) keep ownership of your designs and files.</p>
+                        <p><strong className="text-foreground">Rights confirmation.</strong> You confirm you own the rights to upload the file, or you have sufficient permission to license it for manufacturing and sale as a physical product on MakeHug.</p>
+                        <p><strong className="text-foreground">License to MakeHug (to operate the platform).</strong> You grant MakeHug a non-exclusive license to host, technically copy, convert formats as needed, generate previews, display, and provide the file only to the assigned Maker(s) for valid MakeHug orders, solely to manufacture the ordered quantity.</p>
+                        <p><strong className="text-foreground">File protection (default).</strong> Unless you choose otherwise, Makers and buyers may not redistribute, publish, resell, or share the file, and may not use it for other orders.</p>
+                        <p><strong className="text-foreground">Royalties ("Royalty pool").</strong> For each sale/print on MakeHug, the royalty pool equals: (a) the fixed "Designer Fee" you set for that design, plus (b) a percentage of the physical product sale price. MakeHug pays royalties according to the selected license option and Annex I.</p>
+                        <p><strong className="text-foreground">Removal &amp; enforcement.</strong> MakeHug may suspend listings, withhold payouts, or reverse payouts when reasonably necessary to address fraud, refunds/chargebacks, rights disputes, or violations of these terms.</p>
+                        <p><strong className="text-foreground">Acceptance.</strong> You must actively accept these terms (checkbox) before continuing.</p>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  {/* Checkbox */}
                   <div className="flex items-start gap-2">
+                    <Checkbox
+                      id="creator-terms"
+                      checked={creatorTermsAccepted}
+                      onCheckedChange={(checked) => setCreatorTermsAccepted(checked as boolean)}
+                      disabled={!creatorTermsOpened}
+                    />
+                    <Label htmlFor="creator-terms" className={`cursor-pointer text-sm ${!creatorTermsOpened ? 'text-muted-foreground/50' : ''}`}>
+                      I agree to the MakeHug Creator Terms (platform-only). *
+                      {!creatorTermsOpened && <span className="block text-xs text-muted-foreground mt-0.5">Open "Show full terms" first to enable this.</span>}
+                    </Label>
+                  </div>
+
+                  {/* License selector */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-sm">License type</Label>
+                      <Link to="/designer-terms" className="text-xs text-secondary hover:underline">What is this?</Link>
+                    </div>
+                    <Select value={selectedLicense} onValueChange={setSelectedLicense}>
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Select license type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {complexity === 'Artistic' ? (
+                          <SelectItem value="artistic-no-remixes">Artistic — No Remixes</SelectItem>
+                        ) : (
+                          <>
+                            <SelectItem value="functional-delayed">Functional/Hybrid — Remixes after 6 months</SelectItem>
+                            <SelectItem value="functional-immediate">Functional/Hybrid — Remixes from day 1</SelectItem>
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Info per selected license */}
+                    {selectedLicense === 'artistic-no-remixes' && (
+                      <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/30 rounded p-2">
+                        <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                        <div>
+                          <span>Artistic designs have no remixes allowed. File used only for MakeHug orders.</span>
+                          <Link to="/designer-terms#license-artistic" className="ml-1 text-secondary hover:underline inline-flex items-center gap-0.5">View full license text <ExternalLink className="h-3 w-3" /></Link>
+                        </div>
+                      </div>
+                    )}
+                    {selectedLicense === 'functional-delayed' && (
+                      <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/30 rounded p-2">
+                        <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                        <div>
+                          <span>No remixes for 6 months. After that, only Substantial Improvements qualify. Revenue share applies.</span>
+                          <Link to="/designer-terms#license-functional-delayed" className="ml-1 text-secondary hover:underline inline-flex items-center gap-0.5">View full license text <ExternalLink className="h-3 w-3" /></Link>
+                        </div>
+                      </div>
+                    )}
+                    {selectedLicense === 'functional-immediate' && (
+                      <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/30 rounded p-2">
+                        <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                        <div>
+                          <span>Remixes allowed from day 1, only if they are Substantial Improvements. Revenue share applies immediately.</span>
+                          <Link to="/designer-terms#license-functional-immediate" className="ml-1 text-secondary hover:underline inline-flex items-center gap-0.5">View full license text <ExternalLink className="h-3 w-3" /></Link>
+                        </div>
+                      </div>
+                    )}
+                    {selectedLicense && (
+                      <Link to="/designer-terms#annex-1" className="text-xs text-secondary hover:underline inline-flex items-center gap-1">
+                        View Annex I (Remix Program) <ExternalLink className="h-3 w-3" />
+                      </Link>
+                    )}
+                  </div>
+
+                  {/* Original work + NDA kept */}
+                  <div className="flex items-start gap-2 pt-2 border-t border-border">
                     <Checkbox id="nda" checked={ndaAccepted} onCheckedChange={(checked) => setNdaAccepted(checked as boolean)} />
                     <div className="space-y-0.5">
                       <Label htmlFor="nda" className="font-medium cursor-pointer text-sm">
