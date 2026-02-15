@@ -28,7 +28,7 @@ const blogPosts = [
     id: '3',
     title: 'Design Trends 2026: What is Hot in 3D Printed Products',
     excerpt: 'From geometric minimalism to functional art - explore the design trends shaping our marketplace.',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop',
+    image: designTrendsImg,
     author: 'James Park',
     authorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop',
     date: 'Jan 5, 2024',
