@@ -89,12 +89,12 @@ export default function DesignerTerms() {
               <li><strong className="text-foreground">Remixes on MakeHug:</strong> Not allowed</li>
             </ul>
 
-            {/* ── License: Functional/Hybrid Delayed ── */}
+            {/* ── License: Basic/Functional Delayed ── */}
             <h2 id="license-functional-delayed" className="text-xl font-bold mt-10 mb-4 scroll-mt-24">
-              -Functional/Hybrid — Remixes after 6 months
+              -Basic/Functional — Remixes after 6 months
             </h2>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-3">
-              <li><strong className="text-foreground">Category:</strong> Functional or Hybrid</li>
+              <li><strong className="text-foreground">Category:</strong> Basic or Functional</li>
               <li><strong className="text-foreground">File use:</strong> File may be used only to manufacture MakeHug orders. No redistribution or reuse for other orders.</li>
               <li><strong className="text-foreground">Remixes on MakeHug:</strong> Disabled for the first 6 months, then allowed only if the remix qualifies as a Substantial Improvement (see Annex I).</li>
             </ul>
@@ -105,12 +105,12 @@ export default function DesignerTerms() {
               <li>After month 12: the royalty pool is split equally among all eligible actors (Original Designer + eligible remix creators).</li>
             </ul>
 
-            {/* ── License: Functional/Hybrid Immediate ── */}
+            {/* ── License: Basic/Functional Immediate ── */}
             <h2 id="license-functional-immediate" className="text-xl font-bold mt-10 mb-4 scroll-mt-24">
-              -Functional/Hybrid — Remixes from day 1
+              -Basic/Functional — Remixes from day 1
             </h2>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground mb-3">
-              <li><strong className="text-foreground">Category:</strong> Functional or Hybrid</li>
+              <li><strong className="text-foreground">Category:</strong> Basic or Functional</li>
               <li><strong className="text-foreground">File use:</strong> File may be used only to manufacture MakeHug orders. No redistribution or reuse for other orders.</li>
               <li><strong className="text-foreground">Remixes on MakeHug:</strong> Allowed from day 1 only if the remix qualifies as a Substantial Improvement (see Annex I).</li>
             </ul>

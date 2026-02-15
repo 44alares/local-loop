@@ -22,8 +22,8 @@ export const COMMISSION_RATES = {
 
 // Designer commission rates based on product type
 export const DESIGNER_RATES: Record<ProductType, number> = {
-  functional: 0.08,  // 8%
-  hybrid: 0.12,      // 12%
+  basic: 0.08,       // 8%  (was "functional")
+  functional: 0.12,  // 12% (was "hybrid")
   artistic: 0.16,    // 16%
 };
 
@@ -86,10 +86,10 @@ export interface FullPriceBreakdown {
   makerRate: number;
 }
 
-// Fixed designer fee added to Functional and Hybrid products
+// Fixed designer fee added to Basic and Functional products
 export const DESIGNER_FIXED_FEE: Record<ProductType, number> = {
+  basic: 1.00,
   functional: 1.00,
-  hybrid: 1.00,
   artistic: 0,
 };
 
@@ -98,8 +98,8 @@ export function calculateFullBreakdown(buyerPrice: number, productType: ProductT
   const totalBuyerPrice = buyerPrice + fixedFee;
   const designerRate = DESIGNER_RATES[productType];
 
-  if (productType === 'functional') {
-    // Functional: fixed 75% maker, 3% payment, then balance designer+platform
+  if (productType === 'basic') {
+    // Basic: fixed 75% maker, 3% payment, then balance designer+platform
     const paymentProcessing = Math.round(totalBuyerPrice * 0.03 * 100) / 100;
     const makerPayout = Math.round(totalBuyerPrice * 0.75 * 100) / 100;
     const baseDesignerRoyalty = Math.round((buyerPrice * designerRate + fixedFee) * 100) / 100;
