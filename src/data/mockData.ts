@@ -331,7 +331,7 @@ export const mockProducts: Product[] = [
     id: 'a5',
     name: 'Cyberpunk Street Samurai',
     description: 'A futuristic warrior figure blending traditional samurai aesthetics with cyberpunk elements. Original character design.',
-    images: [cyberpunkSamuraiImg],
+    images: [cyberpunkSamuraiImg, samuraiImg],
     price: 75,
     currency: 'USD',
     designer: mockDesigners[2],
