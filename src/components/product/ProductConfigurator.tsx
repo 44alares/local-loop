@@ -11,10 +11,12 @@ import {
   ARTISTIC_MATERIAL_SURCHARGES,
   QUALITY_SURCHARGES,
   ARTISTIC_QUALITY_SURCHARGES,
-  MIN_PRODUCT_PRICE
+  MIN_PRODUCT_PRICE,
+  getMulticolorSurcharge,
 } from '@/lib/pricing';
 import { getCheapestCombo } from '@/lib/cheapestCombo';
 import { productTypeLabels } from '@/data/categories';
+import { getAvailablePalettes, multicolorHexMap, type PaletteId } from '@/data/multicolorPalettes';
 import { Palette, Layers, Sparkles, Info, Printer, Building2, CreditCard, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -27,8 +29,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export type SizeOption = 'S' | 'M' | 'L';
+export type ColorMode = 'single' | 'multi';
 
 interface ProductConfiguratorProps {
   product: Product;
@@ -42,6 +52,11 @@ export interface ConfigState {
   selectedMaterial: string;
   selectedQuality: 'standard' | 'premium' | 'ultra';
   selectedSize: SizeOption;
+  colorMode?: ColorMode;
+  multicolorCount?: number;
+  multicolorPalette?: string;
+  multicolorColors?: string[];
+  colorMatchPreference?: 'close' | 'exact';
 }
 
 // Size scaling factors
@@ -85,11 +100,43 @@ const materialTooltips: Record<string, string> = {
   TPU: 'Flexible material; great for grips and shock absorption',
 };
 
-// Quality tooltip descriptions (Spanish as requested)
+// Quality tooltip descriptions
 const qualityTooltips: Record<string, string> = {
   standard: 'FDM, 0.32 height layer',
   premium: 'FDM · 0.16 mm layer height',
   ultra: 'Resin, 0.05 height layer',
+};
+
+// Color hex map
+const colorHexMap: Record<string, string> = {
+  'White': '#FFFFFF',
+  'Black': '#1A1A1A',
+  'Grey': '#808080',
+  'Red': '#E53935',
+  'Blue': '#1E88E5',
+  'Green': '#43A047',
+  'Yellow': '#FDD835',
+  'Orange': '#FB8C00',
+  'Purple': '#8E24AA',
+  'Pink': '#D81B60',
+  'Natural': '#E8DCC4',
+  'Clear': '#E8F4F8',
+  'Matte Black': '#2D2D2D',
+  'Glossy Black': '#0A0A0A',
+  'Pearl White': '#F5F5F5',
+  'Bronze': '#CD7F32',
+  'Gold': '#FFD700',
+  'Beige': '#D4C5A9',
+  'Brown': '#795548',
+};
+
+// Basic (always available) colors per material
+const materialBasicColors: Record<string, string[]> = {
+  PLA: ['White', 'Black', 'Grey', 'Red', 'Blue', 'Green'],
+  PETG: ['White', 'Black', 'Grey'],
+  ABS: ['White', 'Black', 'Grey'],
+  Nylon: ['White', 'Black', 'Grey'],
+  Resin: ['White', 'Grey'],
 };
 
 // Breakdown row config
@@ -140,7 +187,7 @@ const breakdownRowConfig = [
   },
 ] as const;
 
-function BreakdownRows({ breakdown, productType }: { breakdown: ReturnType<typeof calculateFullBreakdown>; productType: string }) {
+function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount }: { breakdown: ReturnType<typeof calculateFullBreakdown>; productType: string; multicolorSurchargeAmount?: number }) {
   const [openRow, setOpenRow] = useState<string | null>(null);
 
   return (
@@ -149,6 +196,16 @@ function BreakdownRows({ breakdown, productType }: { breakdown: ReturnType<typeo
         <span className="text-muted-foreground">Buyer price</span>
         <span className="font-semibold">${breakdown.buyerPrice.toFixed(2)}</span>
       </div>
+
+      {multicolorSurchargeAmount != null && multicolorSurchargeAmount > 0 && (
+        <div className="flex justify-between py-1 border-b border-border/50">
+          <span className="text-muted-foreground text-xs flex items-center gap-1">
+            <Palette className="h-3 w-3" />
+            Multi-color surcharge
+          </span>
+          <span className="text-xs font-medium">${multicolorSurchargeAmount.toFixed(2)}</span>
+        </div>
+      )}
 
       {breakdownRowConfig.map((row) => {
         const IconComp = row.icon;
@@ -177,11 +234,11 @@ function BreakdownRows({ breakdown, productType }: { breakdown: ReturnType<typeo
 
 export function ProductConfigurator({ product, selectedMakerId, onPriceChange, onConfigChange }: ProductConfiguratorProps) {
   const isArtistic = product.category === 'artistic';
+  const supportsMulticolor = product.supports_multicolor === true;
   
   // Get available materials based on product type
   const availableMaterials = useMemo(() => {
     if (isArtistic) {
-      // Artistic only allows PLA and Resin (filtered by what product supports)
       return product.materials.filter(m => ['PLA', 'Resin'].includes(m));
     }
     return product.materials;
@@ -202,27 +259,64 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<SizeOption>(cheapest.size);
   
+  // Multi-color state
+  const [colorMode, setColorMode] = useState<ColorMode>('single');
+  const [multicolorPalette, setMulticolorPalette] = useState<PaletteId>('base');
+  const [multicolorCount, setMulticolorCount] = useState<number>(2);
+  const [multicolorColors, setMulticolorColors] = useState<string[]>([]);
+  const [colorMatchPreference, setColorMatchPreference] = useState<'close' | 'exact'>('close');
+  
   const showSizeOptions = hasSizeOptions(product.category);
+  
+  // Get selected maker data
+  const selectedMakerData = useMemo(() => {
+    if (!selectedMakerId) return null;
+    return mockMakers.find(m => m.id === selectedMakerId) || null;
+  }, [selectedMakerId]);
+
+  // Available palettes for current material and maker
+  const availablePalettes = useMemo(() => {
+    const makerConfig = selectedMakerData?.multicolorByMaterial?.[selectedMaterial];
+    const makerPalettes = makerConfig?.palettesReady;
+    return getAvailablePalettes(selectedMaterial, makerPalettes);
+  }, [selectedMaterial, selectedMakerData]);
+
+  // Current palette colors
+  const currentPaletteColors = useMemo(() => {
+    const palette = availablePalettes.find(p => p.id === multicolorPalette);
+    return palette?.colors || [];
+  }, [availablePalettes, multicolorPalette]);
+
+  // Reset palette when material changes
+  useEffect(() => {
+    if (availablePalettes.length > 0 && !availablePalettes.find(p => p.id === multicolorPalette)) {
+      setMulticolorPalette(availablePalettes[0].id);
+    }
+  }, [availablePalettes, multicolorPalette]);
+
+  // Reset multicolor colors when palette or count changes
+  useEffect(() => {
+    if (colorMode === 'multi') {
+      const clamped = Math.min(multicolorCount, currentPaletteColors.length);
+      setMulticolorColors(currentPaletteColors.slice(0, clamped));
+    }
+  }, [multicolorPalette, multicolorCount, currentPaletteColors, colorMode]);
   
   // Handle Resin ↔ Ultra pairing for Artistic products
   useEffect(() => {
     if (isArtistic) {
-      // If Resin is selected, auto-select Ultra
       if (selectedMaterial === 'Resin' && selectedQuality !== 'ultra') {
         setSelectedQuality('ultra');
       }
-      // If Ultra is selected and material is not Resin, switch to Resin
       if (selectedQuality === 'ultra' && selectedMaterial !== 'Resin' && availableMaterials.includes('Resin')) {
         setSelectedMaterial('Resin');
       }
-      // If Premium is selected, ensure material is not Resin (switch to PLA)
       if (selectedQuality === 'premium' && selectedMaterial === 'Resin') {
         setSelectedMaterial(availableMaterials.includes('PLA') ? 'PLA' : availableMaterials[0]);
       }
     }
   }, [selectedMaterial, selectedQuality, isArtistic, availableMaterials]);
   
-  // Handle material change with Resin↔Ultra pairing
   const handleMaterialChange = (material: string) => {
     setSelectedMaterial(material);
     if (isArtistic && material === 'Resin') {
@@ -232,7 +326,6 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
     }
   };
   
-  // Handle quality change with Resin↔Ultra pairing
   const handleQualityChange = (quality: 'standard' | 'premium' | 'ultra') => {
     setSelectedQuality(quality);
     if (isArtistic && quality === 'ultra' && selectedMaterial !== 'Resin' && availableMaterials.includes('Resin')) {
@@ -241,9 +334,9 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
       setSelectedMaterial(availableMaterials.includes('PLA') ? 'PLA' : availableMaterials[0]);
     }
   };
-  
-  // Get available colors based on selected material
-  const availableColors = useMemo(() => {
+
+  // Basic colors always come from the global mandatory mapping
+  const basicColors = useMemo(() => {
     if (isArtistic) {
       if (selectedMaterial === 'PLA') {
         return product.availableColors.pla || product.availableColors.default || [];
@@ -252,106 +345,100 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
         return product.availableColors.resin || [];
       }
     }
-    return product.availableColors.default || product.availableColors.pla || [];
+    return materialBasicColors[selectedMaterial] || [];
   }, [selectedMaterial, product.availableColors, isArtistic]);
+
+  // Derive optional colors from the selected maker
+  const optionalColors = useMemo(() => {
+    if (!selectedMakerData) return [];
+    const basics = materialBasicColors[selectedMaterial] || [];
+    const makerAdditional = selectedMakerData.additionalColorsByMaterial?.[selectedMaterial] || [];
+    return makerAdditional.filter(c => !basics.includes(c));
+  }, [selectedMaterial, selectedMakerData]);
+
+  // Reset color when material or maker changes
+  useEffect(() => {
+    if (colorMode === 'single') {
+      const allAvailable = [...basicColors, ...optionalColors];
+      if (selectedColor && !allAvailable.includes(selectedColor)) {
+        setSelectedColor(basicColors[0] || null);
+      } else if (!selectedColor && basicColors.length > 0) {
+        setSelectedColor(basicColors[0]);
+      }
+    }
+  }, [basicColors, optionalColors, selectedColor, colorMode]);
+
+  // Calculate multi-color surcharge amount (for display)
+  const effectiveMulticolorCount = colorMode === 'multi' ? multicolorCount : 0;
+  const multicolorSurchargeRate = getMulticolorSurcharge(effectiveMulticolorCount);
   
-  
-  // Calculate buyer price (enforcing $15 minimum), applying size factor
+  // Calculate buyer price
   const buyerPrice = useMemo(() => {
     const calculated = calculateBuyerPrice({
       basePrice: product.price,
       material: selectedMaterial,
       quality: selectedQuality,
       isArtistic,
+      multicolorCount: effectiveMulticolorCount,
+    });
+    const sizeFactor = showSizeOptions ? SIZE_PRICE_FACTORS[selectedSize] : 1;
+    return Math.max(Math.round(calculated * sizeFactor), MIN_PRODUCT_PRICE);
+  }, [product.price, selectedMaterial, selectedQuality, isArtistic, selectedSize, showSizeOptions, effectiveMulticolorCount]);
+
+  // Price without multicolor (for calculating surcharge amount)
+  const basePriceWithoutMulticolor = useMemo(() => {
+    const calculated = calculateBuyerPrice({
+      basePrice: product.price,
+      material: selectedMaterial,
+      quality: selectedQuality,
+      isArtistic,
+      multicolorCount: 0,
     });
     const sizeFactor = showSizeOptions ? SIZE_PRICE_FACTORS[selectedSize] : 1;
     return Math.max(Math.round(calculated * sizeFactor), MIN_PRODUCT_PRICE);
   }, [product.price, selectedMaterial, selectedQuality, isArtistic, selectedSize, showSizeOptions]);
+
+  const multicolorSurchargeAmount = buyerPrice - basePriceWithoutMulticolor;
   
-  // Calculate full breakdown (includes +$1 fixed fee for functional/mixed)
   const breakdown = useMemo(() => {
     return calculateFullBreakdown(buyerPrice, product.productType);
   }, [buyerPrice, product.productType]);
   
-  // Use breakdown.buyerPrice as the displayed price (includes fixed fee)
   const displayPrice = breakdown.buyerPrice;
   
   // Notify parent of price changes
   useEffect(() => {
     onPriceChange?.(displayPrice);
-    onConfigChange?.({ selectedColor, selectedMaterial, selectedQuality, selectedSize });
-  }, [displayPrice, selectedColor, selectedMaterial, selectedQuality, selectedSize, onPriceChange, onConfigChange]);
+    onConfigChange?.({ 
+      selectedColor: colorMode === 'single' ? selectedColor : null, 
+      selectedMaterial, 
+      selectedQuality, 
+      selectedSize,
+      colorMode,
+      multicolorCount: colorMode === 'multi' ? multicolorCount : undefined,
+      multicolorPalette: colorMode === 'multi' ? multicolorPalette : undefined,
+      multicolorColors: colorMode === 'multi' ? multicolorColors : undefined,
+      colorMatchPreference: colorMode === 'multi' ? colorMatchPreference : undefined,
+    });
+  }, [displayPrice, selectedColor, selectedMaterial, selectedQuality, selectedSize, colorMode, multicolorCount, multicolorPalette, multicolorColors, colorMatchPreference, onPriceChange, onConfigChange]);
   
-  // Get surcharge label for material - show "Base" for first material
   const getMaterialLabel = (material: string, index: number) => {
     if (index === 0) return 'Base';
     return null;
   };
   
-  // Get surcharge label for quality - show "Base" for first quality
   const getQualityLabel = (quality: string, index: number) => {
     if (index === 0) return 'Base';
     return null;
   };
-  
-  // Basic (always available) colors per material
-  const materialBasicColors: Record<string, string[]> = {
-    PLA: ['White', 'Black', 'Grey', 'Red', 'Blue', 'Green'],
-    PETG: ['White', 'Black', 'Grey'],
-    ABS: ['White', 'Black', 'Grey'],
-    Nylon: ['White', 'Black', 'Grey'],
-    Resin: ['White', 'Grey'],
+
+  const handleMulticolorColorChange = (index: number, color: string) => {
+    setMulticolorColors(prev => {
+      const next = [...prev];
+      next[index] = color;
+      return next;
+    });
   };
-
-  // Color hex map (simplified)
-  const colorHexMap: Record<string, string> = {
-    'White': '#FFFFFF',
-    'Black': '#1A1A1A',
-    'Grey': '#808080',
-    'Red': '#E53935',
-    'Blue': '#1E88E5',
-    'Green': '#43A047',
-    'Yellow': '#FDD835',
-    'Orange': '#FB8C00',
-    'Purple': '#8E24AA',
-    'Pink': '#D81B60',
-    'Natural': '#E8DCC4',
-    'Clear': '#E8F4F8',
-    'Matte Black': '#2D2D2D',
-    'Glossy Black': '#0A0A0A',
-    'Pearl White': '#F5F5F5',
-    'Bronze': '#CD7F32',
-    'Gold': '#FFD700',
-  };
-
-  // Basic colors always come from the global mandatory mapping, never filtered by product
-  const basicColors = useMemo(() => {
-    return materialBasicColors[selectedMaterial] || [];
-  }, [selectedMaterial]);
-
-  // Derive optional colors from the selected maker's additionalColorsByMaterial
-  const selectedMakerData = useMemo(() => {
-    if (!selectedMakerId) return null;
-    return mockMakers.find(m => m.id === selectedMakerId) || null;
-  }, [selectedMakerId]);
-
-  const optionalColors = useMemo(() => {
-    if (!selectedMakerData) return [];
-    const basics = materialBasicColors[selectedMaterial] || [];
-    const makerAdditional = selectedMakerData.additionalColorsByMaterial?.[selectedMaterial] || [];
-    // Filter out any that duplicate basic colors
-    return makerAdditional.filter(c => !basics.includes(c));
-  }, [selectedMaterial, selectedMakerData]);
-
-  // Reset color when material or maker changes
-  useEffect(() => {
-    const allAvailable = [...basicColors, ...optionalColors];
-    if (selectedColor && !allAvailable.includes(selectedColor)) {
-      setSelectedColor(basicColors[0] || null);
-    } else if (!selectedColor && basicColors.length > 0) {
-      setSelectedColor(basicColors[0]);
-    }
-  }, [basicColors, optionalColors, selectedColor]);
   
   return (
     <div className="space-y-5">
@@ -363,73 +450,62 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
         </Badge>
       </div>
       
-      {/* Color Selector */}
-      <div className="space-y-3">
-        <Label className="flex items-center gap-2 text-sm">
-          <Popover>
-            <PopoverTrigger asChild>
-              <button type="button" className="inline-flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors">
-                <Palette className="h-4 w-4" />
-                Color
-                <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
-              Color may vary slightly depending on manufacturing settings and the filament manufacturer.
-            </PopoverContent>
-          </Popover>
-        </Label>
+      {/* Color Mode Toggle (only for multicolor products) */}
+      {supportsMulticolor && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-sm">
+            <Palette className="h-4 w-4" />
+            Color mode
+          </Label>
+          <div className="flex gap-2">
+            <Button
+              variant={colorMode === 'single' ? 'secondary' : 'outline'}
+              size="sm"
+              onClick={() => setColorMode('single')}
+              className="h-8 text-xs"
+            >
+              Single color
+            </Button>
+            <Button
+              variant={colorMode === 'multi' ? 'secondary' : 'outline'}
+              size="sm"
+              onClick={() => setColorMode('multi')}
+              className="h-8 text-xs"
+            >
+              Multi-color
+            </Button>
+          </div>
+        </div>
+      )}
 
-        {!selectedMaterial ? (
-          <p className="text-xs text-muted-foreground">Select a material to see available colors.</p>
-        ) : (
-          <div className="space-y-3">
-            {/* Always available */}
-            {basicColors.length > 0 && (
-              <div className="space-y-1.5">
-                <p className="text-xs font-medium text-muted-foreground">Always available</p>
-                <div className="flex flex-wrap gap-2">
-                  {basicColors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={cn(
-                        "h-8 w-8 rounded-lg border-2 transition-all relative",
-                        selectedColor === color
-                          ? "border-secondary scale-110 shadow-md"
-                          : "border-border hover:scale-105"
-                      )}
-                      style={{ backgroundColor: colorHexMap[color] || '#CCC' }}
-                      title={color}
-                    >
-                      {selectedColor === color && (
-                        <span className="absolute inset-0 flex items-center justify-center">
-                          <span className={cn(
-                            "h-2 w-2 rounded-full",
-                            ['White', 'Clear', 'Natural', 'Pearl White', 'Yellow', 'Gold'].includes(color)
-                              ? 'bg-foreground'
-                              : 'bg-white'
-                          )} />
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+      {/* Single Color Selector */}
+      {colorMode === 'single' && (
+        <div className="space-y-3">
+          <Label className="flex items-center gap-2 text-sm">
+            <Popover>
+              <PopoverTrigger asChild>
+                <button type="button" className="inline-flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors">
+                  <Palette className="h-4 w-4" />
+                  Color
+                  <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
+                Color may vary slightly depending on manufacturing settings and the filament manufacturer.
+              </PopoverContent>
+            </Popover>
+          </Label>
 
-            {/* Optional colors */}
-            <div className="space-y-1.5">
-              <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                Optional colors
-                {!selectedMakerId && (
-                  <span className="text-xs italic text-muted-foreground/70">— To see all optional colors, select a maker.</span>
-                )}
-              </p>
-              {selectedMakerId ? (
-                optionalColors.length > 0 ? (
+          {!selectedMaterial ? (
+            <p className="text-xs text-muted-foreground">Select a material to see available colors.</p>
+          ) : (
+            <div className="space-y-3">
+              {/* Always available */}
+              {basicColors.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-xs font-medium text-muted-foreground">Always available</p>
                   <div className="flex flex-wrap gap-2">
-                    {optionalColors.map((color) => (
+                    {basicColors.map((color) => (
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
@@ -455,18 +531,166 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
                       </button>
                     ))}
                   </div>
-                ) : (
-                  <p className="text-xs text-muted-foreground italic">No optional colors available for this maker.</p>
-                )
-              ) : null}
+                </div>
+              )}
+
+              {/* Optional colors */}
+              <div className="space-y-1.5">
+                <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                  Optional colors
+                  {!selectedMakerId && (
+                    <span className="text-xs italic text-muted-foreground/70">— To see all optional colors, select a maker.</span>
+                  )}
+                </p>
+                {selectedMakerId ? (
+                  optionalColors.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {optionalColors.map((color) => (
+                        <button
+                          key={color}
+                          onClick={() => setSelectedColor(color)}
+                          className={cn(
+                            "h-8 w-8 rounded-lg border-2 transition-all relative",
+                            selectedColor === color
+                              ? "border-secondary scale-110 shadow-md"
+                              : "border-border hover:scale-105"
+                          )}
+                          style={{ backgroundColor: colorHexMap[color] || '#CCC' }}
+                          title={color}
+                        >
+                          {selectedColor === color && (
+                            <span className="absolute inset-0 flex items-center justify-center">
+                              <span className={cn(
+                                "h-2 w-2 rounded-full",
+                                ['White', 'Clear', 'Natural', 'Pearl White', 'Yellow', 'Gold'].includes(color)
+                                  ? 'bg-foreground'
+                                  : 'bg-white'
+                              )} />
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground italic">No optional colors available for this maker.</p>
+                  )
+                ) : null}
+              </div>
+            </div>
+          )}
+
+          {selectedColor && (
+            <p className="text-xs text-muted-foreground">Selected: {selectedColor}</p>
+          )}
+        </div>
+      )}
+
+      {/* Multi-color Selector */}
+      {colorMode === 'multi' && supportsMulticolor && (
+        <div className="space-y-3 p-3 rounded-lg border border-secondary/30 bg-secondary/5">
+          <Label className="flex items-center gap-2 text-sm font-semibold">
+            <Palette className="h-4 w-4 text-secondary" />
+            Multi-color Setup
+          </Label>
+
+          {/* Palette selector */}
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground">Palette</p>
+            <div className="flex gap-2">
+              {availablePalettes.map((palette) => (
+                <Button
+                  key={palette.id}
+                  variant={multicolorPalette === palette.id ? 'secondary' : 'outline'}
+                  size="sm"
+                  onClick={() => setMulticolorPalette(palette.id)}
+                  className="h-7 text-xs"
+                >
+                  {palette.label}
+                  {palette.required && <span className="text-xs opacity-60 ml-1">(default)</span>}
+                </Button>
+              ))}
             </div>
           </div>
-        )}
 
-        {selectedColor && (
-          <p className="text-xs text-muted-foreground">Selected: {selectedColor}</p>
-        )}
-      </div>
+          {/* Number of colors */}
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground">Number of colors</p>
+            <div className="flex gap-2">
+              {[2, 3, 4].map((n) => (
+                <Button
+                  key={n}
+                  variant={multicolorCount === n ? 'secondary' : 'outline'}
+                  size="sm"
+                  onClick={() => setMulticolorCount(n)}
+                  className="h-7 text-xs min-w-[3rem]"
+                >
+                  {n}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Color dropdowns */}
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-muted-foreground">Select colors</p>
+            <div className="grid grid-cols-2 gap-2">
+              {Array.from({ length: multicolorCount }).map((_, i) => (
+                <div key={i} className="space-y-1">
+                  <label className="text-xs text-muted-foreground">Color {i + 1}</label>
+                  <Select
+                    value={multicolorColors[i] || ''}
+                    onValueChange={(val) => handleMulticolorColorChange(i, val)}
+                  >
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue placeholder="Select..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currentPaletteColors.map((color) => (
+                        <SelectItem key={color} value={color}>
+                          <span className="flex items-center gap-2">
+                            <span
+                              className="inline-block h-3 w-3 rounded-full border border-border"
+                              style={{ backgroundColor: colorHexMap[color] || multicolorHexMap[color] || '#CCC' }}
+                            />
+                            {color}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Color matching preference */}
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground">Color matching</p>
+            <div className="flex gap-2">
+              <Button
+                variant={colorMatchPreference === 'close' ? 'secondary' : 'outline'}
+                size="sm"
+                onClick={() => setColorMatchPreference('close')}
+                className="h-7 text-xs"
+              >
+                Close match OK
+              </Button>
+              <Button
+                variant={colorMatchPreference === 'exact' ? 'secondary' : 'outline'}
+                size="sm"
+                onClick={() => setColorMatchPreference('exact')}
+                className="h-7 text-xs"
+              >
+                Exact match only
+              </Button>
+            </div>
+          </div>
+
+          <p className="text-xs text-muted-foreground italic">
+            Multi-color depends on local maker availability.
+          </p>
+        </div>
+      )}
       
       {/* Material Selector */}
       <div className="space-y-2">
@@ -595,7 +819,11 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
             Fees & Payout Breakdown
           </div>
           
-          <BreakdownRows breakdown={breakdown} productType={product.productType} />
+          <BreakdownRows 
+            breakdown={breakdown} 
+            productType={product.productType} 
+            multicolorSurchargeAmount={colorMode === 'multi' ? multicolorSurchargeAmount : undefined}
+          />
           
           <p className="text-xs text-muted-foreground mt-2">
             Product type ({productTypeLabels[product.productType]}) is set by the designer.

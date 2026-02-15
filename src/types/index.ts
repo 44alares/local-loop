@@ -7,6 +7,15 @@ export interface Designer {
   totalDesigns: number;
 }
 
+export type MulticolorCapability = 'none' | 'automatic' | 'manual';
+
+export interface MakerMulticolorConfig {
+  capability: MulticolorCapability;
+  maxColors: number;
+  palettesReady: ('base' | 'earth' | 'accent')[];
+  loadedColors?: string[];
+}
+
 export interface Maker {
   id: string;
   name: string;
@@ -20,6 +29,7 @@ export interface Maker {
   materials: string[];
   colors: string[];
   additionalColorsByMaterial?: Record<string, string[]>;
+  multicolorByMaterial?: Record<string, MakerMulticolorConfig>;
   leadTime: string;
   verified: boolean;
 }
@@ -30,6 +40,16 @@ export interface ProductColorSpec {
   pla?: string[];
   resin?: string[];
   default?: string[];
+}
+
+export type MulticolorMethod = 'automatic' | 'by-parts' | 'manual-layer';
+
+export interface ProductMulticolorConfig {
+  method: MulticolorMethod;
+  recommendedPalettes: ('base' | 'earth' | 'accent')[];
+  minColors: number;
+  maxColors: number;
+  criticalColors?: string;
 }
 
 export interface Product {
@@ -56,6 +76,8 @@ export interface Product {
   rating: number;
   reviewCount: number;
   makerCount: number;
+  supports_multicolor?: boolean;
+  multicolorConfig?: ProductMulticolorConfig;
 }
 
 export type ProductCategory = 'functional' | 'desktop' | 'decoration' | 'kids' | 'gaming' | 'repair' | 'artistic' | 'other';

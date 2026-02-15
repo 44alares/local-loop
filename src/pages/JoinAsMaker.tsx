@@ -88,6 +88,21 @@ export default function JoinAsMaker() {
   const [additionalRalColors, setAdditionalRalColors] = useState<Record<MaterialType, string[]>>({
     PLA: [], PETG: [], ABS: [], Nylon: [], Resin: [],
   });
+  // Multicolor capability per material
+  type MulticolorCap = 'none' | 'automatic' | 'manual';
+  const [multicolorCapability, setMulticolorCapability] = useState<Record<MaterialType, MulticolorCap>>({
+    PLA: 'none', PETG: 'none', ABS: 'none', Nylon: 'none', Resin: 'none',
+  });
+  const [multicolorMaxColors, setMulticolorMaxColors] = useState<Record<MaterialType, number>>({
+    PLA: 4, PETG: 4, ABS: 4, Nylon: 4, Resin: 4,
+  });
+  const [paletteReadiness, setPaletteReadiness] = useState<Record<MaterialType, { earth: boolean; accent: boolean }>>({
+    PLA: { earth: false, accent: false },
+    PETG: { earth: false, accent: false },
+    ABS: { earth: false, accent: false },
+    Nylon: { earth: false, accent: false },
+    Resin: { earth: false, accent: false },
+  });
   // ndaAccepted removed — covered by makerTermsAccepted
   const [qualityAccepted, setQualityAccepted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -433,6 +448,80 @@ export default function JoinAsMaker() {
                       </div>
                     );
                   })}
+
+                  {/* Multi-color capability per material */}
+                  <div className="space-y-4 pt-4 border-t border-border">
+                    <Label className="font-medium">Multi-color Capability</Label>
+                    {selectedMaterials.filter(m => ['PLA', 'PETG'].includes(m)).map((mat) => (
+                      <div key={`mc-${mat}`} className="space-y-3 p-3 rounded-lg border border-border">
+                        <p className="text-sm font-semibold">{mat}</p>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-muted-foreground">Multi-color capability</Label>
+                          <Select
+                            value={multicolorCapability[mat]}
+                            onValueChange={(val) => setMulticolorCapability(prev => ({ ...prev, [mat]: val as MulticolorCap }))}
+                          >
+                            <SelectTrigger className="h-9">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">None</SelectItem>
+                              <SelectItem value="automatic">Automatic (AMS/MMU)</SelectItem>
+                              <SelectItem value="manual">Manual by-layer</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {multicolorCapability[mat] !== 'none' && (
+                          <>
+                            <div className="space-y-2">
+                              <Label className="text-xs text-muted-foreground">Max colors per job</Label>
+                              <Input
+                                type="number"
+                                min={2}
+                                max={8}
+                                value={multicolorMaxColors[mat]}
+                                onChange={(e) => setMulticolorMaxColors(prev => ({ ...prev, [mat]: Math.max(2, Math.min(8, parseInt(e.target.value) || 2)) }))}
+                                className="h-9 w-24"
+                              />
+                              <p className="text-xs text-muted-foreground">Buyer requests are capped at 4 colors.</p>
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-xs text-muted-foreground">Palette readiness</Label>
+                              <div className="flex flex-wrap gap-3">
+                                <div className="flex items-center gap-2">
+                                  <Checkbox checked={true} disabled />
+                                  <Label className="text-xs">Base palette (always)</Label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Checkbox
+                                    checked={paletteReadiness[mat].earth}
+                                    onCheckedChange={(checked) => setPaletteReadiness(prev => ({
+                                      ...prev,
+                                      [mat]: { ...prev[mat], earth: checked as boolean }
+                                    }))}
+                                  />
+                                  <Label className="text-xs cursor-pointer">Earth palette ready</Label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Checkbox
+                                    checked={paletteReadiness[mat].accent}
+                                    onCheckedChange={(checked) => setPaletteReadiness(prev => ({
+                                      ...prev,
+                                      [mat]: { ...prev[mat], accent: checked as boolean }
+                                    }))}
+                                  />
+                                  <Label className="text-xs cursor-pointer">Accent palette ready</Label>
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                    {selectedMaterials.filter(m => ['PLA', 'PETG'].includes(m)).length === 0 && (
+                      <p className="text-xs text-muted-foreground">Select PLA or PETG to configure multi-color capability.</p>
+                    )}
+                  </div>
                 </>
               )}
             </CardContent>
