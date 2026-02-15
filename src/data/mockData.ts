@@ -17,6 +17,7 @@ import parametricWrenchImg from '@/assets/products/parametric-wrench.jpg';
 import customControllerGripsImg from '@/assets/products/custom-controller-grips.jpg';
 import dishwasherBasketWheelImg from '@/assets/products/dishwasher-basket-wheel.jpg';
 import vacuumAdapterImg from '@/assets/products/vacuum-adapter.jpg';
+import keycapSetImg from '@/assets/products/keycap-set.jpg';
 
 export const mockDesigners: Designer[] = [
   {
@@ -264,7 +265,7 @@ export const mockProducts: Product[] = [
      id: 'p12',
      name: 'Mechanical Keycap Set',
      description: 'Custom artisan keycaps for mechanical keyboards. Unique designs that stand out.',
-     images: ['https://images.unsplash.com/photo-1595225476474-87563907a212?w=600&h=600&fit=crop'],
+     images: [keycapSetImg],
      price: 28,
      currency: 'USD',
      designer: mockDesigners[0],
