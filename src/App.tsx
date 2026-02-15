@@ -22,6 +22,8 @@ import FoundersClub from "./pages/FoundersClub";
 import Shipping from "./pages/Shipping";
 import NotFound from "./pages/NotFound";
 import DesignerTerms from "./pages/DesignerTerms";
+import Privacy from "./pages/Privacy";
+import Cookies from "./pages/Cookies";
 
 // Hub pages
 import HubLayout from "./pages/hub/HubLayout";
@@ -54,6 +56,8 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/founders-club" element={<FoundersClub />} />
           <Route path="/shipping" element={<Shipping />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/cookies" element={<Cookies />} />
           {/* Member Hub */}
           <Route path="/hub" element={<HubLayout />}>
             <Route index element={<HubOverview />} />
