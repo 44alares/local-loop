@@ -1,6 +1,7 @@
 import { Layout } from '@/components/layout/Layout';
 import sustainabilityImg from '@/assets/community/3d-printing-sustainability.png';
 import mariaImg from '@/assets/community/blog_maria.jpg';
+import designTrendsImg from '@/assets/community/design-trends.png';
 
 const blogPosts = [
   {
