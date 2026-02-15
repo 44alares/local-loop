@@ -348,18 +348,10 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
     }
   };
 
-  // Basic colors from shared config
+  // Basic colors from shared materialsConfig (single source of truth for all product pages)
   const basicColors = useMemo(() => {
-    if (isArtistic) {
-      if (selectedMaterial === 'PLA') {
-        return product.availableColors.pla || product.availableColors.default || [];
-      }
-      if (selectedMaterial === 'Resin') {
-        return product.availableColors.resin || [];
-      }
-    }
     return getBasicColorNames(selectedMaterial);
-  }, [selectedMaterial, product.availableColors, isArtistic]);
+  }, [selectedMaterial]);
 
   // Derive optional colors from the selected maker
   const optionalColors = useMemo(() => {
@@ -369,17 +361,21 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
     return makerAdditional.filter(c => !basics.includes(c));
   }, [selectedMaterial, selectedMakerData]);
 
-  // Reset color when material or maker changes
+  // Effective available colors = basicColors ∪ optionalColors (maker-dependent)
+  const effectiveAvailableColors = useMemo(() => {
+    return [...basicColors, ...optionalColors];
+  }, [basicColors, optionalColors]);
+
+  // Auto-reset color when material, maker, or color mode changes
   useEffect(() => {
     if (colorMode === 'single') {
-      const allAvailable = [...basicColors, ...optionalColors];
-      if (selectedColor && !allAvailable.includes(selectedColor)) {
+      if (selectedColor && !effectiveAvailableColors.includes(selectedColor)) {
         setSelectedColor(basicColors[0] || null);
       } else if (!selectedColor && basicColors.length > 0) {
         setSelectedColor(basicColors[0]);
       }
     }
-  }, [basicColors, optionalColors, selectedColor, colorMode]);
+  }, [basicColors, effectiveAvailableColors, selectedColor, colorMode]);
 
   // Multi-color: flat 30% when in multi mode
   const effectiveMulticolorCount = (colorMode === 'multi' && !isResin) ? multicolorCount : 0;
