@@ -17,6 +17,7 @@ import {
 import { getCheapestCombo } from '@/lib/cheapestCombo';
 import { productTypeLabels } from '@/data/categories';
 import { getAvailablePalettes, multicolorHexMap, type PaletteId } from '@/data/multicolorPalettes';
+import { PaletteInfoTooltip } from '@/components/PaletteInfoTooltip';
 import { getBasicColorNames, materialSupportsMulticolor } from '@/data/materialsConfig';
 import { Palette, Layers, Sparkles, Info, Printer, Building2, CreditCard, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -613,7 +614,9 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
 
           {/* Palette selector */}
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-muted-foreground">Palette</p>
+            <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+              Palette <PaletteInfoTooltip />
+            </p>
             <div className="flex gap-2">
               {availablePalettes.map((palette) => (
                 <Button

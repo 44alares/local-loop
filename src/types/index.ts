@@ -12,7 +12,7 @@ export type MulticolorCapability = 'none' | 'automatic' | 'manual';
 export interface MakerMulticolorConfig {
   capability: MulticolorCapability;
   maxColors: number;
-  palettesReady: ('base' | 'earth' | 'accent')[];
+  palettesReady: ('base' | 'earth' | 'accent' | 'matte')[];
   loadedColors?: string[];
 }
 
@@ -46,7 +46,7 @@ export type MulticolorMethod = 'automatic' | 'by-parts' | 'manual-layer';
 
 export interface ProductMulticolorConfig {
   method: MulticolorMethod;
-  recommendedPalettes: ('base' | 'earth' | 'accent')[];
+  recommendedPalettes: ('base' | 'earth' | 'accent' | 'matte')[];
   minColors: number;
   maxColors: number;
   criticalColors?: string;

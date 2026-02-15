@@ -35,6 +35,7 @@ import {
 import { Link } from 'react-router-dom';
 import { MATERIALS_CONFIG, ALL_MATERIALS, type MaterialType } from '@/data/materialsConfig';
 import { ralColors } from '@/data/ralColors';
+import { PaletteInfoTooltip } from '@/components/PaletteInfoTooltip';
 
 const machineTypes = ['FDM', 'Resin', 'Both'];
 
@@ -60,12 +61,12 @@ export default function JoinAsMaker() {
   const [multicolorMaxColors, setMulticolorMaxColors] = useState<Record<MaterialType, number>>({
     PLA: 4, PETG: 4, ABS: 4, Nylon: 4, Resin: 4,
   });
-  const [paletteReadiness, setPaletteReadiness] = useState<Record<MaterialType, { earth: boolean; accent: boolean }>>({
-    PLA: { earth: false, accent: false },
-    PETG: { earth: false, accent: false },
-    ABS: { earth: false, accent: false },
-    Nylon: { earth: false, accent: false },
-    Resin: { earth: false, accent: false },
+  const [paletteReadiness, setPaletteReadiness] = useState<Record<MaterialType, { earth: boolean; accent: boolean; matte: boolean }>>({
+    PLA: { earth: false, accent: false, matte: false },
+    PETG: { earth: false, accent: false, matte: false },
+    ABS: { earth: false, accent: false, matte: false },
+    Nylon: { earth: false, accent: false, matte: false },
+    Resin: { earth: false, accent: false, matte: false },
   });
   const [qualityAccepted, setQualityAccepted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -414,7 +415,7 @@ export default function JoinAsMaker() {
 
                   {/* Multi-color capability per material (only PLA/PETG) */}
                   <div className="space-y-4 pt-4 border-t border-border">
-                    <Label className="font-medium">Multi-color Capability</Label>
+                    <Label className="font-medium flex items-center gap-1.5">Multi-color Capability <PaletteInfoTooltip /></Label>
                     {selectedMaterials.filter(m => MATERIALS_CONFIG[m].supportsMulticolor).map((mat) => (
                       <div key={`mc-${mat}`} className="space-y-3 p-3 rounded-lg border border-border">
                         <p className="text-sm font-semibold">{mat}</p>
@@ -436,45 +437,39 @@ export default function JoinAsMaker() {
                         </div>
                         {multicolorCapability[mat] !== 'none' && (
                           <>
-                            <div className="space-y-2">
-                              <Label className="text-xs text-muted-foreground">Max colors per job</Label>
+                             <div className="space-y-2">
+                              <Label className="text-xs text-muted-foreground">Max colors per job (2–4)</Label>
                               <Input
                                 type="number"
                                 min={2}
-                                max={8}
+                                max={4}
                                 value={multicolorMaxColors[mat]}
-                                onChange={(e) => setMulticolorMaxColors(prev => ({ ...prev, [mat]: Math.max(2, Math.min(8, parseInt(e.target.value) || 2)) }))}
+                                onChange={(e) => setMulticolorMaxColors(prev => ({ ...prev, [mat]: Math.max(2, Math.min(4, parseInt(e.target.value) || 2)) }))}
                                 className="h-9 w-24"
                               />
-                              <p className="text-xs text-muted-foreground">Buyer requests are capped at 4 colors.</p>
+                              <p className="text-xs text-muted-foreground">Only 2, 3, or 4 colors allowed.</p>
                             </div>
                             <div className="space-y-2">
-                              <Label className="text-xs text-muted-foreground">Palette readiness</Label>
+                              <Label className="text-xs text-muted-foreground flex items-center gap-1.5">
+                                Palette readiness <PaletteInfoTooltip />
+                              </Label>
                               <div className="flex flex-wrap gap-3">
                                 <div className="flex items-center gap-2">
                                   <Checkbox checked={true} disabled />
                                   <Label className="text-xs">Base palette (always)</Label>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <Checkbox
-                                    checked={paletteReadiness[mat].earth}
-                                    onCheckedChange={(checked) => setPaletteReadiness(prev => ({
-                                      ...prev,
-                                      [mat]: { ...prev[mat], earth: checked as boolean }
-                                    }))}
-                                  />
-                                  <Label className="text-xs cursor-pointer">Earth palette ready</Label>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <Checkbox
-                                    checked={paletteReadiness[mat].accent}
-                                    onCheckedChange={(checked) => setPaletteReadiness(prev => ({
-                                      ...prev,
-                                      [mat]: { ...prev[mat], accent: checked as boolean }
-                                    }))}
-                                  />
-                                  <Label className="text-xs cursor-pointer">Accent palette ready</Label>
-                                </div>
+                                {(['earth', 'accent', 'matte'] as const).map((p) => (
+                                  <div key={p} className="flex items-center gap-2">
+                                    <Checkbox
+                                      checked={paletteReadiness[mat][p]}
+                                      onCheckedChange={(checked) => setPaletteReadiness(prev => ({
+                                        ...prev,
+                                        [mat]: { ...prev[mat], [p]: checked as boolean }
+                                      }))}
+                                    />
+                                    <Label className="text-xs cursor-pointer capitalize">{p} palette ready</Label>
+                                  </div>
+                                ))}
                               </div>
                             </div>
                           </>
