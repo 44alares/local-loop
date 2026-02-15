@@ -16,7 +16,7 @@ const blogPosts = [
   },
   {
     id: '2',
-    title: 'Maker Spotlight: Maria Santos from Madrid',
+    title: 'Maker Spotlight: Marta Santos from Toledo',
     excerpt: 'Meet Marta, one of our top-rated makers who has printed over 500 designs for local customers.',
     image: mariaImg,
     author: 'MakeHug Team',
