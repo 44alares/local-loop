@@ -176,7 +176,7 @@ export const mockProducts: Product[] = [
   },
   {
      id: 'p5',
-     name: 'Modular Plant Holder',
+     name: 'Plant Holder',
      description: 'Stackable plant holders that can be arranged in countless configurations. Bring nature to your space with sustainable 3D printed design.',
      images: [modularPlantHolderImg],
      price: 18,
