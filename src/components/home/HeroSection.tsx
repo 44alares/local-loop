@@ -49,7 +49,7 @@ export function HeroSection() {
             {/* Founders Club CTA - Centered, separated */}
             <div className="flex justify-center md:justify-start pt-2">
               <Button variant="outline" size="default" className="border-accent text-accent hover:bg-accent/10 text-base" asChild>
-                <a href="https://forms.gle/D7eY7nSEBHEhLgzK7" target="_blank" rel="noopener noreferrer">Join Founders Club</a>
+                <a href="https://forms.gle/D7eY7nSEBHEhLgzK7" target="_blank" rel="noopener noreferrer"><a href="https://forms.gle/D7eY7nSEBHEhLgzK7" target="_blank" rel="noopener noreferrer">Early testers</a></a>
               </Button>
             </div>
 
