@@ -1,4 +1,4 @@
-import { Product, Designer, Maker, Review } from '@/types';
+import { Product, Designer, Maker, Review, MakerMulticolorConfig } from '@/types';
 
 // Import generated product images
 import geometricDeskOrganizerImg from '@/assets/products/geometric-desk-organizer.jpg';
@@ -66,6 +66,10 @@ export const mockMakers: Maker[] = [
       ABS: ['Red', 'Blue'],
       PETG: ['Blue', 'Green', 'Natural'],
     },
+    multicolorByMaterial: {
+      PLA: { capability: 'automatic', maxColors: 4, palettesReady: ['base', 'earth', 'accent'], loadedColors: ['Black', 'White', 'Grey', 'Red', 'Blue', 'Green', 'Beige', 'Brown', 'Yellow'] },
+      PETG: { capability: 'manual', maxColors: 2, palettesReady: ['base'], loadedColors: ['Black', 'White', 'Grey', 'Blue'] },
+    },
     leadTime: '5-7 days',
     verified: true,
   },
@@ -86,6 +90,9 @@ export const mockMakers: Maker[] = [
       Resin: ['Clear', 'Matte Black'],
       Nylon: [],
     },
+    multicolorByMaterial: {
+      PLA: { capability: 'automatic', maxColors: 4, palettesReady: ['base', 'accent'], loadedColors: ['Black', 'White', 'Grey', 'Red', 'Blue', 'Green', 'Yellow'] },
+    },
     leadTime: '3-5 days',
     verified: true,
   },
@@ -105,6 +112,9 @@ export const mockMakers: Maker[] = [
       PLA: ['Orange', 'Pearl White'],
       ABS: ['Red', 'Orange', 'Yellow'],
       Resin: ['Clear', 'Pearl White'],
+    },
+    multicolorByMaterial: {
+      PLA: { capability: 'manual', maxColors: 2, palettesReady: ['base'], loadedColors: ['Black', 'White', 'Grey', 'Red', 'Blue', 'Green'] },
     },
     leadTime: '7-10 days',
     verified: true,
@@ -132,6 +142,8 @@ export const mockProducts: Product[] = [
     rating: 4.8,
     reviewCount: 47,
     makerCount: 12,
+    supports_multicolor: true,
+    multicolorConfig: { method: 'automatic', recommendedPalettes: ['base', 'accent'], minColors: 2, maxColors: 4 },
   },
   // Decoration
   {
@@ -143,8 +155,8 @@ export const mockProducts: Product[] = [
      currency: 'USD',
      designer: mockDesigners[0],
      category: 'decoration',
-      productType: 'functional',
-      style: 'geometric',
+     productType: 'basic',
+     style: 'geometric',
      materials: ['PLA', 'PETG'],
      availableColors: { default: ['White', 'Black', 'Yellow', 'Orange', 'Blue', 'Green', 'Pink'] },
     supportedQualities: ['standard', 'premium'],
@@ -153,6 +165,8 @@ export const mockProducts: Product[] = [
     rating: 4.8,
     reviewCount: 123,
     makerCount: 32,
+    supports_multicolor: true,
+    multicolorConfig: { method: 'automatic', recommendedPalettes: ['base', 'accent'], minColors: 2, maxColors: 4 },
   },
   {
      id: 'p5',
@@ -163,8 +177,8 @@ export const mockProducts: Product[] = [
      currency: 'USD',
      designer: mockDesigners[1],
      category: 'decoration',
-      productType: 'functional',
-      style: 'geometric',
+     productType: 'basic',
+     style: 'geometric',
      materials: ['PLA', 'PETG'],
      availableColors: { default: ['White', 'Black', 'Natural', 'Green'] },
     supportedQualities: ['standard', 'premium'],
@@ -194,6 +208,8 @@ export const mockProducts: Product[] = [
     rating: 4.9,
     reviewCount: 234,
     makerCount: 45,
+    supports_multicolor: true,
+    multicolorConfig: { method: 'automatic', recommendedPalettes: ['base', 'accent'], minColors: 2, maxColors: 4 },
   },
   // Functional Tools
   {
@@ -205,7 +221,7 @@ export const mockProducts: Product[] = [
     currency: 'USD',
     designer: mockDesigners[3],
     category: 'functional',
-    productType: 'basic',
+    productType: 'functional',
     style: 'industrial',
     materials: ['PETG', 'Nylon'],
     availableColors: { default: ['Black', 'Grey', 'Orange'] },
@@ -226,8 +242,8 @@ export const mockProducts: Product[] = [
      currency: 'USD',
      designer: mockDesigners[2],
      category: 'gaming',
-      productType: 'functional',
-      style: 'colorful',
+     productType: 'functional',
+     style: 'colorful',
      materials: ['TPU', 'PLA'],
     availableColors: { default: ['Black', 'White', 'Red', 'Blue', 'Purple'] },
     supportedQualities: ['standard', 'premium'],
@@ -236,6 +252,8 @@ export const mockProducts: Product[] = [
     rating: 4.7,
     reviewCount: 156,
     makerCount: 35,
+    supports_multicolor: true,
+    multicolorConfig: { method: 'automatic', recommendedPalettes: ['base'], minColors: 2, maxColors: 3 },
   },
   {
      id: 'p12',
@@ -246,8 +264,8 @@ export const mockProducts: Product[] = [
      currency: 'USD',
      designer: mockDesigners[0],
      category: 'gaming',
-      productType: 'functional',
-      style: 'colorful',
+     productType: 'functional',
+     style: 'colorful',
      materials: ['Resin', 'PLA'],
     availableColors: { 
       pla: ['Black', 'White', 'Red', 'Blue', 'Green', 'Purple'],
@@ -259,6 +277,8 @@ export const mockProducts: Product[] = [
     rating: 4.9,
     reviewCount: 203,
     makerCount: 18,
+    supports_multicolor: true,
+    multicolorConfig: { method: 'by-parts', recommendedPalettes: ['base', 'accent'], minColors: 2, maxColors: 4 },
   },
   // Repair Hub
   {
@@ -270,7 +290,7 @@ export const mockProducts: Product[] = [
     currency: 'USD',
     designer: mockDesigners[1],
     category: 'repair',
-    productType: 'basic',
+    productType: 'functional',
     style: 'industrial',
     materials: ['ABS', 'PETG'],
     availableColors: { default: ['White', 'Grey'] },
@@ -290,7 +310,7 @@ export const mockProducts: Product[] = [
     currency: 'USD',
     designer: mockDesigners[3],
     category: 'repair',
-    productType: 'basic',
+    productType: 'functional',
     style: 'industrial',
     materials: ['ABS', 'PETG'],
     availableColors: { default: ['Black', 'Grey', 'White'] },
@@ -324,6 +344,8 @@ export const mockProducts: Product[] = [
     rating: 4.8,
     reviewCount: 112,
     makerCount: 10,
+    supports_multicolor: true,
+    multicolorConfig: { method: 'automatic', recommendedPalettes: ['base', 'accent'], minColors: 2, maxColors: 4 },
   },
   {
     id: 'a7',
@@ -347,6 +369,8 @@ export const mockProducts: Product[] = [
     rating: 4.6,
     reviewCount: 67,
     makerCount: 14,
+    supports_multicolor: true,
+    multicolorConfig: { method: 'automatic', recommendedPalettes: ['base', 'earth', 'accent'], minColors: 2, maxColors: 4 },
   },
 ];
 

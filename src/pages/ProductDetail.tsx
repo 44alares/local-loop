@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -50,10 +50,44 @@ export default function ProductDetail() {
   const shippingCost = selectedShippingOption?.price || 0;
   const totalPrice = (buyerPrice + shippingCost) * quantity;
 
-  // Sort makers by distance (mock: just shuffle for demo)
-  const sortedMakers = [...mockMakers].sort((a, b) => {
-    return a.rating > b.rating ? -1 : 1;
-  });
+  // Filter and sort makers - apply multicolor filtering when in multi-color mode
+  const sortedMakers = useMemo(() => {
+    let makers = [...mockMakers];
+    
+    // If multi-color mode, filter by multicolor capability
+    if (config?.colorMode === 'multi' && config.multicolorCount) {
+      const material = config.selectedMaterial;
+      const requestedCount = config.multicolorCount;
+      const requestedPalette = config.multicolorPalette as 'base' | 'earth' | 'accent' | undefined;
+      
+      makers = makers.filter(m => {
+        const mc = m.multicolorByMaterial?.[material];
+        if (!mc || mc.capability === 'none') return false;
+        if (Math.min(mc.maxColors, 4) < requestedCount) return false;
+        // Base palette is always OK; earth/accent need explicit readiness
+        if (requestedPalette && requestedPalette !== 'base' && !mc.palettesReady.includes(requestedPalette)) return false;
+        return true;
+      });
+      
+      // Rank higher makers who have loaded colors matching request
+      if (config.multicolorColors && config.multicolorColors.length > 0) {
+        makers.sort((a, b) => {
+          const aLoaded = a.multicolorByMaterial?.[material]?.loadedColors || [];
+          const bLoaded = b.multicolorByMaterial?.[material]?.loadedColors || [];
+          const aMatch = config.multicolorColors!.filter(c => aLoaded.includes(c)).length;
+          const bMatch = config.multicolorColors!.filter(c => bLoaded.includes(c)).length;
+          if (bMatch !== aMatch) return bMatch - aMatch;
+          return b.rating - a.rating;
+        });
+      } else {
+        makers.sort((a, b) => b.rating - a.rating);
+      }
+    } else {
+      makers.sort((a, b) => b.rating - a.rating);
+    }
+    
+    return makers;
+  }, [config?.colorMode, config?.multicolorCount, config?.multicolorPalette, config?.multicolorColors, config?.selectedMaterial]);
   return <Layout>
       <div className="container py-6">
         {/* Breadcrumb */}
@@ -246,7 +280,16 @@ export default function ProductDetail() {
                         </button>)}
                     </>
                   ) : (
-                    <p className="text-sm text-muted-foreground">No makers found near this location.</p>
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      {config?.colorMode === 'multi' ? (
+                        <>
+                          <p>No local makers match this palette right now.</p>
+                          <p className="text-xs">Try Base palette, reduce colors, or allow close match.</p>
+                        </>
+                      ) : (
+                        <p>No makers found near this location.</p>
+                      )}
+                    </div>
                   )}
                 </div>
               )}

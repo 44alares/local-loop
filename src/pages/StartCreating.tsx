@@ -43,6 +43,13 @@ export default function StartCreating() {
   const [creatorTermsAccepted, setCreatorTermsAccepted] = useState(false);
   const [creatorTermsOpen, setCreatorTermsOpen] = useState(false);
   const [selectedLicense, setSelectedLicense] = useState('');
+  // Multi-color design fields
+  const [supportsMulticolor, setSupportsMulticolor] = useState(false);
+  const [multicolorMethod, setMulticolorMethod] = useState<'automatic' | 'by-parts' | 'manual-layer'>('automatic');
+  const [recommendedPalettes, setRecommendedPalettes] = useState<Record<string, boolean>>({ base: true, earth: false, accent: false });
+  const [minColors, setMinColors] = useState(2);
+  const [maxColors, setMaxColors] = useState(4);
+  const [criticalColors, setCriticalColors] = useState('');
 
   // Get fee range based on complexity
   const feeRange = complexity ? FIXED_FEE_RANGES[complexity] : { min: 1, max: 3 };
@@ -359,6 +366,89 @@ export default function StartCreating() {
                       </p>
                     </div>
                   )}
+
+                  {/* Multi-color support */}
+                  <div className="space-y-3 p-3 rounded-lg border border-border">
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="supports-multicolor"
+                        checked={supportsMulticolor}
+                        onCheckedChange={(checked) => setSupportsMulticolor(checked as boolean)}
+                      />
+                      <Label htmlFor="supports-multicolor" className="cursor-pointer text-sm font-medium">
+                        Supports multi-color
+                      </Label>
+                    </div>
+
+                    {supportsMulticolor && (
+                      <div className="space-y-3 ml-7">
+                        <div className="space-y-1.5">
+                          <Label className="text-xs text-muted-foreground">Multi-color method</Label>
+                          <Select value={multicolorMethod} onValueChange={(v) => setMulticolorMethod(v as typeof multicolorMethod)}>
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="automatic">Automatic (AMS/MMU)</SelectItem>
+                              <SelectItem value="by-parts">By-parts assembly</SelectItem>
+                              <SelectItem value="manual-layer">Manual by-layer</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <Label className="text-xs text-muted-foreground">Recommended palettes</Label>
+                          <div className="flex flex-wrap gap-3">
+                            {['base', 'earth', 'accent'].map((p) => (
+                              <div key={p} className="flex items-center gap-1.5">
+                                <Checkbox
+                                  checked={recommendedPalettes[p]}
+                                  disabled={p === 'base'}
+                                  onCheckedChange={(checked) => setRecommendedPalettes(prev => ({ ...prev, [p]: checked as boolean }))}
+                                />
+                                <Label className="text-xs capitalize cursor-pointer">{p}</Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <Label className="text-xs text-muted-foreground">Min colors</Label>
+                            <Select value={String(minColors)} onValueChange={(v) => setMinColors(Number(v))}>
+                              <SelectTrigger className="h-8 text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {[2, 3, 4].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs text-muted-foreground">Max colors</Label>
+                            <Select value={String(maxColors)} onValueChange={(v) => setMaxColors(Math.max(Number(v), minColors))}>
+                              <SelectTrigger className="h-8 text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {[2, 3, 4].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Critical colors (optional)</Label>
+                          <Input
+                            placeholder="e.g., Black body, Red accents"
+                            value={criticalColors}
+                            onChange={(e) => setCriticalColors(e.target.value)}
+                            className="h-8 text-xs"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   <div className="space-y-1.5">
                     <Label className="flex items-center gap-2 text-sm">

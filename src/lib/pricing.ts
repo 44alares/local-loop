@@ -55,15 +55,29 @@ export const ARTISTIC_QUALITY_SURCHARGES: Record<string, number> = {
   ultra: 0.25,
 };
 
+// Multi-color surcharges by color count
+export const MULTICOLOR_SURCHARGES: Record<number, number> = {
+  2: 0.10,
+  3: 0.15,
+  4: 0.20,
+};
+
+export function getMulticolorSurcharge(colorCount: number): number {
+  if (colorCount < 2) return 0;
+  const clamped = Math.min(colorCount, 4);
+  return MULTICOLOR_SURCHARGES[clamped] || 0;
+}
+
 export interface BuyerPriceParams {
   basePrice: number;
   material: string;
   quality: 'standard' | 'premium' | 'ultra';
   isArtistic: boolean;
+  multicolorCount?: number;
 }
 
 export function calculateBuyerPrice(params: BuyerPriceParams): number {
-  const { basePrice, material, quality, isArtistic } = params;
+  const { basePrice, material, quality, isArtistic, multicolorCount } = params;
   
   const materialSurcharge = isArtistic 
     ? (ARTISTIC_MATERIAL_SURCHARGES[material] ?? 0)
@@ -73,7 +87,9 @@ export function calculateBuyerPrice(params: BuyerPriceParams): number {
     ? (ARTISTIC_QUALITY_SURCHARGES[quality] ?? 0)
     : (QUALITY_SURCHARGES[quality] ?? 0);
   
-  return basePrice * (1 + materialSurcharge) * (1 + qualitySurcharge);
+  const multicolorSurcharge = multicolorCount ? getMulticolorSurcharge(multicolorCount) : 0;
+  
+  return basePrice * (1 + materialSurcharge) * (1 + qualitySurcharge) * (1 + multicolorSurcharge);
 }
 
 export interface FullPriceBreakdown {
