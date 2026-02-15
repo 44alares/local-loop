@@ -39,7 +39,7 @@ import {
   Check,
 } from 'lucide-react';
 import { ralColors, RALColor } from '@/data/ralColors';
-import { calculatePrintPrice, COMMISSION_RATES } from '@/lib/pricing';
+import { calculatePrintPrice } from '@/lib/pricing';
 import { mockMakers } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 
@@ -429,29 +429,36 @@ export default function PrintMyDesign() {
 
                         <div className="space-y-3 pt-4 border-t border-border">
                           <p className="text-sm font-medium text-muted-foreground">Fee Preview:</p>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex items-center justify-between">
-                              <span className="flex items-center gap-2">
-                                <Printer className="h-4 w-4 text-accent" />
-                                Maker earns
-                              </span>
-                              <span className="font-medium">${(estimatedPrice * COMMISSION_RATES.MAKER).toFixed(2)}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="flex items-center gap-2">
-                                <Building2 className="h-4 w-4 text-secondary" />
-                                Platform fee
-                              </span>
-                              <span>${(estimatedPrice * COMMISSION_RATES.PLATFORM).toFixed(2)}</span>
-                            </div>
-                            <div className="flex items-center justify-between text-muted-foreground">
-                              <span className="flex items-center gap-2">
-                                <CreditCard className="h-4 w-4" />
-                                Payment processing
-                              </span>
-                              <span>${(estimatedPrice * COMMISSION_RATES.PAYMENT_GATEWAY).toFixed(2)}</span>
-                            </div>
-                          </div>
+                          {(() => {
+                            const makerAmount = Math.round(estimatedPrice * 0.80 * 100) / 100;
+                            const processingAmount = Math.round(estimatedPrice * 0.03 * 100) / 100;
+                            const platformAmount = Math.round((estimatedPrice - makerAmount - processingAmount) * 100) / 100;
+                            return (
+                              <div className="space-y-2 text-sm">
+                                <div className="flex items-center justify-between">
+                                  <span className="flex items-center gap-2">
+                                    <Printer className="h-4 w-4 text-accent" />
+                                    Maker earns
+                                  </span>
+                                  <span className="font-medium">${makerAmount.toFixed(2)}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-muted-foreground">
+                                  <span className="flex items-center gap-2">
+                                    <CreditCard className="h-4 w-4" />
+                                    Payment processing
+                                  </span>
+                                  <span>${processingAmount.toFixed(2)}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="flex items-center gap-2">
+                                    <Building2 className="h-4 w-4 text-secondary" />
+                                    Platform fee
+                                  </span>
+                                  <span>${platformAmount.toFixed(2)}</span>
+                                </div>
+                              </div>
+                            );
+                          })()}
                           <p className="text-xs text-muted-foreground mt-2">You'll see exact amounts before paying.</p>
                         </div>
 
