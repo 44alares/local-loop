@@ -24,7 +24,7 @@ export interface Maker {
   verified: boolean;
 }
 
-export type ProductType = 'functional' | 'hybrid' | 'artistic';
+export type ProductType = 'basic' | 'functional' | 'artistic';
 
 export interface ProductColorSpec {
   pla?: string[];

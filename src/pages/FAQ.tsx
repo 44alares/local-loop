@@ -11,7 +11,7 @@ import { HelpCircle } from 'lucide-react';
 const generalFaqs = [
   {
     question: 'What is MakeHug?',
-    answer: 'MakeHug is a platform to buy physical 3D‑printed products, created by independent designers and produced by makers close to the buyer.',
+    answer: 'MakeHug is a platform to buy physical 3D-printed products, created by independent designers and produced by makers close to the buyer.',
   },
   {
     question: 'Does MakeHug sell STL files?',
@@ -31,7 +31,7 @@ const generalFaqs = [
   },
   {
     question: 'What quality standards does MakeHug apply?',
-    answer: 'The maker warrants that their equipment is calibrated to standard tolerances (±0.2 mm) and that they will use materials consistent with the Designer\'s "Real‑Scale Proof."',
+    answer: 'The maker warrants that their equipment is calibrated to standard tolerances and that they will use materials consistent with the Designer\'s "Real-Scale Proof."',
   },
   {
     question: 'Who manufactures and ships the order?',
@@ -39,7 +39,7 @@ const generalFaqs = [
   },
   {
     question: 'What materials and colors are supported?',
-    answer: 'Makers must use materials and colors that match the product listing requirements and the Designer\'s "Real‑Scale Proof." If an exact material or color isn\'t available, the maker must request approval before substituting.',
+    answer: 'Makers must use materials and colors that match the product listing requirements and the Designer\'s "Real-Scale Proof." If an exact material or color isn\'t available, the maker must request approval before substituting.',
   },
   {
     question: 'What happens if a print fails or arrives damaged?',
@@ -47,11 +47,10 @@ const generalFaqs = [
   },
   {
     question: 'How long does production take vs shipping?',
-    answer: 
-'• Standard (FDM, ~0.32 mm layer height): Layer lines are clearly visible, but the part keeps its essential shape and its functional/aesthetic value; best for most everyday functional prints where perfection isn’t the goal.
- • Premium (FDM, ~0.16 mm layer height): Smoother finish for parts where surface quality matters; layer lines may still be visible up close, but the overall look is noticeably cleaner.
- • Ultra (Resin, ~0.05 mm layer height): Very high detail and a near line‑free surface; ideal for small, high‑definition parts and display/detail work (requires resin printing and post‑processing).
- • Baseline guarantee (all tiers): The maker warrants their equipment is calibrated to standard tolerances (±0.2 mm) and will use materials consistent with the Designer’s “Real‑Scale Proof.”',
+    answer: `\u2022 Standard (FDM, ~0.32 mm layer height): Layer lines are clearly visible, but the part keeps its essential shape and its functional/aesthetic value; best for most everyday functional prints where perfection isn't the goal.
+\u2022 Premium (FDM, ~0.16 mm layer height): Smoother finish for parts where surface quality matters; layer lines may still be visible up close, but the overall look is noticeably cleaner.
+\u2022 Ultra (Resin, ~0.05 mm layer height): Very high detail and a near line-free surface; ideal for small, high-definition parts and display/detail work (requires resin printing and post-processing).
+\u2022 Baseline guarantee (all tiers): The maker warrants their equipment is calibrated to standard tolerances (\u00b10.2 mm) and will use materials consistent with the Designer's "Real-Scale Proof."`,
   },
 ];
 
@@ -60,9 +59,9 @@ const makerFaqs = [
   {
     question: 'Can the maker reuse my file for other orders or personal use?',
     answer: `No. The maker acts as a contract manufacturer and agrees to:
-• Use the file only to produce the quantity specified in the order.
-• Not print extra copies (including for sale, gifts, marketing, or portfolio use) without the Designer's prior written consent.
-• Delete all copies after completing the order and the warranty period (including local and cloud copies, and derivatives such as project/sliced files where applicable).`,
+\u2022 Use the file only to produce the quantity specified in the order.
+\u2022 Not print extra copies (including for sale, gifts, marketing, or portfolio use) without the Designer's prior written consent.
+\u2022 Delete all copies after completing the order and the warranty period (including local and cloud copies, and derivatives such as project/sliced files where applicable).`,
   },
   {
     question: 'What information will I receive with an order?',
@@ -98,7 +97,7 @@ const makerFaqs = [
   },
   {
     question: 'Are there restricted items makers should not print?',
-    answer: 'Yes—makers must refuse items that are illegal, unsafe, or violate third-party rights, and should flag suspicious requests. When in doubt, request clarification or decline the order.',
+    answer: 'Yes -- makers must refuse items that are illegal, unsafe, or violate third-party rights, and should flag suspicious requests. When in doubt, request clarification or decline the order.',
   },
   {
     question: 'Who decides orientation, supports, and print settings (infill/walls)?',
@@ -116,11 +115,11 @@ const designerFaqs = [
     question: 'What does it mean if I set my design as Basic, Functional or Artistic?',
     answer: `This label helps set the right expectations for production and use.
 
-• Basic: Simple items that don’t need precise mechanical fit, special materials, or extra strength/heat resistance—think desk organizers, simple decor, basic holders, and other non‑critical accessories.
+\u2022 Basic: Simple items that don't need precise mechanical fit, special materials, or extra strength/heat resistance -- think desk organizers, simple decor, basic holders, and other non-critical accessories.
 
-• Functional: parts where fit, tolerances, and durability matter (sliding/press‑fit interfaces, mechanisms, replacement parts, brackets, mounts, adapters). Use this when the part must align correctly or withstand real stress/heat.
+\u2022 Functional: parts where fit, tolerances, and durability matter (sliding/press-fit interfaces, mechanisms, replacement parts, brackets, mounts, adapters). Use this when the part must align correctly or withstand real stress/heat.
 
-• Artistic: aesthetic pieces where detail and surface finish are the priority (figurines, sculptures, display models, high‑detail decor).
+\u2022 Artistic: aesthetic pieces where detail and surface finish are the priority (figurines, sculptures, display models, high-detail decor).
 
 Review note: Functional and Artistic objects always require manual team validation before publishing.
 
@@ -129,21 +128,21 @@ Fees note: The designer can set a fixed fee that varies by design type. On top o
   {
     question: 'What does the Designer guarantee when uploading a design?',
     answer: `By uploading a Design, the Designer warrants, under their sole responsibility, that:
-• The design is their original work.
-• They are not reselling or re‑uploading third‑party files (Thingiverse, Printables, Cults3D, Patreon, etc.), even if those files were shared under open licenses.
-• They are not uploading designs that are identical to, or substantially similar to, designs already available on MakeHug.`,
+\u2022 The design is their original work.
+\u2022 They are not reselling or re-uploading third-party files (Thingiverse, Printables, Cults3D, Patreon, etc.), even if those files were shared under open licenses.
+\u2022 They are not uploading designs that are identical to, or substantially similar to, designs already available on MakeHug.`,
   },
   {
     question: 'How does MakeHug prevent duplicates?',
-    answer: 'MakeHug may run internal similarity checks to detect duplicates or near‑identical designs. Flagged listings may be hidden, suspended, or removed, and repeated violations may result in account suspension.',
+    answer: 'MakeHug may run internal similarity checks to detect duplicates or near-identical designs. Flagged listings may be hidden, suspended, or removed, and repeated violations may result in account suspension.',
   },
   {
     question: 'What does MakeHug do about intellectual property?',
-    answer: 'MakeHug operates as a neutral platform: users (Designers and Makers) are responsible for ensuring they have the necessary rights to upload, manufacture, and sell a design. MakeHug does not provide legal clearance or guarantee non‑infringement.',
+    answer: 'MakeHug operates as a neutral platform: users (Designers and Makers) are responsible for ensuring they have the necessary rights to upload, manufacture, and sell a design. MakeHug does not provide legal clearance or guarantee non-infringement.',
   },
   {
     question: 'What are "Generic Geometry Designs" and how are they handled?',
-    answer: 'These are designs primarily based on basic/common geometric forms (e.g., cylinders or simple boxes). They may be uploaded and sold on MakeHug, but they are not eligible for exclusivity. However, the platform still blocks exact duplicates, near‑identical copies, and cosmetic‑only variations (e.g., only color, material, or negligible dimensional tweaks).',
+    answer: 'These are designs primarily based on basic/common geometric forms (e.g., cylinders or simple boxes). They may be uploaded and sold on MakeHug, but they are not eligible for exclusivity. However, the platform still blocks exact duplicates, near-identical copies, and cosmetic-only variations (e.g., only color, material, or negligible dimensional tweaks).',
   },
   {
     question: 'Can MakeHug request proof of authorship?',

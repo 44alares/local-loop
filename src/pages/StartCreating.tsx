@@ -19,8 +19,8 @@ import { Link } from 'react-router-dom';
 
 // Fixed fee ranges by complexity
 const FIXED_FEE_RANGES = {
-  Functional: { min: 1, max: 2 },
-  Hybrid: { min: 1, max: 4 },
+  Basic: { min: 1, max: 2 },
+  Functional: { min: 1, max: 4 },
   Artistic: { min: 1, max: 6 },
 };
 
@@ -37,7 +37,7 @@ export default function StartCreating() {
   // ndaAccepted removed — covered by creatorTermsAccepted
   const [originalWorkCertified, setOriginalWorkCertified] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [complexity, setComplexity] = useState<'Functional' | 'Hybrid' | 'Artistic' | ''>('');
+  const [complexity, setComplexity] = useState<'Basic' | 'Functional' | 'Artistic' | ''>('');
   const [fixedFee, setFixedFee] = useState(2);
   const [creatorTermsOpened, setCreatorTermsOpened] = useState(false);
   const [creatorTermsAccepted, setCreatorTermsAccepted] = useState(false);
@@ -309,15 +309,15 @@ export default function StartCreating() {
                       <span className="relative group">
                         <span className="text-muted-foreground cursor-help text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
                         <span className="absolute left-0 bottom-full mb-2 w-64 p-3 bg-popover border border-border rounded-lg shadow-lg text-xs text-left opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                          <strong>Functional object:</strong> utilitarian/spare/accessory focused on use, tolerances, fit<br/><br/>
-                          <strong>Artistic object:</strong> mainly aesthetic/sculpture/decor<br/><br/>
-                          <strong>Hybrid object:</strong> function + aesthetics<br/><br/>
-                          <em className="text-accent">Hybrid and Artistic objects always require manual team validation before publishing.</em>
+                          <strong>Basic:</strong> simple items that don't need precise fit, special materials, or extra strength/heat resistance (desk organizers, basic holders, non-critical accessories).<br/><br/>
+                          <strong>Functional:</strong> parts where fit, tolerances, and durability matter (tools, replacements, brackets, mounts, adapters).<br/><br/>
+                          <strong>Artistic:</strong> aesthetic/collectible pieces where surface finish and detail are the priority (figurines, sculptures, display pieces).<br/><br/>
+                          <em className="text-accent">Functional and Artistic objects always require manual team validation before publishing.</em>
                         </span>
                       </span>
                     </Label>
                     <div className="grid grid-cols-3 gap-2">
-                      {(['Functional', 'Hybrid', 'Artistic'] as const).map((option) => (
+                      {(['Basic', 'Functional', 'Artistic'] as const).map((option) => (
                         <button
                           key={option}
                           type="button"
@@ -491,8 +491,8 @@ export default function StartCreating() {
                           <SelectItem value="artistic-no-remixes">Artistic — No Remixes</SelectItem>
                         ) : (
                           <>
-                            <SelectItem value="functional-delayed">Functional/Hybrid — Remixes after 6 months</SelectItem>
-                            <SelectItem value="functional-immediate">Functional/Hybrid — Remixes from day 1</SelectItem>
+                            <SelectItem value="functional-delayed">Basic/Functional — Remixes after 6 months</SelectItem>
+                            <SelectItem value="functional-immediate">Basic/Functional — Remixes from day 1</SelectItem>
                           </>
                         )}
                       </SelectContent>

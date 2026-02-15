@@ -62,8 +62,8 @@ export const categoryLabels: Record<string, string> = {
 };
 
 export const productTypeLabels: Record<string, string> = {
+  basic: 'Basic',
   functional: 'Functional',
-  hybrid: 'Hybrid',
   artistic: 'Artistic',
 };
 
