@@ -47,7 +47,11 @@ const generalFaqs = [
   },
   {
     question: 'How long does production take vs shipping?',
-    answer: 'Production time depends on the print technology, size, complexity, and the selected quality level. Shipping time depends on the maker disponibility. The order view should clearly show production status and shipping updates when available.',
+    answer: 
+'• Standard (FDM, ~0.32 mm layer height): Layer lines are clearly visible, but the part keeps its essential shape and its functional/aesthetic value; best for most everyday functional prints where perfection isn’t the goal.
+ • Premium (FDM, ~0.16 mm layer height): Smoother finish for parts where surface quality matters; layer lines may still be visible up close, but the overall look is noticeably cleaner.
+ • Ultra (Resin, ~0.05 mm layer height): Very high detail and a near line‑free surface; ideal for small, high‑definition parts and display/detail work (requires resin printing and post‑processing).
+ • Baseline guarantee (all tiers): The maker warrants their equipment is calibrated to standard tolerances (±0.2 mm) and will use materials consistent with the Designer’s “Real‑Scale Proof.”',
   },
 ];
 
@@ -109,16 +113,16 @@ const makerFaqs = [
 // Designer FAQs
 const designerFaqs = [
   {
-    question: 'What does it mean if I set my design as Functional, Hybrid, or Artistic?',
-    answer: `This label helps set the right expectations for production and review.
+    question: 'What does it mean if I set my design as Basic, Functional or Artistic?',
+    answer: `This label helps set the right expectations for production and use.
 
-• Functional object: Utilitarian/spare/accessory focused on real-world use—tolerances, fit, and performance matter most.
+• Basic: Simple items that don’t need precise mechanical fit, special materials, or extra strength/heat resistance—think desk organizers, simple decor, basic holders, and other non‑critical accessories.
 
-• Artistic object: Mainly aesthetic (sculpture/decor), where visual quality is the priority.
+• Functional: parts where fit, tolerances, and durability matter (sliding/press‑fit interfaces, mechanisms, replacement parts, brackets, mounts, adapters). Use this when the part must align correctly or withstand real stress/heat.
 
-• Hybrid object: Function + aesthetics, where both usability and appearance matter.
+• Artistic: aesthetic pieces where detail and surface finish are the priority (figurines, sculptures, display models, high‑detail decor).
 
-Review note: Hybrid and Artistic objects always require manual team validation before publishing.
+Review note: Functional and Artistic objects always require manual team validation before publishing.
 
 Fees note: The designer can set a fixed fee that varies by design type. On top of that fixed fee, a small variable fee is added based on the final sale price (you'll see the exact breakdown as amounts before publishing).`,
   },
