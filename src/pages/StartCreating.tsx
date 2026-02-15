@@ -400,7 +400,7 @@ export default function StartCreating() {
                         </div>
 
                         <div className="space-y-1.5">
-                          <Label className="text-xs text-muted-foreground">Recommended palettes</Label>
+                          <Label className="text-xs text-muted-foreground flex items-center gap-1">Recommended palettes <PaletteInfoTooltip /></Label>
                           <div className="flex flex-wrap gap-3">
                             {['base', 'earth', 'accent', 'matte'].map((p) => (
                               <div key={p} className="flex items-center gap-1.5">
