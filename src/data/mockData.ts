@@ -7,6 +7,7 @@ import articulatedDragonImg from '@/assets/products/articulated-dragon.jpg';
 import chameleonMultiImg from '@/assets/products/chameleon-multi.jpg';
 import chameleonGreenImg from '@/assets/products/chameleon-green.jpg';
 import honeycombWallArtImg from '@/assets/products/honeycomb-wall-art.jpg';
+import modularPlantHolderImg from '@/assets/products/modular-plant-holder.jpg';
 // Artistic category images
 import cyberpunkSamuraiImg from '@/assets/products/cyberpunk-samurai.jpg';
 import mechaPilotImg from '@/assets/products/mecha-pilot.jpg';
@@ -176,7 +177,7 @@ export const mockProducts: Product[] = [
      id: 'p5',
      name: 'Modular Plant Holder',
      description: 'Stackable plant holders that can be arranged in countless configurations. Bring nature to your space with sustainable 3D printed design.',
-     images: ['https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=600&h=600&fit=crop'],
+     images: [modularPlantHolderImg],
      price: 18,
      currency: 'USD',
      designer: mockDesigners[1],
