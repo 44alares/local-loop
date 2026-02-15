@@ -50,9 +50,8 @@ export default function About() {
               MakeHug was founded by individual designers and makers.
             </p>
             <p className="text-xl text-muted-foreground mb-8">
-              Makehug is an ethical ecosystem where products are manufactured by neighbors, 
-              not shipped across oceans. We connect designers, local makers, and conscious 
-              buyers to create a zero-kilometer economy.
+              Makehug is an ethical network where products are manufactured by neighbors, 
+              not shipped across oceans. We connect designers, makers, and conscious buyers to keep money, jobs, and skills in your hometown.
             </p>
             <div className="flex flex-wrap justify-center items-center gap-6">
               <Button variant="hero" asChild>
