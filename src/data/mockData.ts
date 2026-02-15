@@ -194,7 +194,7 @@ export const mockProducts: Product[] = [
   {
     id: 'p6',
     name: 'Articulated Dragon Toy',
-    description: 'A fully articulated dragon that moves and poses. Print-in-place design means no assembly required. Kids and adults love it!',
+    description: 'A fully articulated chamaleon that moves and poses. Print-in-place design means no assembly required. Kids and adults love it!',
     images: [articulatedDragonImg],
     price: 45,
     currency: 'USD',
