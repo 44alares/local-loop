@@ -132,7 +132,7 @@ export const mockProducts: Product[] = [
   {
     id: 'p1',
     name: 'Geometric Desk Organizer',
-    description: 'A sleek, modern desk organizer with a Voronoi hexagonal pattern. Perfect for keeping your workspace tidy while adding a touch of modern design.',
+    description: 'A sleek, modern desk organizer. Perfect for keeping your workspace tidy while adding a touch of modern design.',
     images: [geometricDeskOrganizerImg],
     price: 25,
     currency: 'USD',
