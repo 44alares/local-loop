@@ -32,7 +32,7 @@ const communityPosts = [
     author: 'Kenji Yamamoto',
     authorImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop',
     location: 'Tokyo, Japan',
-    content: 'Behind the scenes at my print studio. Getting ready for a batch of articulated dragons! These are so fun to make.',
+    content: 'Behind the scenes at my print studio. Getting ready for a batch of dragons! These are so fun to make.',
     image: dragonPrintImg,
     likes: 156,
     comments: 34,
