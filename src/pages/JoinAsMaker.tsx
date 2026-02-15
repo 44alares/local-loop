@@ -33,43 +33,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-// Materials and their required basic colors
-type MaterialType = 'PLA' | 'PETG' | 'ABS' | 'Nylon' | 'Resin';
-
-const materialBasicColors: Record<MaterialType, { name: string; hex: string; ral: string }[]> = {
-  PLA: [
-    { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
-    { name: 'Black', hex: '#0A0A0D', ral: 'RAL 9005' },
-    { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
-    { name: 'Red', hex: '#CC0605', ral: 'RAL 3020' },
-    { name: 'Blue', hex: '#007CB0', ral: 'RAL 5015' },
-    { name: 'Green', hex: '#57A639', ral: 'RAL 6018' },
-  ],
-  ABS: [
-    { name: 'Black', hex: '#0A0A0D', ral: 'RAL 9005' },
-    { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
-    { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
-  ],
-  PETG: [
-    { name: 'Black', hex: '#0A0A0D', ral: 'RAL 9005' },
-    { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
-    { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
-  ],
-  Resin: [
-    { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
-    { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
-  ],
-  Nylon: [
-    { name: 'Black', hex: '#0A0A0D', ral: 'RAL 9005' },
-    { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
-    { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
-  ],
-};
-
-const materials: MaterialType[] = ['PLA', 'PETG', 'ABS', 'Nylon', 'Resin'];
-
-// RAL additional colors available per material (same set for all, labeled as RAL approx.)
+import { MATERIALS_CONFIG, ALL_MATERIALS, type MaterialType } from '@/data/materialsConfig';
 import { ralColors } from '@/data/ralColors';
 
 const machineTypes = ['FDM', 'Resin', 'Both'];
@@ -103,7 +67,6 @@ export default function JoinAsMaker() {
     Nylon: { earth: false, accent: false },
     Resin: { earth: false, accent: false },
   });
-  // ndaAccepted removed — covered by makerTermsAccepted
   const [qualityAccepted, setQualityAccepted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [makerTermsOpened, setMakerTermsOpened] = useState(false);
@@ -111,13 +74,12 @@ export default function JoinAsMaker() {
   const [makerTermsOpen, setMakerTermsOpen] = useState(false);
 
   // Collect all basic colors and RAL codes across selected materials
-  const allBasicColors = selectedMaterials.flatMap(m => materialBasicColors[m]);
+  const allBasicColors = selectedMaterials.flatMap(m => MATERIALS_CONFIG[m].basicColors);
   const allBasicRalCodes = [...new Set(allBasicColors.map(c => c.ral))];
 
   const handleMaterialToggle = (mat: MaterialType) => {
     setSelectedMaterials(prev => {
       const next = prev.includes(mat) ? prev.filter(m => m !== mat) : [...prev, mat];
-      // Clear additional colors for unchecked material
       if (!next.includes(mat)) {
         setAdditionalRalColors(ar => ({ ...ar, [mat]: [] }));
       }
@@ -338,26 +300,27 @@ export default function JoinAsMaker() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Material selection - multi-select checkboxes */}
+              {/* Material selection - fix: use label wrapping to prevent double-toggle */}
               <div className="space-y-3">
                 <Label>Material *</Label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {materials.map((m) => (
-                    <div
+                  {ALL_MATERIALS.map((m) => (
+                    <label
                       key={m}
+                      htmlFor={`mat-${m}`}
                       className={`flex items-center gap-3 p-3 rounded-lg border transition-colors cursor-pointer ${
                         selectedMaterials.includes(m)
                           ? 'border-secondary bg-secondary/5'
                           : 'border-border hover:border-muted-foreground'
                       }`}
-                      onClick={() => handleMaterialToggle(m)}
                     >
                       <Checkbox
+                        id={`mat-${m}`}
                         checked={selectedMaterials.includes(m)}
                         onCheckedChange={() => handleMaterialToggle(m)}
                       />
-                      <Label className="cursor-pointer text-sm font-medium">{m}</Label>
-                    </div>
+                      <span className="text-sm font-medium">{m}</span>
+                    </label>
                   ))}
                 </div>
                 {selectedMaterials.length === 0 && (
@@ -372,7 +335,7 @@ export default function JoinAsMaker() {
                 <>
                   {/* Basic colors per material */}
                   {selectedMaterials.map((mat) => {
-                    const matColors = materialBasicColors[mat];
+                    const matConfig = MATERIALS_CONFIG[mat];
                     return (
                       <div key={mat} className="space-y-3">
                         <div className="flex items-center gap-3">
@@ -382,7 +345,7 @@ export default function JoinAsMaker() {
                           </Label>
                         </div>
                         <div className="flex flex-wrap gap-2 ml-7">
-                          {matColors.map((color) => (
+                          {matConfig.basicColors.map((color) => (
                             <Badge key={`${mat}-${color.name}`} variant="secondary" className="gap-1.5 py-1 px-2.5">
                               <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
                               <div className="flex flex-col leading-tight">
@@ -393,7 +356,7 @@ export default function JoinAsMaker() {
                           ))}
                         </div>
                         <p className="text-xs text-muted-foreground ml-7">
-                          Basic colors: {matColors.length} included
+                          Basic colors: {matConfig.basicColors.length} included
                         </p>
                       </div>
                     );
@@ -401,7 +364,7 @@ export default function JoinAsMaker() {
 
                   {/* Additional RAL colors per material */}
                   {selectedMaterials.map((mat) => {
-                    const matBasicCodes = materialBasicColors[mat].map(c => c.ral);
+                    const matBasicCodes = MATERIALS_CONFIG[mat].basicColors.map(c => c.ral);
                     const matAdditional = additionalRalColors[mat];
                     return (
                       <div key={`additional-${mat}`} className="space-y-3">
@@ -449,10 +412,10 @@ export default function JoinAsMaker() {
                     );
                   })}
 
-                  {/* Multi-color capability per material */}
+                  {/* Multi-color capability per material (only PLA/PETG) */}
                   <div className="space-y-4 pt-4 border-t border-border">
                     <Label className="font-medium">Multi-color Capability</Label>
-                    {selectedMaterials.filter(m => ['PLA', 'PETG'].includes(m)).map((mat) => (
+                    {selectedMaterials.filter(m => MATERIALS_CONFIG[m].supportsMulticolor).map((mat) => (
                       <div key={`mc-${mat}`} className="space-y-3 p-3 rounded-lg border border-border">
                         <p className="text-sm font-semibold">{mat}</p>
                         <div className="space-y-2">
@@ -518,7 +481,7 @@ export default function JoinAsMaker() {
                         )}
                       </div>
                     ))}
-                    {selectedMaterials.filter(m => ['PLA', 'PETG'].includes(m)).length === 0 && (
+                    {selectedMaterials.filter(m => MATERIALS_CONFIG[m].supportsMulticolor).length === 0 && (
                       <p className="text-xs text-muted-foreground">Select PLA or PETG to configure multi-color capability.</p>
                     )}
                   </div>
@@ -588,7 +551,6 @@ export default function JoinAsMaker() {
 
               {/* Quality checkbox */}
               <div className="pt-2 border-t border-border space-y-4">
-
                 <div className="flex items-start gap-3">
                   <Checkbox 
                     id="quality" 

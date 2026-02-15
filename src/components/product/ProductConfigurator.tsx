@@ -17,6 +17,7 @@ import {
 import { getCheapestCombo } from '@/lib/cheapestCombo';
 import { productTypeLabels } from '@/data/categories';
 import { getAvailablePalettes, multicolorHexMap, type PaletteId } from '@/data/multicolorPalettes';
+import { getBasicColorNames, materialSupportsMulticolor } from '@/data/materialsConfig';
 import { Palette, Layers, Sparkles, Info, Printer, Building2, CreditCard, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -130,15 +131,6 @@ const colorHexMap: Record<string, string> = {
   'Brown': '#795548',
 };
 
-// Basic (always available) colors per material
-const materialBasicColors: Record<string, string[]> = {
-  PLA: ['White', 'Black', 'Grey', 'Red', 'Blue', 'Green'],
-  PETG: ['White', 'Black', 'Grey'],
-  ABS: ['White', 'Black', 'Grey'],
-  Nylon: ['White', 'Black', 'Grey'],
-  Resin: ['White', 'Grey'],
-};
-
 // Breakdown row config
 const breakdownRowConfig = [
   {
@@ -201,7 +193,7 @@ function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount }: { 
         <div className="flex justify-between py-1 border-b border-border/50">
           <span className="text-muted-foreground text-xs flex items-center gap-1">
             <Palette className="h-3 w-3" />
-            Multi-color surcharge
+            Multi-color +30%
           </span>
           <span className="text-xs font-medium">${multicolorSurchargeAmount.toFixed(2)}</span>
         </div>
@@ -253,8 +245,14 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
   }, [product.supportedQualities, isArtistic]);
   
   const cheapest = useMemo(() => getCheapestCombo(product), [product]);
+
+  // Default to PLA if both PLA and Resin are available
+  const defaultMaterial = useMemo(() => {
+    if (availableMaterials.includes('PLA')) return 'PLA';
+    return cheapest.material;
+  }, [availableMaterials, cheapest.material]);
   
-  const [selectedMaterial, setSelectedMaterial] = useState<string>(cheapest.material);
+  const [selectedMaterial, setSelectedMaterial] = useState<string>(defaultMaterial);
   const [selectedQuality, setSelectedQuality] = useState<'standard' | 'premium' | 'ultra'>(cheapest.quality);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<SizeOption>(cheapest.size);
@@ -267,6 +265,21 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
   const [colorMatchPreference, setColorMatchPreference] = useState<'close' | 'exact'>('close');
   
   const showSizeOptions = hasSizeOptions(product.category);
+
+  // Resin disables multi-color: force single when Resin is selected
+  const isResin = selectedMaterial === 'Resin';
+  const canShowMulticolor = supportsMulticolor && !isResin && materialSupportsMulticolor(selectedMaterial);
+
+  // When material changes to Resin, force single color and clear multi-color state
+  useEffect(() => {
+    if (isResin && colorMode === 'multi') {
+      setColorMode('single');
+      setMulticolorPalette('base');
+      setMulticolorCount(2);
+      setMulticolorColors([]);
+      setColorMatchPreference('close');
+    }
+  }, [isResin]); // Only trigger on material change to Resin
   
   // Get selected maker data
   const selectedMakerData = useMemo(() => {
@@ -335,7 +348,7 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
     }
   };
 
-  // Basic colors always come from the global mandatory mapping
+  // Basic colors from shared config
   const basicColors = useMemo(() => {
     if (isArtistic) {
       if (selectedMaterial === 'PLA') {
@@ -345,13 +358,13 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
         return product.availableColors.resin || [];
       }
     }
-    return materialBasicColors[selectedMaterial] || [];
+    return getBasicColorNames(selectedMaterial);
   }, [selectedMaterial, product.availableColors, isArtistic]);
 
   // Derive optional colors from the selected maker
   const optionalColors = useMemo(() => {
     if (!selectedMakerData) return [];
-    const basics = materialBasicColors[selectedMaterial] || [];
+    const basics = getBasicColorNames(selectedMaterial);
     const makerAdditional = selectedMakerData.additionalColorsByMaterial?.[selectedMaterial] || [];
     return makerAdditional.filter(c => !basics.includes(c));
   }, [selectedMaterial, selectedMakerData]);
@@ -368,8 +381,8 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
     }
   }, [basicColors, optionalColors, selectedColor, colorMode]);
 
-  // Calculate multi-color surcharge amount (for display)
-  const effectiveMulticolorCount = colorMode === 'multi' ? multicolorCount : 0;
+  // Multi-color: flat 30% when in multi mode
+  const effectiveMulticolorCount = (colorMode === 'multi' && !isResin) ? multicolorCount : 0;
   const multicolorSurchargeRate = getMulticolorSurcharge(effectiveMulticolorCount);
   
   // Calculate buyer price
@@ -414,13 +427,13 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
       selectedMaterial, 
       selectedQuality, 
       selectedSize,
-      colorMode,
-      multicolorCount: colorMode === 'multi' ? multicolorCount : undefined,
-      multicolorPalette: colorMode === 'multi' ? multicolorPalette : undefined,
-      multicolorColors: colorMode === 'multi' ? multicolorColors : undefined,
-      colorMatchPreference: colorMode === 'multi' ? colorMatchPreference : undefined,
+      colorMode: isResin ? 'single' : colorMode,
+      multicolorCount: (colorMode === 'multi' && !isResin) ? multicolorCount : undefined,
+      multicolorPalette: (colorMode === 'multi' && !isResin) ? multicolorPalette : undefined,
+      multicolorColors: (colorMode === 'multi' && !isResin) ? multicolorColors : undefined,
+      colorMatchPreference: (colorMode === 'multi' && !isResin) ? colorMatchPreference : undefined,
     });
-  }, [displayPrice, selectedColor, selectedMaterial, selectedQuality, selectedSize, colorMode, multicolorCount, multicolorPalette, multicolorColors, colorMatchPreference, onPriceChange, onConfigChange]);
+  }, [displayPrice, selectedColor, selectedMaterial, selectedQuality, selectedSize, colorMode, multicolorCount, multicolorPalette, multicolorColors, colorMatchPreference, isResin, onPriceChange, onConfigChange]);
   
   const getMaterialLabel = (material: string, index: number) => {
     if (index === 0) return 'Base';
@@ -450,31 +463,40 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
         </Badge>
       </div>
       
-      {/* Color Mode Toggle (only for multicolor products) */}
+      {/* Color Mode Toggle (only for multicolor products with compatible material) */}
       {supportsMulticolor && (
         <div className="space-y-2">
           <Label className="flex items-center gap-2 text-sm">
             <Palette className="h-4 w-4" />
             Color mode
           </Label>
-          <div className="flex gap-2">
-            <Button
-              variant={colorMode === 'single' ? 'secondary' : 'outline'}
-              size="sm"
-              onClick={() => setColorMode('single')}
-              className="h-8 text-xs"
-            >
-              Single color
-            </Button>
-            <Button
-              variant={colorMode === 'multi' ? 'secondary' : 'outline'}
-              size="sm"
-              onClick={() => setColorMode('multi')}
-              className="h-8 text-xs"
-            >
-              Multi-color
-            </Button>
-          </div>
+          {isResin ? (
+            <div className="space-y-1">
+              <Button variant="secondary" size="sm" className="h-8 text-xs" disabled>
+                Single color
+              </Button>
+              <p className="text-xs text-muted-foreground">Multi-color is not available for Resin.</p>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <Button
+                variant={colorMode === 'single' ? 'secondary' : 'outline'}
+                size="sm"
+                onClick={() => setColorMode('single')}
+                className="h-8 text-xs"
+              >
+                Single color
+              </Button>
+              <Button
+                variant={colorMode === 'multi' ? 'secondary' : 'outline'}
+                size="sm"
+                onClick={() => setColorMode('multi')}
+                className="h-8 text-xs"
+              >
+                Multi-color
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
@@ -586,7 +608,7 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
       )}
 
       {/* Multi-color Selector */}
-      {colorMode === 'multi' && supportsMulticolor && (
+      {colorMode === 'multi' && canShowMulticolor && (
         <div className="space-y-3 p-3 rounded-lg border border-secondary/30 bg-secondary/5">
           <Label className="flex items-center gap-2 text-sm font-semibold">
             <Palette className="h-4 w-4 text-secondary" />
@@ -822,7 +844,7 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
           <BreakdownRows 
             breakdown={breakdown} 
             productType={product.productType} 
-            multicolorSurchargeAmount={colorMode === 'multi' ? multicolorSurchargeAmount : undefined}
+            multicolorSurchargeAmount={(colorMode === 'multi' && !isResin) ? multicolorSurchargeAmount : undefined}
           />
           
           <p className="text-xs text-muted-foreground mt-2">

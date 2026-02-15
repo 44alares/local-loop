@@ -55,17 +55,12 @@ export const ARTISTIC_QUALITY_SURCHARGES: Record<string, number> = {
   ultra: 0.25,
 };
 
-// Multi-color surcharges by color count
-export const MULTICOLOR_SURCHARGES: Record<number, number> = {
-  2: 0.10,
-  3: 0.15,
-  4: 0.20,
-};
+// Multi-color: flat 30% surcharge (independent of color count)
+export const MULTICOLOR_SURCHARGE_RATE = 0.30;
 
 export function getMulticolorSurcharge(colorCount: number): number {
   if (colorCount < 2) return 0;
-  const clamped = Math.min(colorCount, 4);
-  return MULTICOLOR_SURCHARGES[clamped] || 0;
+  return MULTICOLOR_SURCHARGE_RATE;
 }
 
 export interface BuyerPriceParams {
