@@ -216,7 +216,7 @@ export const mockProducts: Product[] = [
   // Functional Tools
   {
     id: 'p8',
-    name: 'Parametric Wrench',
+    name: 'Adjustable Wrench',
     description: 'Adjustable wrench with customizable jaw size. Perfect for light-duty tasks and emergencies.',
     images: [parametricWrenchImg],
     price: 15,
