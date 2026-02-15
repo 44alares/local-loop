@@ -376,7 +376,7 @@ export default function StartCreating() {
                         onCheckedChange={(checked) => setSupportsMulticolor(checked as boolean)}
                       />
                       <Label htmlFor="supports-multicolor" className="cursor-pointer text-sm font-medium">
-                        Supports multi-color
+                        Supports multi-color (only PLA and PETG)
                       </Label>
                     </div>
 
