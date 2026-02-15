@@ -4,6 +4,8 @@ import { Product, Designer, Maker, Review, MakerMulticolorConfig } from '@/types
 import geometricDeskOrganizerImg from '@/assets/products/geometric-desk-organizer.jpg';
 import samuraiImg from '@/assets/products/samurai.jpg';
 import articulatedDragonImg from '@/assets/products/articulated-dragon.jpg';
+import chameleonMultiImg from '@/assets/products/chameleon-multi.jpg';
+import chameleonGreenImg from '@/assets/products/chameleon-green.jpg';
 import honeycombWallArtImg from '@/assets/products/honeycomb-wall-art.jpg';
 // Artistic category images
 import cyberpunkSamuraiImg from '@/assets/products/cyberpunk-samurai.jpg';
@@ -195,7 +197,7 @@ export const mockProducts: Product[] = [
     id: 'p6',
     name: 'Articulated Chameleon Toy',
     description: 'A fully articulated chamaleon that moves and poses. Print-in-place design means no assembly required. Kids and adults love it!',
-    images: [articulatedDragonImg],
+    images: [chameleonMultiImg, chameleonGreenImg],
     price: 45,
     currency: 'USD',
     designer: mockDesigners[2],
