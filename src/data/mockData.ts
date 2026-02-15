@@ -217,7 +217,7 @@ export const mockProducts: Product[] = [
   {
     id: 'p8',
     name: 'Parametric Wrench',
-    description: 'Adjustable parametric wrench with customizable jaw size. Perfect for light-duty tasks and emergencies.',
+    description: 'Adjustable wrench with customizable jaw size. Perfect for light-duty tasks and emergencies.',
     images: [parametricWrenchImg],
     price: 15,
     currency: 'USD',
