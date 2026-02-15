@@ -18,6 +18,7 @@ import customControllerGripsImg from '@/assets/products/custom-controller-grips.
 import dishwasherBasketWheelImg from '@/assets/products/dishwasher-basket-wheel.jpg';
 import vacuumAdapterImg from '@/assets/products/vacuum-adapter.jpg';
 import keycapSetImg from '@/assets/products/keycap-set.jpg';
+import cableManagementSystemImg from '@/assets/products/cable-management-system.jpg';
 
 export const mockDesigners: Designer[] = [
   {
@@ -148,6 +149,29 @@ export const mockProducts: Product[] = [
     rating: 4.8,
     reviewCount: 47,
     makerCount: 12,
+    supports_multicolor: true,
+    multicolorConfig: { method: 'automatic', recommendedPalettes: ['base', 'accent'], minColors: 2, maxColors: 4 },
+  },
+  // Desktop & Office - Cable Management
+  {
+    id: 'p2',
+    name: 'Modular Cable Management System',
+    description: 'A modular, stackable cable organizer designed to keep desks clean and cables accessible. Minimal, ribbed/clean-line aesthetic, expandable by adding modules as your setup grows.',
+    images: [cableManagementSystemImg],
+    price: 20,
+    currency: 'USD',
+    designer: mockDesigners[0],
+    category: 'desktop',
+    productType: 'basic',
+    style: 'geometric',
+    materials: ['PLA', 'PETG'],
+    availableColors: { default: ['White', 'Black', 'Grey', 'Blue', 'Green'] },
+    supportedQualities: ['standard', 'premium'],
+    dimensions: { length: 180, width: 80, height: 60, unit: 'mm' },
+    leadTime: '5-7 days',
+    rating: 4.7,
+    reviewCount: 34,
+    makerCount: 15,
     supports_multicolor: true,
     multicolorConfig: { method: 'automatic', recommendedPalettes: ['base', 'accent'], minColors: 2, maxColors: 4 },
   },
