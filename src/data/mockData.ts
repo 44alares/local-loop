@@ -8,6 +8,8 @@ import honeycombWallArtImg from '@/assets/products/honeycomb-wall-art.jpg';
 // Artistic category images
 import cyberpunkSamuraiImg from '@/assets/products/cyberpunk-samurai.jpg';
 import mechaPilotImg from '@/assets/products/mecha-pilot.jpg';
+import mechaPilotBlueWhiteImg from '@/assets/products/mecha-pilot-blue-white.jpg';
+import mechaPilotRedImg from '@/assets/products/mecha-pilot-red.jpg';
 import parametricWrenchImg from '@/assets/products/parametric-wrench.jpg';
 import customControllerGripsImg from '@/assets/products/custom-controller-grips.jpg';
 import dishwasherBasketWheelImg from '@/assets/products/dishwasher-basket-wheel.jpg';
@@ -351,7 +353,7 @@ export const mockProducts: Product[] = [
     id: 'a7',
     name: 'Mecha Pilot Figure',
     description: 'A detailed pilot figure in flight suit with helmet. Compatible with various mecha model kits or standalone display. Original anime-inspired design with realistic proportions.',
-    images: [mechaPilotImg],
+    images: [mechaPilotBlueWhiteImg, mechaPilotRedImg],
     price: 45,
     currency: 'USD',
     designer: mockDesigners[1],
