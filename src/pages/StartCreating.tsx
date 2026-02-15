@@ -14,6 +14,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Upload, Image, Camera, Settings, Calculator, Printer, Building2, Palette, CreditCard, CheckCircle2, FileText, AlertCircle, Info, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { ralColors, RALColor } from '@/data/ralColors';
+import { MATERIALS_CONFIG, type MaterialType } from '@/data/materialsConfig';
 import { calculatePrintPrice } from '@/lib/pricing';
 import { Link } from 'react-router-dom';
 
@@ -449,6 +450,49 @@ export default function StartCreating() {
                       </div>
                     )}
                   </div>
+
+                  {/* Material-specific basic colors + recommended colors */}
+                  {selectedMaterial && MATERIALS_CONFIG[selectedMaterial as MaterialType] && (
+                    <div className="space-y-3">
+                      <Label className="flex items-center gap-2 text-sm">
+                        <Palette className="h-3 w-3" />
+                        Colors for {selectedMaterial}
+                      </Label>
+                      {/* Basic colors - always visible */}
+                      <div className="space-y-1.5">
+                        <p className="text-xs font-medium text-muted-foreground">Basic colors</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {MATERIALS_CONFIG[selectedMaterial as MaterialType].basicColors.map((color) => (
+                            <Badge key={color.name} variant="secondary" className="gap-1.5 py-1 px-2">
+                              <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                              <span className="text-xs">{color.name}</span>
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      {/* Recommended colors - collapsible */}
+                      {MATERIALS_CONFIG[selectedMaterial as MaterialType].recommendedColors.length > 0 && (
+                        <Collapsible>
+                          <CollapsibleTrigger asChild>
+                            <Button variant="ghost" size="sm" className="w-full justify-between text-xs h-7">
+                              Recommended colors (optional)
+                              <ChevronDown className="h-3 w-3 ml-1" />
+                            </Button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div className="flex flex-wrap gap-1.5 pt-2">
+                              {MATERIALS_CONFIG[selectedMaterial as MaterialType].recommendedColors.map((color) => (
+                                <Badge key={color.name} variant="outline" className="gap-1.5 py-1 px-2">
+                                  <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                                  <span className="text-xs">{color.name}</span>
+                                </Badge>
+                              ))}
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      )}
+                    </div>
+                  )}
 
                   <div className="space-y-1.5">
                     <Label className="flex items-center gap-2 text-sm">
