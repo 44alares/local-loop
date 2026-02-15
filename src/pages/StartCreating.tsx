@@ -15,6 +15,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Upload, Image, Camera, Settings, Calculator, Printer, Building2, Palette, CreditCard, CheckCircle2, FileText, AlertCircle, Info, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { ralColors, RALColor } from '@/data/ralColors';
 import { MATERIALS_CONFIG, type MaterialType } from '@/data/materialsConfig';
+import { getPalettesForMaterial, multicolorHexMap, type PaletteId } from '@/data/multicolorPalettes';
+import { PaletteInfoTooltip } from '@/components/PaletteInfoTooltip';
 import { calculatePrintPrice } from '@/lib/pricing';
 import { Link } from 'react-router-dom';
 
@@ -400,10 +402,10 @@ export default function StartCreating() {
                         <div className="space-y-1.5">
                           <Label className="text-xs text-muted-foreground">Recommended palettes</Label>
                           <div className="flex flex-wrap gap-3">
-                            {['base', 'earth', 'accent'].map((p) => (
+                            {['base', 'earth', 'accent', 'matte'].map((p) => (
                               <div key={p} className="flex items-center gap-1.5">
                                 <Checkbox
-                                  checked={recommendedPalettes[p]}
+                                  checked={recommendedPalettes[p] ?? false}
                                   disabled={p === 'base'}
                                   onCheckedChange={(checked) => setRecommendedPalettes(prev => ({ ...prev, [p]: checked as boolean }))}
                                 />
@@ -491,6 +493,48 @@ export default function StartCreating() {
                           </CollapsibleContent>
                         </Collapsible>
                       )}
+                    </div>
+                  )}
+
+                  {/* Recommended palettes */}
+                  {selectedMaterial && MATERIALS_CONFIG[selectedMaterial as MaterialType]?.supportsMulticolor && (
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2 text-sm">
+                        <Palette className="h-3 w-3" />
+                        Recommended palettes
+                        <PaletteInfoTooltip />
+                      </Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {getPalettesForMaterial(selectedMaterial).map((palette) => {
+                          const colors = palette.colors;
+                          return (
+                            <button
+                              key={palette.id}
+                              type="button"
+                              onClick={() => {
+                                // Pre-fill color selection with palette colors
+                                const ralMatch = ralColors.find(r => r.name.toLowerCase().includes(colors[0].toLowerCase()));
+                                if (ralMatch) setSelectedColor(ralMatch);
+                              }}
+                              className="flex items-center gap-2 p-2.5 rounded-lg border border-border hover:border-secondary transition-colors text-left"
+                            >
+                              <div className="flex gap-0.5 shrink-0">
+                                {colors.slice(0, 4).map((c) => (
+                                  <span
+                                    key={c}
+                                    className="h-5 w-5 rounded-full border border-border"
+                                    style={{ backgroundColor: multicolorHexMap[c] || '#CCC' }}
+                                  />
+                                ))}
+                              </div>
+                              <div>
+                                <p className="text-xs font-medium capitalize">{palette.label}</p>
+                                <p className="text-[10px] text-muted-foreground">{colors.length} colors</p>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
 
