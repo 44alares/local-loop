@@ -38,7 +38,7 @@ import {
   Leaf,
   Check,
 } from 'lucide-react';
-import { ralColors, RALColor } from '@/data/ralColors';
+import { MATERIALS_CONFIG, MaterialType, MaterialColorDef } from '@/data/materialsConfig';
 import { calculatePrintPrice } from '@/lib/pricing';
 import { mockMakers } from '@/data/mockData';
 import { cn } from '@/lib/utils';
@@ -49,7 +49,7 @@ export default function PrintMyDesign() {
   const [selectedFlow, setSelectedFlow] = useState<FlowType>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState('');
-  const [selectedColor, setSelectedColor] = useState<RALColor | null>(null);
+  const [selectedColorRal, setSelectedColorRal] = useState<string>('');
   const [estimatedWeight, setEstimatedWeight] = useState('');
   const [estimatedPrintTime, setEstimatedPrintTime] = useState('');
   const [ndaAccepted, setNdaAccepted] = useState(false);
@@ -322,7 +322,11 @@ export default function PrintMyDesign() {
                   <CardContent className="space-y-6">
                     <div className="space-y-2">
                       <Label>Material</Label>
-                      <Select value={selectedMaterial} onValueChange={setSelectedMaterial}>
+                      <Select value={selectedMaterial} onValueChange={(mat) => {
+                        setSelectedMaterial(mat);
+                        const allowed = MATERIALS_CONFIG[mat as MaterialType]?.basicColors.map(c => c.ral) ?? [];
+                        if (!allowed.includes(selectedColorRal)) setSelectedColorRal('');
+                      }}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select material" />
                         </SelectTrigger>
@@ -337,40 +341,42 @@ export default function PrintMyDesign() {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <Palette className="h-4 w-4" />
-                        RAL color (approx.)
-                      </Label>
-                      <Select
-                        value={selectedColor?.code ?? ''}
-                        onValueChange={(code) => {
-                          const c = ralColors.find(r => r.code === code);
-                          setSelectedColor(c ?? null);
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select RAL color…">
-                            {selectedColor && (
-                              <span className="flex items-center gap-2">
-                                <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: selectedColor.hex }} />
-                                {selectedColor.code} – {selectedColor.name}
-                              </span>
-                            )}
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent className="max-h-60">
-                          {ralColors.map((color) => (
-                            <SelectItem key={color.code} value={color.code}>
-                              <span className="flex items-center gap-2">
-                                <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
-                                {color.code} – {color.name}
-                              </span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    {selectedMaterial && (
+                      <div className="space-y-2">
+                        <Label className="flex items-center gap-2">
+                          <Palette className="h-4 w-4" />
+                          Color
+                        </Label>
+                        <Select
+                          value={selectedColorRal}
+                          onValueChange={setSelectedColorRal}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select color…">
+                              {selectedColorRal && (() => {
+                                const c = MATERIALS_CONFIG[selectedMaterial as MaterialType]?.basicColors.find(bc => bc.ral === selectedColorRal);
+                                return c ? (
+                                  <span className="flex items-center gap-2">
+                                    <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c.hex }} />
+                                    {c.name} — {c.ral}
+                                  </span>
+                                ) : null;
+                              })()}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent className="max-h-60">
+                            {MATERIALS_CONFIG[selectedMaterial as MaterialType]?.basicColors.map((c) => (
+                              <SelectItem key={c.ral} value={c.ral}>
+                                <span className="flex items-center gap-2">
+                                  <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c.hex }} />
+                                  {c.name} — {c.ral}
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
