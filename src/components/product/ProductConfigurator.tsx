@@ -617,19 +617,43 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
             <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
               Palette <PaletteInfoTooltip />
             </p>
-            <div className="flex gap-2">
-              {availablePalettes.map((palette) => (
-                <Button
-                  key={palette.id}
-                  variant={multicolorPalette === palette.id ? 'secondary' : 'outline'}
-                  size="sm"
-                  onClick={() => setMulticolorPalette(palette.id)}
-                  className="h-7 text-xs"
-                >
-                  {palette.label}
-                  {palette.required && <span className="text-xs opacity-60 ml-1">(default)</span>}
-                </Button>
-              ))}
+            <div className="flex flex-wrap gap-2">
+              {availablePalettes.map((palette) => {
+                const displayColors = product.paletteDisplayColors?.[palette.id]
+                  ?? palette.colors.slice(0, 4);
+                const extraCount = palette.colors.length - displayColors.length;
+                return (
+                  <button
+                    key={palette.id}
+                    type="button"
+                    onClick={() => setMulticolorPalette(palette.id)}
+                    className={cn(
+                      "flex items-center gap-2 p-2 rounded-lg border transition-colors text-left",
+                      multicolorPalette === palette.id
+                        ? "border-secondary bg-secondary/10"
+                        : "border-border hover:border-secondary/50"
+                    )}
+                  >
+                    <div className="flex gap-0.5 shrink-0">
+                      {displayColors.slice(0, 4).map((c) => (
+                        <span
+                          key={c}
+                          className="h-4 w-4 rounded-full border border-border"
+                          style={{ backgroundColor: colorHexMap[c] || multicolorHexMap[c] || '#CCC' }}
+                          title={c}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-medium">{palette.label}</span>
+                      {extraCount > 0 && (
+                        <span className="text-[10px] text-muted-foreground">+{extraCount} more</span>
+                      )}
+                    </div>
+                    {palette.required && <span className="text-[10px] opacity-60">(default)</span>}
+                  </button>
+                );
+              })}
             </div>
           </div>
 

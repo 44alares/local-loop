@@ -53,6 +53,8 @@ export default function StartCreating() {
   const [minColors, setMinColors] = useState(2);
   const [maxColors, setMaxColors] = useState(4);
   const [criticalColors, setCriticalColors] = useState('');
+  // Display colors per palette (designer picks max 4 per palette)
+  const [paletteDisplayColors, setPaletteDisplayColors] = useState<Record<string, string[]>>({});
 
   // Get fee range based on complexity
   const feeRange = complexity ? FIXED_FEE_RANGES[complexity] : { min: 1, max: 3 };
@@ -508,6 +510,9 @@ export default function StartCreating() {
                       <div className="grid grid-cols-2 gap-2">
                         {getPalettesForMaterial(selectedMaterial).map((palette) => {
                           const colors = palette.colors;
+                          const displayColors = paletteDisplayColors[palette.id] ?? colors.slice(0, 4);
+                          const needsSelection = colors.length > 6;
+                          const hasValidSelection = displayColors.length === 4;
                           return (
                             <button
                               key={palette.id}
@@ -517,10 +522,14 @@ export default function StartCreating() {
                                 const ralMatch = ralColors.find(r => r.name.toLowerCase().includes(colors[0].toLowerCase()));
                                 if (ralMatch) setSelectedColor(ralMatch);
                               }}
-                              className="flex items-center gap-2 p-2.5 rounded-lg border border-border hover:border-secondary transition-colors text-left"
+                              className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left ${
+                                needsSelection && !hasValidSelection
+                                  ? 'border-accent/50'
+                                  : 'border-border hover:border-secondary'
+                              }`}
                             >
                               <div className="flex gap-0.5 shrink-0">
-                                {colors.slice(0, 4).map((c) => (
+                                {displayColors.slice(0, 4).map((c) => (
                                   <span
                                     key={c}
                                     className="h-5 w-5 rounded-full border border-border"
@@ -530,12 +539,116 @@ export default function StartCreating() {
                               </div>
                               <div>
                                 <p className="text-xs font-medium capitalize">{palette.label}</p>
-                                <p className="text-[10px] text-muted-foreground">{colors.length} colors</p>
+                                <p className="text-[10px] text-muted-foreground">
+                                  {colors.length} colors
+                                  {colors.length > 4 && ` · showing ${Math.min(displayColors.length, 4)}`}
+                                </p>
                               </div>
                             </button>
                           );
                         })}
                       </div>
+
+                      {/* Display colors picker for palettes with >6 colors */}
+                      {getPalettesForMaterial(selectedMaterial)
+                        .filter((p) => p.colors.length > 6)
+                        .map((palette) => {
+                          const selected = paletteDisplayColors[palette.id] || [];
+                          return (
+                            <div key={`display-${palette.id}`} className="space-y-1.5 p-2.5 rounded-lg border border-accent/30 bg-accent/5">
+                              <p className="text-xs font-medium">
+                                Display colors for "{palette.label}" (choose exactly 4) *
+                              </p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {palette.colors.map((c) => {
+                                  const isSelected = selected.includes(c);
+                                  return (
+                                    <button
+                                      key={c}
+                                      type="button"
+                                      onClick={() => {
+                                        setPaletteDisplayColors((prev) => {
+                                          const current = prev[palette.id] || [];
+                                          if (isSelected) {
+                                            return { ...prev, [palette.id]: current.filter((x) => x !== c) };
+                                          }
+                                          if (current.length >= 4) return prev;
+                                          return { ...prev, [palette.id]: [...current, c] };
+                                        });
+                                      }}
+                                      className={`flex items-center gap-1 px-2 py-1 rounded-md border text-xs transition-colors ${
+                                        isSelected
+                                          ? 'border-secondary bg-secondary/10 text-secondary'
+                                          : 'border-border hover:border-secondary/50'
+                                      }`}
+                                    >
+                                      <span
+                                        className="h-3 w-3 rounded-full border border-border shrink-0"
+                                        style={{ backgroundColor: multicolorHexMap[c] || '#CCC' }}
+                                      />
+                                      {c}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground">
+                                {selected.length}/4 selected
+                                {selected.length !== 4 && ' — exactly 4 required to publish'}
+                              </p>
+                            </div>
+                          );
+                        })}
+
+                      {/* Display colors override for palettes with ≤6 colors (optional) */}
+                      {getPalettesForMaterial(selectedMaterial)
+                        .filter((p) => p.colors.length > 4 && p.colors.length <= 6)
+                        .map((palette) => {
+                          const selected = paletteDisplayColors[palette.id] || palette.colors.slice(0, 4);
+                          const isCustom = !!paletteDisplayColors[palette.id];
+                          return (
+                            <div key={`display-opt-${palette.id}`} className="space-y-1.5 p-2.5 rounded-lg border border-border">
+                              <p className="text-xs font-medium flex items-center gap-1.5">
+                                Display colors for "{palette.label}" (optional override)
+                              </p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {palette.colors.map((c) => {
+                                  const isSelected = selected.includes(c);
+                                  return (
+                                    <button
+                                      key={c}
+                                      type="button"
+                                      onClick={() => {
+                                        setPaletteDisplayColors((prev) => {
+                                          const current = prev[palette.id] || palette.colors.slice(0, 4);
+                                          if (isSelected && current.length <= 1) return prev;
+                                          if (isSelected) {
+                                            return { ...prev, [palette.id]: current.filter((x) => x !== c) };
+                                          }
+                                          if (current.length >= 4) return prev;
+                                          return { ...prev, [palette.id]: [...current, c] };
+                                        });
+                                      }}
+                                      className={`flex items-center gap-1 px-2 py-1 rounded-md border text-xs transition-colors ${
+                                        isSelected
+                                          ? 'border-secondary bg-secondary/10 text-secondary'
+                                          : 'border-border hover:border-secondary/50'
+                                      }`}
+                                    >
+                                      <span
+                                        className="h-3 w-3 rounded-full border border-border shrink-0"
+                                        style={{ backgroundColor: multicolorHexMap[c] || '#CCC' }}
+                                      />
+                                      {c}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground">
+                                Showing {selected.length} of {palette.colors.length} · first 4 used by default
+                              </p>
+                            </div>
+                          );
+                        })}
                     </div>
                   )}
 
