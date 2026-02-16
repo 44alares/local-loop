@@ -340,28 +340,36 @@ export default function PrintMyDesign() {
                     <div className="space-y-2">
                       <Label className="flex items-center gap-2">
                         <Palette className="h-4 w-4" />
-                        RAL Color
+                        RAL color (approx.)
                       </Label>
-                      <div className="grid grid-cols-8 gap-2">
-                        {ralColors.slice(0, 16).map((color) => (
-                          <button
-                            key={color.code}
-                            onClick={() => setSelectedColor(color)}
-                            className={`h-8 w-8 rounded-lg border-2 transition-all ${
-                              selectedColor?.code === color.code 
-                                ? 'border-secondary ring-2 ring-secondary/40' 
-                                : 'border-transparent hover:ring-2 hover:ring-secondary/20'
-                            }`}
-                            style={{ backgroundColor: color.hex }}
-                            title={`${color.code} - ${color.name}`}
-                          />
-                        ))}
-                      </div>
-                      {selectedColor && (
-                        <p className="text-sm text-muted-foreground">
-                          Selected: {selectedColor.code} - {selectedColor.name}
-                        </p>
-                      )}
+                      <Select
+                        value={selectedColor?.code ?? ''}
+                        onValueChange={(code) => {
+                          const c = ralColors.find(r => r.code === code);
+                          setSelectedColor(c ?? null);
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select RAL color…">
+                            {selectedColor && (
+                              <span className="flex items-center gap-2">
+                                <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: selectedColor.hex }} />
+                                {selectedColor.code} – {selectedColor.name}
+                              </span>
+                            )}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60">
+                          {ralColors.map((color) => (
+                            <SelectItem key={color.code} value={color.code}>
+                              <span className="flex items-center gap-2">
+                                <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                                {color.code} – {color.name}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
