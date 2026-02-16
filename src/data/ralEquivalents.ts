@@ -124,18 +124,57 @@ export const ralEquivalents: Record<string, Partial<Record<BrandKey, Omit<BrandM
 
 /**
  * Get equivalents for a RAL code.
- * Only returns brands that have an entry (subset of all brands).
+ * Enforces a minimum of 5 brands per RAL by auto-filling from the brand universe
+ * using a deterministic selection based on the RAL code hash.
  */
 export function getEquivalents(
   ralCode: string
-): { brand: BrandKey; label: string; match: BrandMatch | null }[] {
-  const matches = ralEquivalents[ralCode] || {};
-  // Only return brands that have a match for this RAL code
-  return BRAND_ORDER
-    .filter((key) => matches[key] != null)
-    .map((key) => ({
-      brand: key,
-      label: BRAND_LABELS[key],
-      match: matches[key] ? { ...matches[key]!, ref: getFakeBrandRef(ralCode, key) } : null,
-    }));
+): { brand: BrandKey; label: string; match: BrandMatch }[] {
+  const MIN_BRANDS = 5;
+  const explicit = ralEquivalents[ralCode] || {};
+
+  // Start with brands that have explicit entries (in fixed order)
+  const result: { brand: BrandKey; label: string; match: BrandMatch }[] = [];
+  const usedBrands = new Set<BrandKey>();
+
+  for (const key of BRAND_ORDER) {
+    if (explicit[key]) {
+      result.push({
+        brand: key,
+        label: BRAND_LABELS[key],
+        match: { ...explicit[key]!, ref: getFakeBrandRef(ralCode, key) },
+      });
+      usedBrands.add(key);
+    }
+  }
+
+  // Auto-fill remaining brands deterministically until we reach MIN_BRANDS
+  if (result.length < MIN_BRANDS) {
+    const remaining = BRAND_ORDER.filter((k) => !usedBrands.has(k));
+    // Deterministic shuffle based on RAL code
+    const h = hashCode(ralCode);
+    const sorted = remaining.sort((a, b) => {
+      const ha = hashCode(`${ralCode}::fill::${a}`) % 1000;
+      const hb = hashCode(`${ralCode}::fill::${b}`) % 1000;
+      return ha - hb;
+    });
+
+    for (const key of sorted) {
+      if (result.length >= MIN_BRANDS) break;
+      result.push({
+        brand: key,
+        label: BRAND_LABELS[key],
+        match: {
+          name: `PLA ${BRAND_LABELS[key]}`,
+          ref: getFakeBrandRef(ralCode, key),
+          confidence: 'Low' as const,
+        },
+      });
+    }
+  }
+
+  // Re-sort result into the canonical BRAND_ORDER
+  return result.sort(
+    (a, b) => BRAND_ORDER.indexOf(a.brand) - BRAND_ORDER.indexOf(b.brand)
+  );
 }
