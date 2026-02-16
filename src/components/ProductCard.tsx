@@ -106,8 +106,7 @@ export function ProductCard({ product, className, compact = false }: ProductCard
         {/* Price & CTA */}
         <div className="flex items-center justify-between">
           <div>
-            <span className={cn("font-bold", compact ? "text-base" : "text-xl")}>${cheapest.displayPrice.toFixed(0)}</span>
-            <span className={cn("text-muted-foreground ml-1", compact ? "text-xs" : "text-sm")}>{product.currency}</span>
+            <span className={cn("font-bold", compact ? "text-base" : "text-xl")}>{cheapest.displayPrice.toFixed(0)}</span>
           </div>
           {!compact && (
             <Button size="sm" variant="secondary">

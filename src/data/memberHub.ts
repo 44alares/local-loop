@@ -351,7 +351,7 @@ export const mockSuppliers: Supplier[] = [
       whatMembersGet: 'Reduced pricing on eco-friendly packaging. Volume-based tiers unlock automatically.',
       eligibility: 'All member roles in all regions.',
       howToRedeem: 'Order through the Member Hub storefront or use member code on greenship.eco.',
-      limitations: 'Free shipping on orders above €50 / $60.',
+      limitations: 'Free shipping on orders above €50.',
     },
   },
 ];

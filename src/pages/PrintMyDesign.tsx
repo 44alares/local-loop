@@ -226,11 +226,11 @@ export default function PrintMyDesign() {
                       <SelectValue placeholder="Select budget range" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="under-25">Under $25</SelectItem>
-                      <SelectItem value="25-50">$25 - $50</SelectItem>
-                      <SelectItem value="50-100">$50 - $100</SelectItem>
-                      <SelectItem value="100-250">$100 - $250</SelectItem>
-                      <SelectItem value="over-250">Over $250</SelectItem>
+                      <SelectItem value="under-25">Under 25</SelectItem>
+                      <SelectItem value="25-50">25 - 50</SelectItem>
+                      <SelectItem value="50-100">50 - 100</SelectItem>
+                      <SelectItem value="100-250">100 - 250</SelectItem>
+                      <SelectItem value="over-250">Over 250</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -424,7 +424,7 @@ export default function PrintMyDesign() {
                     {estimatedPrice ? (
                       <>
                         <div className="text-center py-4">
-                          <p className="text-4xl font-bold">${estimatedPrice.toFixed(2)}</p>
+                          <p className="text-4xl font-bold">{estimatedPrice.toFixed(2)}</p>
                           <p className="text-muted-foreground text-sm mt-1">Estimated total</p>
                         </div>
 
@@ -441,21 +441,21 @@ export default function PrintMyDesign() {
                                     <Printer className="h-4 w-4 text-accent" />
                                     Maker earns
                                   </span>
-                                  <span className="font-medium">${makerAmount.toFixed(2)}</span>
+                                  <span className="font-medium">{makerAmount.toFixed(2)}</span>
                                 </div>
                                 <div className="flex items-center justify-between text-muted-foreground">
                                   <span className="flex items-center gap-2">
                                     <CreditCard className="h-4 w-4" />
                                     Payment processing
                                   </span>
-                                  <span>${processingAmount.toFixed(2)}</span>
+                                  <span>{processingAmount.toFixed(2)}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                   <span className="flex items-center gap-2">
                                     <Building2 className="h-4 w-4 text-secondary" />
                                     Platform fee
                                   </span>
-                                  <span>${platformAmount.toFixed(2)}</span>
+                                  <span>{platformAmount.toFixed(2)}</span>
                                 </div>
                               </div>
                             );

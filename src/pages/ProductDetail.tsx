@@ -327,7 +327,7 @@ export default function ProductDetail() {
                         </div>
                         <div className="text-right">
                           <p className={cn("font-semibold text-sm", option.price === 0 && "text-secondary")}>
-                            {option.price === 0 ? 'FREE' : `$${option.price.toFixed(2)}`}
+                            {option.price === 0 ? 'FREE' : option.price.toFixed(2)}
                           </p>
                         </div>
                       </button>)}
@@ -339,7 +339,7 @@ export default function ProductDetail() {
             {/* Actions */}
             <div className="flex gap-2">
               <Button variant="accent" size="lg" className="flex-1" disabled={!selectedMaker || !config?.selectedColor}>
-                Add to Cart — ${totalPrice.toFixed(2)}
+                Add to Cart — {totalPrice.toFixed(2)}
               </Button>
               <Button variant="outline" size="lg">
                 <Heart className="h-4 w-4" />
