@@ -187,7 +187,7 @@ export function BreakdownRows({ breakdown, productType, multicolorSurchargeAmoun
   return (
     <div className="space-y-1.5 text-sm">
       <div className="flex justify-between py-1 border-b border-border/50">
-        <span className="text-muted-foreground">Buyer price</span>
+        <span className="text-muted-foreground">Total price</span>
         <span className="font-semibold">{breakdown.buyerPrice.toFixed(2)}</span>
       </div>
 

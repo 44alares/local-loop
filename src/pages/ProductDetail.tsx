@@ -46,6 +46,8 @@ export default function ProductDetail() {
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [buyerPrice, setBuyerPrice] = useState(product.price);
   const [config, setConfig] = useState<ConfigState | null>(null);
+  const [personalizedText, setPersonalizedText] = useState('');
+  const [personalizedTextError, setPersonalizedTextError] = useState('');
   const maker = selectedMaker ? mockMakers.find(m => m.id === selectedMaker) : null;
   const shippingOptions = getShippingOptions();
   const selectedShippingOption = shippingOptions.find(o => o.id === selectedShipping);
@@ -182,13 +184,44 @@ export default function ProductDetail() {
           {/* Right: Details */}
           <div className="space-y-6">
 
-            {/* Final Price (total only — no breakdown) */}
-            <div className="flex items-baseline gap-2">
+            {/* Now Price — polished card */}
+            <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 inline-flex flex-col">
+              <span className="text-xs font-medium text-muted-foreground">Now Price</span>
               <span className="text-2xl font-bold">{buyerPrice.toFixed(2)}</span>
             </div>
 
             {/* Product Configurator — Product Type, Material, Quality, Size, Colors */}
             <ProductConfigurator product={product} selectedMakerId={selectedMaker} onPriceChange={setBuyerPrice} onConfigChange={setConfig} />
+
+            {/* Personalized Text — only for personalizable products, after Size/Colors */}
+            {product.personalizable && (
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Personalized text <span className="text-muted-foreground font-normal">(optional, one word)</span></Label>
+                <Input
+                  placeholder="e.g. Alex"
+                  maxLength={15}
+                  value={personalizedText}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setPersonalizedText(val);
+                    const trimmed = val.trim();
+                    if (trimmed.length === 0) {
+                      setPersonalizedTextError('');
+                    } else if (/\s/.test(trimmed)) {
+                      setPersonalizedTextError('Only one word allowed — no spaces.');
+                    } else if (trimmed.length > 15) {
+                      setPersonalizedTextError('Max 15 characters.');
+                    } else {
+                      setPersonalizedTextError('');
+                    }
+                  }}
+                  className={cn(personalizedTextError && "border-destructive focus-visible:ring-destructive")}
+                />
+                {personalizedTextError && (
+                  <p className="text-xs text-destructive">{personalizedTextError}</p>
+                )}
+              </div>
+            )}
 
             {/* Smart Maker Search with Geofencing */}
             <div className="space-y-3">
@@ -399,7 +432,7 @@ export default function ProductDetail() {
 
             {/* Actions — Add to Cart after breakdown */}
             <div className="flex gap-2">
-              <Button variant="accent" size="lg" className="flex-1" disabled={!selectedMaker || !config?.selectedColor}>
+              <Button variant="accent" size="lg" className="flex-1" disabled={!selectedMaker || !config?.selectedColor || !!personalizedTextError}>
                 Add to Cart — {totalPrice.toFixed(2)}
               </Button>
               <Button variant="outline" size="lg">
