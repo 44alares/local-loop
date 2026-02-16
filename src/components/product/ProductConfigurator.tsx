@@ -799,7 +799,6 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
       <div className="p-4 rounded-xl bg-card border border-border">
         <div className="flex items-baseline gap-2 mb-3">
           <span className="text-2xl font-bold">{displayPrice.toFixed(2)}</span>
-          <span className="text-muted-foreground text-sm">EUR</span>
         </div>
         
         {/* Fees & Payout Breakdown - Amounts only, no percentages */}
