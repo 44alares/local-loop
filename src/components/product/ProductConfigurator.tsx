@@ -187,7 +187,7 @@ function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount }: { 
     <div className="space-y-1.5 text-sm">
       <div className="flex justify-between py-1 border-b border-border/50">
         <span className="text-muted-foreground">Buyer price</span>
-        <span className="font-semibold">${breakdown.buyerPrice.toFixed(2)}</span>
+        <span className="font-semibold">{breakdown.buyerPrice.toFixed(2)}</span>
       </div>
 
       {multicolorSurchargeAmount != null && multicolorSurchargeAmount > 0 && (
@@ -196,7 +196,7 @@ function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount }: { 
             <Palette className="h-3 w-3" />
             Multi-color +30%
           </span>
-          <span className="text-xs font-medium">${multicolorSurchargeAmount.toFixed(2)}</span>
+          <span className="text-xs font-medium">{multicolorSurchargeAmount.toFixed(2)}</span>
         </div>
       )}
 
@@ -217,7 +217,7 @@ function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount }: { 
                 {row.tooltip}
               </PopoverContent>
             </Popover>
-            <span className={row.valueClass}>${value.toFixed(2)}</span>
+            <span className={row.valueClass}>{value.toFixed(2)}</span>
           </div>
         );
       })}
@@ -798,8 +798,8 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
       {/* Live Price Display */}
       <div className="p-4 rounded-xl bg-card border border-border">
         <div className="flex items-baseline gap-2 mb-3">
-          <span className="text-2xl font-bold">${displayPrice.toFixed(2)}</span>
-          <span className="text-muted-foreground text-sm">{product.currency}</span>
+          <span className="text-2xl font-bold">{displayPrice.toFixed(2)}</span>
+          <span className="text-muted-foreground text-sm">EUR</span>
         </div>
         
         {/* Fees & Payout Breakdown - Amounts only, no percentages */}

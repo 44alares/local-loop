@@ -1,7 +1,7 @@
 // Updated pricing engine with new commission structure
 import type { ProductType } from '@/types';
 
-// Minimum product price - no product can be below $15
+// Minimum product price - no product can be below 15
 export const MIN_PRODUCT_PRICE = 15;
 
 export interface PriceBreakdown {
