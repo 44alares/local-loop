@@ -41,16 +41,18 @@ function TooltipBody({ color }: Props) {
         ))}
       </div>
 
-      {/* Color Match CTA — always shown */}
+      {/* Protabula CTA — always shown */}
       <div className="pt-1.5 mt-1.5 border-t border-border">
         <p className="text-muted-foreground text-[11px]">
-          If you can't find your filament here, use our{' '}
+          If you can't find an equivalence for your filament, use the{' '}
           <a
-            href="/color-match"
+            href="https://protabula.com/en/ral-colors/picker?utm_source=chatgpt.com"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-secondary font-medium hover:underline"
             onClick={(e) => e.stopPropagation()}
           >
-            Color Match tool
+            RAL Color Picker
           </a>
           .
         </p>
