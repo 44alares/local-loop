@@ -359,7 +359,7 @@ export const mockProducts: Product[] = [
     id: 'p20',
     name: 'Weekly Pill Organizer',
     description: 'A compact, personalized weekly pill organizer with day-of-week compartments and a sliding lid. Add your name for a custom touch.',
-    images: [pillOrganizerAlexImg, pillOrganizerImg, pillOrganizerWhiteImg],
+    images: [pillOrganizerImg, pillOrganizerWhiteImg],
     price: 18,
     currency: 'USD',
     designer: mockDesigners[0],
