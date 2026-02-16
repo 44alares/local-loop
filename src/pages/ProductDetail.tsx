@@ -8,8 +8,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { mockProducts, mockMakers, mockReviews } from '@/data/mockData';
 import { getShippingOptions } from '@/lib/pricing';
-import { ProductConfigurator, ConfigState } from '@/components/product/ProductConfigurator';
-import { ArrowLeft, Heart, Share2, Star, MapPin, Clock, Package, Shield, Truck, ChevronRight, Check, Leaf, Store, Search, Loader2 } from 'lucide-react';
+import { calculateFullBreakdown } from '@/lib/pricing';
+import { productTypeLabels } from '@/data/categories';
+import { ProductConfigurator, ConfigState, BreakdownRows } from '@/components/product/ProductConfigurator';
+import { ArrowLeft, Heart, Share2, Star, MapPin, Clock, Package, Shield, Truck, ChevronRight, Check, Leaf, Store, Search, Loader2, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 // Round to nearest integer ending in 0 or 5
 function roundTo5(n: number): number {
@@ -49,6 +51,7 @@ export default function ProductDetail() {
   const selectedShippingOption = shippingOptions.find(o => o.id === selectedShipping);
   const shippingCost = selectedShippingOption?.price || 0;
   const totalPrice = (buyerPrice + shippingCost) * quantity;
+  const breakdown = useMemo(() => calculateFullBreakdown(buyerPrice, product.productType), [buyerPrice, product.productType]);
 
   // Filter and sort makers - apply multicolor filtering when in multi-color mode
   const sortedMakers = useMemo(() => {
@@ -142,8 +145,8 @@ export default function ProductDetail() {
                   </button>)}
               </div>}
 
-            {/* Specifications - Now directly below About This Design */}
-            <div className="pt-3">
+            {/* Specifications - Desktop only (hidden on mobile, shown below Find a Maker on mobile) */}
+            <div className="pt-3 hidden md:block">
               <h3 className="text-lg font-bold mb-3">Specifications</h3>
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between py-1.5 border-b border-border">
@@ -179,7 +182,12 @@ export default function ProductDetail() {
           {/* Right: Details */}
           <div className="space-y-6">
 
-            {/* Product Configurator - Material, Color, Quality with Live Pricing */}
+            {/* Final Price (total only — no breakdown) */}
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold">{buyerPrice.toFixed(2)}</span>
+            </div>
+
+            {/* Product Configurator — Product Type, Material, Quality, Size, Colors */}
             <ProductConfigurator product={product} selectedMakerId={selectedMaker} onPriceChange={setBuyerPrice} onConfigChange={setConfig} />
 
             {/* Smart Maker Search with Geofencing */}
@@ -336,7 +344,60 @@ export default function ProductDetail() {
 
               </div>}
 
-            {/* Actions */}
+            {/* Specifications — Mobile only (between Find a Maker and Breakdown) */}
+            <div className="md:hidden pt-3">
+              <h3 className="text-lg font-bold mb-3">Specifications</h3>
+              <div className="space-y-1.5 text-sm">
+                <div className="flex justify-between py-1.5 border-b border-border">
+                  <span className="text-muted-foreground">Dimensions</span>
+                  {!['gaming', 'repair'].includes(product.category) ? (
+                    <div className="text-right space-y-0.5">
+                      {(['S', 'M', 'L'] as const).map(size => {
+                        const scale = size === 'S' ? 0.75 : size === 'L' ? 1.25 : 1;
+                        const d = size === 'M' ? product.dimensions : getSizedDimensions(product.dimensions, scale);
+                        return (
+                          <div key={size} className="text-sm">
+                            <span className="font-medium">{size}:</span> {d.length} × {d.width} × {d.height} {d.unit}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <span>{product.dimensions.length} × {product.dimensions.width} × {product.dimensions.height} {product.dimensions.unit}</span>
+                  )}
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-border">
+                  <span className="text-muted-foreground">Available Materials</span>
+                  <span>{product.materials.join(', ')}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-border">
+                  <span className="text-muted-foreground">Style</span>
+                  <span className="capitalize">{product.style}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Price Breakdown — full decomposition */}
+            <div className="p-4 rounded-xl bg-card border border-border">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                  <Info className="h-3.5 w-3.5 text-secondary" />
+                  Fees & Payout Breakdown
+                </div>
+                
+                <BreakdownRows 
+                  breakdown={breakdown} 
+                  productType={product.productType} 
+                  multicolorSurchargeAmount={config?.multicolorSurchargeAmount}
+                />
+                
+                <p className="text-xs text-muted-foreground mt-2">
+                  Product type ({productTypeLabels[product.productType]}) is set by the designer.
+                </p>
+              </div>
+            </div>
+
+            {/* Actions — Add to Cart after breakdown */}
             <div className="flex gap-2">
               <Button variant="accent" size="lg" className="flex-1" disabled={!selectedMaker || !config?.selectedColor}>
                 Add to Cart — {totalPrice.toFixed(2)}

@@ -59,6 +59,7 @@ export interface ConfigState {
   multicolorPalette?: string;
   multicolorColors?: string[];
   colorMatchPreference?: 'close' | 'exact';
+  multicolorSurchargeAmount?: number;
 }
 
 // Size scaling factors
@@ -180,7 +181,7 @@ const breakdownRowConfig = [
   },
 ] as const;
 
-function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount }: { breakdown: ReturnType<typeof calculateFullBreakdown>; productType: string; multicolorSurchargeAmount?: number }) {
+export function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount }: { breakdown: ReturnType<typeof calculateFullBreakdown>; productType: string; multicolorSurchargeAmount?: number }) {
   const [openRow, setOpenRow] = useState<string | null>(null);
 
   return (
@@ -429,8 +430,9 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
       multicolorPalette: (colorMode === 'multi' && !isResin) ? multicolorPalette : undefined,
       multicolorColors: (colorMode === 'multi' && !isResin) ? multicolorColors : undefined,
       colorMatchPreference: (colorMode === 'multi' && !isResin) ? colorMatchPreference : undefined,
+      multicolorSurchargeAmount: (colorMode === 'multi' && !isResin) ? multicolorSurchargeAmount : undefined,
     });
-  }, [displayPrice, selectedColor, selectedMaterial, selectedQuality, selectedSize, colorMode, multicolorCount, multicolorPalette, multicolorColors, colorMatchPreference, isResin, onPriceChange, onConfigChange]);
+  }, [displayPrice, selectedColor, selectedMaterial, selectedQuality, selectedSize, colorMode, multicolorCount, multicolorPalette, multicolorColors, colorMatchPreference, isResin, onPriceChange, onConfigChange, multicolorSurchargeAmount]);
   
   const getMaterialLabel = (material: string, index: number) => {
     if (index === 0) return 'Base';
@@ -459,7 +461,127 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
           {productTypeLabels[product.productType]}
         </Badge>
       </div>
-      
+
+      {/* Material Selector */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-sm">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button type="button" className="inline-flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors">
+                <Layers className="h-4 w-4" />
+                Material
+                <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
+              <div className="space-y-1.5">
+                {Object.entries(materialTooltips).map(([mat, desc]) => (
+                  <p key={mat}><strong>{mat}:</strong> {desc}</p>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </Label>
+        <div className="flex flex-wrap gap-2">
+          {availableMaterials.map((material, index) => {
+            const label = getMaterialLabel(material, index);
+            return (
+              <Tooltip key={material}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={selectedMaterial === material ? "secondary" : "outline"}
+                    size="sm"
+                    onClick={() => handleMaterialChange(material)}
+                    className="gap-1 h-8 text-xs"
+                  >
+                    {material}
+                    {label && <span className="text-xs opacity-70">({label})</span>}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="text-xs">
+                  {materialTooltips[material] || material}
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Quality Selector */}
+      <div className="space-y-2">
+        <Label className="flex items-center gap-2 text-sm">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button type="button" className="inline-flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors">
+                <Sparkles className="h-4 w-4" />
+                Quality
+                <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
+              <div className="space-y-1">
+                <p><strong>Standard:</strong> FDM, 0,32 height layer</p>
+                <p><strong>Premium:</strong> FDM · 0.16 mm layer height</p>
+                <p><strong>Ultra:</strong> Resin, 0,05 height layer</p>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </Label>
+        <div className="flex flex-wrap gap-2">
+          {availableQualities.map((quality, index) => {
+            const label = getQualityLabel(quality, index);
+            return (
+              <Tooltip key={quality}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={selectedQuality === quality ? "secondary" : "outline"}
+                    size="sm"
+                    onClick={() => handleQualityChange(quality)}
+                    className="gap-1 capitalize h-8 text-xs"
+                  >
+                    {quality}
+                    {label && <span className="text-xs opacity-70">({label})</span>}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="text-xs">
+                  {qualityTooltips[quality]}
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Size Selector (not for gaming/repair) */}
+      {showSizeOptions && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-2 text-sm">
+            <Maximize2 className="h-4 w-4" />
+            Size
+          </Label>
+          <div className="flex flex-wrap gap-2">
+            {(['S', 'M', 'L'] as SizeOption[]).map((size) => (
+              <Button
+                key={size}
+                variant={selectedSize === size ? "secondary" : "outline"}
+                size="sm"
+                onClick={() => setSelectedSize(size)}
+                className="h-8 text-xs min-w-[3rem]"
+              >
+                {size}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TPU surcharge note */}
+      {selectedMaterial === 'TPU' && (
+        <p className="text-xs text-accent font-medium px-1">
+          TPU Flexible adds a +20% surcharge over PLA Base.
+        </p>
+      )}
+
       {/* Color Mode Toggle (only for multicolor products with compatible material) */}
       {supportsMulticolor && (
         <div className="space-y-2">
@@ -674,151 +796,6 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
           </p>
         </div>
       )}
-      
-      {/* Material Selector */}
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2 text-sm">
-          <Popover>
-            <PopoverTrigger asChild>
-              <button type="button" className="inline-flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors">
-                <Layers className="h-4 w-4" />
-                Material
-                <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
-              <div className="space-y-1.5">
-                {Object.entries(materialTooltips).map(([mat, desc]) => (
-                  <p key={mat}><strong>{mat}:</strong> {desc}</p>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-        </Label>
-        <div className="flex flex-wrap gap-2">
-          {availableMaterials.map((material, index) => {
-            const label = getMaterialLabel(material, index);
-            return (
-              <Tooltip key={material}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={selectedMaterial === material ? "secondary" : "outline"}
-                    size="sm"
-                    onClick={() => handleMaterialChange(material)}
-                    className="gap-1 h-8 text-xs"
-                  >
-                    {material}
-                    {label && <span className="text-xs opacity-70">({label})</span>}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="text-xs">
-                  {materialTooltips[material] || material}
-                </TooltipContent>
-              </Tooltip>
-            );
-          })}
-        </div>
-      </div>
-      
-      {/* Quality Selector */}
-      <div className="space-y-2">
-        <Label className="flex items-center gap-2 text-sm">
-          <Popover>
-            <PopoverTrigger asChild>
-              <button type="button" className="inline-flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors">
-                <Sparkles className="h-4 w-4" />
-                Quality
-                <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
-              <div className="space-y-1">
-                <p><strong>Standard:</strong> FDM, 0,32 height layer</p>
-                <p><strong>Premium:</strong> FDM · 0.16 mm layer height</p>
-                <p><strong>Ultra:</strong> Resin, 0,05 height layer</p>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </Label>
-        <div className="flex flex-wrap gap-2">
-          {availableQualities.map((quality, index) => {
-            const label = getQualityLabel(quality, index);
-            return (
-              <Tooltip key={quality}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={selectedQuality === quality ? "secondary" : "outline"}
-                    size="sm"
-                    onClick={() => handleQualityChange(quality)}
-                    className="gap-1 capitalize h-8 text-xs"
-                  >
-                    {quality}
-                    {label && <span className="text-xs opacity-70">({label})</span>}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="text-xs">
-                  {qualityTooltips[quality]}
-                </TooltipContent>
-              </Tooltip>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Size Selector (not for gaming/repair) */}
-      {showSizeOptions && (
-        <div className="space-y-2">
-          <Label className="flex items-center gap-2 text-sm">
-            <Maximize2 className="h-4 w-4" />
-            Size
-          </Label>
-          <div className="flex flex-wrap gap-2">
-            {(['S', 'M', 'L'] as SizeOption[]).map((size) => (
-              <Button
-                key={size}
-                variant={selectedSize === size ? "secondary" : "outline"}
-                size="sm"
-                onClick={() => setSelectedSize(size)}
-                className="h-8 text-xs min-w-[3rem]"
-              >
-                {size}
-              </Button>
-            ))}
-          </div>
-        </div>
-      )}
-      
-      {/* TPU surcharge note */}
-      {selectedMaterial === 'TPU' && (
-        <p className="text-xs text-accent font-medium px-1">
-          TPU Flexible adds a +20% surcharge over PLA Base.
-        </p>
-      )}
-
-      {/* Live Price Display */}
-      <div className="p-4 rounded-xl bg-card border border-border">
-        <div className="flex items-baseline gap-2 mb-3">
-          <span className="text-2xl font-bold">{displayPrice.toFixed(2)}</span>
-        </div>
-        
-        {/* Fees & Payout Breakdown - Amounts only, no percentages */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-            <Info className="h-3.5 w-3.5 text-secondary" />
-            Fees & Payout Breakdown
-          </div>
-          
-          <BreakdownRows 
-            breakdown={breakdown} 
-            productType={product.productType} 
-            multicolorSurchargeAmount={(colorMode === 'multi' && !isResin) ? multicolorSurchargeAmount : undefined}
-          />
-          
-          <p className="text-xs text-muted-foreground mt-2">
-            Product type ({productTypeLabels[product.productType]}) is set by the designer.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
