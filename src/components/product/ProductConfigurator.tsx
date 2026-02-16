@@ -615,7 +615,7 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
           {/* Palette selector */}
           <div className="space-y-1.5">
             <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              Palette <PaletteInfoTooltip />
+              {selectedMakerId ? 'Palettes available from this Maker' : 'Base palette (default)'} <PaletteInfoTooltip />
             </p>
             <div className="flex flex-wrap gap-2">
               {availablePalettes.map((palette) => {
@@ -657,79 +657,17 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
             </div>
           </div>
 
-          {/* Number of colors */}
-          <div className="space-y-1.5">
-            <p className="text-xs font-medium text-muted-foreground">Number of colors</p>
-            <div className="flex gap-2">
-              {[2, 3, 4].map((n) => (
-                <Button
-                  key={n}
-                  variant={multicolorCount === n ? 'secondary' : 'outline'}
-                  size="sm"
-                  onClick={() => setMulticolorCount(n)}
-                  className="h-7 text-xs min-w-[3rem]"
-                >
-                  {n}
-                </Button>
-              ))}
-            </div>
-          </div>
+          {!selectedMakerId && (
+            <p className="text-xs text-muted-foreground italic">
+              Want more color options? Select a Maker first.
+            </p>
+          )}
 
-          {/* Color dropdowns */}
-          <div className="space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">Select colors</p>
-            <div className="grid grid-cols-2 gap-2">
-              {Array.from({ length: multicolorCount }).map((_, i) => (
-                <div key={i} className="space-y-1">
-                  <label className="text-xs text-muted-foreground">Color {i + 1}</label>
-                  <Select
-                    value={multicolorColors[i] || ''}
-                    onValueChange={(val) => handleMulticolorColorChange(i, val)}
-                  >
-                    <SelectTrigger className="h-8 text-xs">
-                      <SelectValue placeholder="Select..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {currentPaletteColors.map((color) => (
-                        <SelectItem key={color} value={color}>
-                          <span className="flex items-center gap-2">
-                            <span
-                              className="inline-block h-3 w-3 rounded-full border border-border"
-                              style={{ backgroundColor: colorHexMap[color] || multicolorHexMap[color] || '#CCC' }}
-                            />
-                            {color}
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Color matching preference */}
-          <div className="space-y-1.5">
-            <p className="text-xs font-medium text-muted-foreground">Color matching</p>
-            <div className="flex gap-2">
-              <Button
-                variant={colorMatchPreference === 'close' ? 'secondary' : 'outline'}
-                size="sm"
-                onClick={() => setColorMatchPreference('close')}
-                className="h-7 text-xs"
-              >
-                Close match OK
-              </Button>
-              <Button
-                variant={colorMatchPreference === 'exact' ? 'secondary' : 'outline'}
-                size="sm"
-                onClick={() => setColorMatchPreference('exact')}
-                className="h-7 text-xs"
-              >
-                Exact match only
-              </Button>
-            </div>
-          </div>
+          {selectedMakerId && availablePalettes.length === 0 && (
+            <p className="text-xs text-muted-foreground italic">
+              This Maker doesn't offer multi-color for this product. Choose another Maker or switch to Single color.
+            </p>
+          )}
 
           <p className="text-xs text-muted-foreground italic">
             Multi-color depends on local maker availability.

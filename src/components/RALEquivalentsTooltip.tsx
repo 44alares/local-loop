@@ -10,12 +10,12 @@ interface Props {
 
 /**
  * Click/tap-activated popover showing approximate filament brand equivalents
- * for a given RAL color. MVP shows "coming soon" fallback.
+ * for a given RAL color. Shows only brands with available matches + Color Match CTA.
  */
 export function RALEquivalentsTooltip({ color }: Props) {
   const [open, setOpen] = useState(false);
   const equivalents = getEquivalents(color.code);
-  const hasAnyMatch = equivalents.some((e) => e.match);
+  const hasAnyMatch = equivalents.length > 0;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -43,7 +43,7 @@ export function RALEquivalentsTooltip({ color }: Props) {
             className="inline-block h-3 w-3 rounded-full border border-border shrink-0"
             style={{ backgroundColor: color.hex }}
           />
-          {color.code} {color.name}
+          {color.code} — {color.name}
         </p>
         {hasAnyMatch ? (
           <div className="space-y-1">
@@ -52,7 +52,7 @@ export function RALEquivalentsTooltip({ color }: Props) {
                 <span className="font-medium text-foreground">{label}</span>
                 {' — '}
                 {match
-                  ? `Closest match: ${match.name} (confidence: ${match.confidence})`
+                  ? `ref. ${match.ref}`
                   : 'No reliable match'}
               </p>
             ))}
@@ -62,6 +62,13 @@ export function RALEquivalentsTooltip({ color }: Props) {
             Equivalences coming soon. For now, use RAL approx. as a reference.
           </p>
         )}
+        {/* Color Match CTA — always shown */}
+        <div className="pt-1.5 mt-1.5 border-t border-border">
+          <p className="text-muted-foreground text-[11px]">
+            If you can't find your filament here, use our{' '}
+            <span className="text-secondary font-medium cursor-pointer hover:underline">Color Match tool</span>.
+          </p>
+        </div>
       </PopoverContent>
     </Popover>
   );

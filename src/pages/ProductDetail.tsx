@@ -147,10 +147,6 @@ export default function ProductDetail() {
               <h3 className="text-lg font-bold mb-3">Specifications</h3>
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between py-1.5 border-b border-border">
-                  <span className="text-muted-foreground">Product Type</span>
-                  <span className="capitalize font-medium">{product.productType}</span>
-                </div>
-                <div className="flex justify-between py-1.5 border-b border-border">
                   <span className="text-muted-foreground">Dimensions</span>
                   {!['gaming', 'repair'].includes(product.category) ? (
                     <div className="text-right space-y-0.5">
