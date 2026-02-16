@@ -230,7 +230,7 @@ export const mockProducts: Product[] = [
     category: 'kids',
     productType: 'artistic',
     style: 'colorful',
-    materials: ['PLA'],
+    materials: ['PLA', 'TPU'],
     availableColors: { default: ['Red', 'Blue', 'Green', 'Purple', 'Orange', 'Pink', 'Black'] },
     supportedQualities: ['standard', 'premium'],
     dimensions: { length: 200, width: 50, height: 60, unit: 'mm' },

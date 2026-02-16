@@ -186,6 +186,7 @@ export const PRINT_MATERIAL_RATES: Record<string, number> = {
   PETG: 0.03,
   Resin: 0.045,
   Nylon: 0.05,
+  TPU: 0.03,
 };
 
 // Pricing for "Print My Design" based on file specs

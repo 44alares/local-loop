@@ -309,6 +309,7 @@ export default function StartCreating() {
                         <SelectItem value="PETG">PETG - Durable</SelectItem>
                         <SelectItem value="Resin">Resin - High Detail</SelectItem>
                         <SelectItem value="Nylon">Nylon - Industrial</SelectItem>
+                        <SelectItem value="TPU">TPU Flexible (+20% vs PLA)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

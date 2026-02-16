@@ -13,7 +13,7 @@ export interface MaterialConfig {
   supportsMulticolor: boolean;
 }
 
-export type MaterialType = 'PLA' | 'PETG' | 'ABS' | 'Nylon' | 'Resin';
+export type MaterialType = 'PLA' | 'PETG' | 'ABS' | 'Nylon' | 'Resin' | 'TPU';
 
 export const MATERIALS_CONFIG: Record<MaterialType, MaterialConfig> = {
   PLA: {
@@ -77,9 +77,20 @@ export const MATERIALS_CONFIG: Record<MaterialType, MaterialConfig> = {
     ],
     supportsMulticolor: false,
   },
+  TPU: {
+    basicColors: [
+      { name: 'Black', hex: '#0A0A0D', ral: 'RAL 9005' },
+      { name: 'White', hex: '#F4F8F4', ral: 'RAL 9010' },
+      { name: 'Grey', hex: '#C5C7C4', ral: 'RAL 7035' },
+      { name: 'Blue', hex: '#007CB0', ral: 'RAL 5015' },
+      { name: 'Red', hex: '#CC0605', ral: 'RAL 3020' },
+    ],
+    recommendedColors: [],
+    supportsMulticolor: false,
+  },
 };
 
-export const ALL_MATERIALS: MaterialType[] = ['PLA', 'PETG', 'ABS', 'Nylon', 'Resin'];
+export const ALL_MATERIALS: MaterialType[] = ['PLA', 'PETG', 'ABS', 'Nylon', 'Resin', 'TPU'];
 
 /** Get basic color names for a material (used in configurator) */
 export function getBasicColorNames(material: string): string[] {
