@@ -294,9 +294,15 @@ export default function JoinAsMaker() {
           {/* Materials & Colors */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 flex-wrap">
                 <Palette className="h-5 w-5 text-accent" />
                 Materials & Colors
+                <Link
+                  to="/ral-equivalents"
+                  className="text-xs font-normal text-secondary hover:underline ml-auto"
+                >
+                  Filament manufacturers RAL equivalents
+                </Link>
               </CardTitle>
               <CardDescription>
                 Select your material first, then review the required basic colors

@@ -25,6 +25,7 @@ import NotFound from "./pages/NotFound";
 import DesignerTerms from "./pages/DesignerTerms";
 import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
+import RALEquivalents from "./pages/RALEquivalents";
 
 // Hub pages
 import HubLayout from "./pages/hub/HubLayout";
@@ -60,6 +61,7 @@ const App = () => (
           <Route path="/shipping" element={<Shipping />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/cookies" element={<Cookies />} />
+          <Route path="/ral-equivalents" element={<RALEquivalents />} />
           {/* Member Hub */}
           <Route path="/hub" element={<HubLayout />}>
             <Route index element={<HubOverview />} />
