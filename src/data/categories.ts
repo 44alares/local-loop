@@ -49,6 +49,12 @@ export const categories: Category[] = [
     description: 'Curated sculptures, busts, and collectible figures',
     icon: 'Sparkles',
   },
+  {
+    id: 'personalized',
+    name: 'Personalized Items',
+    description: 'Products you can customize with your own text or details',
+    icon: 'PenLine',
+  },
 ];
 
 export const categoryLabels: Record<string, string> = {
@@ -59,6 +65,7 @@ export const categoryLabels: Record<string, string> = {
   decoration: 'Decoration',
   kids: 'Kids & Toys',
   artistic: 'Artistic',
+  personalized: 'Personalized Items',
 };
 
 export const productTypeLabels: Record<string, string> = {

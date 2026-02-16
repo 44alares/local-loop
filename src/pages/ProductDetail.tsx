@@ -187,7 +187,7 @@ export default function ProductDetail() {
             {/* Now Price — polished card */}
             <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 inline-flex flex-col">
               <span className="text-xs font-medium text-muted-foreground">Now Price</span>
-              <span className="text-2xl font-bold">{buyerPrice.toFixed(2)}</span>
+              <span className="text-2xl font-bold">{breakdown.buyerPrice.toFixed(2)}</span>
             </div>
 
             {/* Product Configurator — Product Type, Material, Quality, Size, Colors */}

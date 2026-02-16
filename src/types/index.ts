@@ -84,7 +84,7 @@ export interface Product {
   personalizable?: boolean;
 }
 
-export type ProductCategory = 'functional' | 'desktop' | 'decoration' | 'kids' | 'gaming' | 'repair' | 'artistic' | 'other';
+export type ProductCategory = 'functional' | 'desktop' | 'decoration' | 'kids' | 'gaming' | 'repair' | 'artistic' | 'personalized' | 'other';
 export type ProductStyle = 'geometric' | 'colorful' | 'hybrid' | 'industrial' | 'sculptural';
 
 export interface Review {
