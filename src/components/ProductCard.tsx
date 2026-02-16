@@ -49,7 +49,7 @@ export function ProductCard({ product, className, compact = false }: ProductCard
         </button>
 
         {/* Quick Info Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
           <div className="flex items-center gap-1.5 text-white text-xs">
             <Clock className="h-3 w-3" />
             <span>{product.leadTime}</span>

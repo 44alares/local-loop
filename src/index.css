@@ -165,7 +165,8 @@
   }
 
   .card-hover:hover {
-    @apply -translate-y-1;
+    margin-top: -4px;
+    margin-bottom: 4px;
     box-shadow: var(--shadow-card-hover);
   }
 
