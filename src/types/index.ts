@@ -80,6 +80,8 @@ export interface Product {
   multicolorConfig?: ProductMulticolorConfig;
   /** Designer-chosen display colors per palette (max 4 per palette) */
   paletteDisplayColors?: Record<string, string[]>;
+  /** Whether this product supports personalized text */
+  personalizable?: boolean;
 }
 
 export type ProductCategory = 'functional' | 'desktop' | 'decoration' | 'kids' | 'gaming' | 'repair' | 'artistic' | 'other';

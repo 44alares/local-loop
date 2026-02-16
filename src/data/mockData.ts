@@ -19,6 +19,8 @@ import dishwasherBasketWheelImg from '@/assets/products/dishwasher-basket-wheel.
 import vacuumAdapterImg from '@/assets/products/vacuum-adapter.jpg';
 import keycapSetImg from '@/assets/products/keycap-set.jpg';
 import cableManagementSystemImg from '@/assets/products/cable-management-system.jpg';
+import pillOrganizerImg from '@/assets/products/pill-organizer.png';
+import pillOrganizerWhiteImg from '@/assets/products/pill-organizer-white.png';
 
 export const mockDesigners: Designer[] = [
   {
@@ -350,6 +352,30 @@ export const mockProducts: Product[] = [
     rating: 4.7,
     reviewCount: 72,
     makerCount: 28,
+  },
+  // Health & Wellness
+  {
+    id: 'p20',
+    name: 'Weekly Pill Organizer',
+    description: 'A compact, personalized weekly pill organizer with day-of-week compartments and a sliding lid. Add your name for a custom touch.',
+    images: [pillOrganizerImg, pillOrganizerWhiteImg],
+    price: 18,
+    currency: 'USD',
+    designer: mockDesigners[0],
+    category: 'functional',
+    productType: 'basic',
+    style: 'geometric',
+    materials: ['PLA', 'PETG'],
+    availableColors: { default: ['White', 'Black', 'Grey', 'Blue', 'Green'] },
+    supportedQualities: ['standard', 'premium'],
+    dimensions: { length: 160, width: 55, height: 25, unit: 'mm' },
+    leadTime: '5-7 days',
+    rating: 4.8,
+    reviewCount: 64,
+    makerCount: 18,
+    supports_multicolor: true,
+    multicolorConfig: { method: 'automatic', recommendedPalettes: ['base', 'accent'], minColors: 2, maxColors: 4 },
+    personalizable: true,
   },
   // ARTISTIC CATEGORY
   {
