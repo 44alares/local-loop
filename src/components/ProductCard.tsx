@@ -41,7 +41,7 @@ export function ProductCard({ product, className, compact = false }: ProductCard
             // Handle wishlist
           }}
           className={cn(
-            "absolute top-2 right-2 flex items-center justify-center rounded-full bg-background/90 backdrop-blur-sm shadow-md transition-all hover:bg-background hover:scale-110",
+            "absolute top-2 right-2 flex items-center justify-center rounded-full bg-background/90 backdrop-blur-sm shadow-md transition-all hover:bg-background hover:shadow-lg",
             compact ? "h-7 w-7" : "h-9 w-9"
           )}
         >

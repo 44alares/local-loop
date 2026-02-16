@@ -531,8 +531,8 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
                         className={cn(
                           "h-8 w-8 rounded-lg border-2 transition-all relative",
                           selectedColor === color
-                            ? "border-secondary scale-110 shadow-md"
-                            : "border-border hover:scale-105"
+                            ? "border-secondary ring-2 ring-secondary/40 shadow-md"
+                            : "border-border hover:ring-2 hover:ring-secondary/20"
                         )}
                         style={{ backgroundColor: colorHexMap[color] || '#CCC' }}
                         title={color}
@@ -571,8 +571,8 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
                           className={cn(
                             "h-8 w-8 rounded-lg border-2 transition-all relative",
                             selectedColor === color
-                              ? "border-secondary scale-110 shadow-md"
-                              : "border-border hover:scale-105"
+                              ? "border-secondary ring-2 ring-secondary/40 shadow-md"
+                              : "border-border hover:ring-2 hover:ring-secondary/20"
                           )}
                           style={{ backgroundColor: colorHexMap[color] || '#CCC' }}
                           title={color}
