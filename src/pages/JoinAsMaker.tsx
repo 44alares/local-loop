@@ -51,15 +51,15 @@ export default function JoinAsMaker() {
   const [dailyHours, setDailyHours] = useState('');
   const [selectedMaterials, setSelectedMaterials] = useState<MaterialType[]>([]);
   const [additionalRalColors, setAdditionalRalColors] = useState<Record<MaterialType, string[]>>({
-    PLA: [], PETG: [], ABS: [], Nylon: [], Resin: [],
+    PLA: [], PETG: [], ABS: [], Nylon: [], Resin: [], TPU: [],
   });
   // Multicolor capability per material
   type MulticolorCap = 'none' | 'automatic' | 'manual';
   const [multicolorCapability, setMulticolorCapability] = useState<Record<MaterialType, MulticolorCap>>({
-    PLA: 'none', PETG: 'none', ABS: 'none', Nylon: 'none', Resin: 'none',
+    PLA: 'none', PETG: 'none', ABS: 'none', Nylon: 'none', Resin: 'none', TPU: 'none',
   });
   const [multicolorMaxColors, setMulticolorMaxColors] = useState<Record<MaterialType, number>>({
-    PLA: 4, PETG: 4, ABS: 4, Nylon: 4, Resin: 4,
+    PLA: 4, PETG: 4, ABS: 4, Nylon: 4, Resin: 4, TPU: 4,
   });
   const [paletteReadiness, setPaletteReadiness] = useState<Record<MaterialType, { earth: boolean; accent: boolean; matte: boolean }>>({
     PLA: { earth: false, accent: false, matte: false },
@@ -67,6 +67,7 @@ export default function JoinAsMaker() {
     ABS: { earth: false, accent: false, matte: false },
     Nylon: { earth: false, accent: false, matte: false },
     Resin: { earth: false, accent: false, matte: false },
+    TPU: { earth: false, accent: false, matte: false },
   });
   const [qualityAccepted, setQualityAccepted] = useState(false);
   const [submitted, setSubmitted] = useState(false);

@@ -99,7 +99,7 @@ const materialTooltips: Record<string, string> = {
   PETG: 'More durable; water/chemical resistant',
   Nylon: 'Very strong/tough; great for functional/wear parts',
   Resin: 'Highest detail/smooth surface; more brittle and needs post-processing',
-  TPU: 'Flexible material; great for grips and shock absorption',
+  TPU: 'TPU Flexible is a durable, firm-flex material (TPU 95A class). Ideal for grips, bumpers, and impact-resistant parts. +20% surcharge over PLA Base. Available in Standard and Premium. Color availability depends on local maker stock.',
 };
 
 // Quality tooltip descriptions
@@ -826,6 +826,13 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
         </div>
       )}
       
+      {/* TPU surcharge note */}
+      {selectedMaterial === 'TPU' && (
+        <p className="text-xs text-accent font-medium px-1">
+          TPU Flexible adds a +20% surcharge over PLA Base.
+        </p>
+      )}
+
       {/* Live Price Display */}
       <div className="p-4 rounded-xl bg-card border border-border">
         <div className="flex items-baseline gap-2 mb-3">
