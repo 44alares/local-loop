@@ -21,6 +21,7 @@ import keycapSetImg from '@/assets/products/keycap-set.jpg';
 import cableManagementSystemImg from '@/assets/products/cable-management-system.jpg';
 import pillOrganizerImg from '@/assets/products/pill-organizer.png';
 import pillOrganizerWhiteImg from '@/assets/products/pill-organizer-white.png';
+import pillOrganizerAlexImg from '@/assets/products/pill-organizer-alex.png';
 
 export const mockDesigners: Designer[] = [
   {
@@ -358,7 +359,7 @@ export const mockProducts: Product[] = [
     id: 'p20',
     name: 'Weekly Pill Organizer',
     description: 'A compact, personalized weekly pill organizer with day-of-week compartments and a sliding lid. Add your name for a custom touch.',
-    images: [pillOrganizerImg, pillOrganizerWhiteImg],
+    images: [pillOrganizerAlexImg, pillOrganizerImg, pillOrganizerWhiteImg],
     price: 18,
     currency: 'USD',
     designer: mockDesigners[0],
