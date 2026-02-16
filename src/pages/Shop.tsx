@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { mockProducts } from '@/data/mockData';
 import { categories, categoryLabels, styleLabels } from '@/data/categories';
-import { Search, SlidersHorizontal, MapPin, X, Monitor, Gamepad2, Wrench, Cog, Palette, Baby, Sparkles } from 'lucide-react';
+import { Search, SlidersHorizontal, MapPin, X, Monitor, Gamepad2, Wrench, Cog, Palette, Baby, Sparkles, PenLine } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const styles = Object.entries(styleLabels);
@@ -21,6 +21,7 @@ const categoryIcons: Record<string, React.ComponentType<{ className?: string }>>
   decoration: Palette,
   kids: Baby,
   artistic: Sparkles,
+  personalized: PenLine,
 };
 
 export default function Shop() {

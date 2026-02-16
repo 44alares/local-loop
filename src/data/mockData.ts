@@ -362,7 +362,7 @@ export const mockProducts: Product[] = [
     price: 18,
     currency: 'USD',
     designer: mockDesigners[0],
-    category: 'functional',
+    category: 'personalized',
     productType: 'basic',
     style: 'geometric',
     materials: ['PLA', 'PETG'],
@@ -471,6 +471,7 @@ export const categoryLabels: Record<string, string> = {
   decoration: 'Decoration',
   kids: 'Kids & Toys',
   artistic: 'Artistic',
+  personalized: 'Personalized Items',
 };
 
 export const styleLabels: Record<string, string> = {
