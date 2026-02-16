@@ -36,6 +36,7 @@ import { Link } from 'react-router-dom';
 import { MATERIALS_CONFIG, ALL_MATERIALS, type MaterialType } from '@/data/materialsConfig';
 import { ralColors } from '@/data/ralColors';
 import { PaletteInfoTooltip } from '@/components/PaletteInfoTooltip';
+import { RALEquivalentsTooltip } from '@/components/RALEquivalentsTooltip';
 
 const machineTypes = ['FDM', 'Resin', 'Both'];
 
@@ -383,6 +384,7 @@ export default function JoinAsMaker() {
                                   <span className="flex items-center gap-2">
                                     <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
                                     {color.code} (approx.) – {color.name}
+                                    <RALEquivalentsTooltip color={color} />
                                   </span>
                                 </SelectItem>
                               ))}
@@ -401,6 +403,7 @@ export default function JoinAsMaker() {
                                 >
                                   <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c?.hex }} />
                                   {c?.code} – {c?.name}
+                                  {c && <RALEquivalentsTooltip color={c} />}
                                   <span className="text-muted-foreground ml-0.5">×</span>
                                 </Badge>
                               );

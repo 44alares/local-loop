@@ -78,6 +78,8 @@ export interface Product {
   makerCount: number;
   supports_multicolor?: boolean;
   multicolorConfig?: ProductMulticolorConfig;
+  /** Designer-chosen display colors per palette (max 4 per palette) */
+  paletteDisplayColors?: Record<string, string[]>;
 }
 
 export type ProductCategory = 'functional' | 'desktop' | 'decoration' | 'kids' | 'gaming' | 'repair' | 'artistic' | 'other';
