@@ -664,8 +664,8 @@ export default function StartCreating() {
                           onClick={() => setSelectedColor(color)}
                           className={`h-7 w-7 rounded-lg border-2 transition-all ${
                             selectedColor?.code === color.code
-                              ? 'border-secondary scale-110'
-                              : 'border-transparent hover:scale-105'
+                              ? 'border-secondary ring-2 ring-secondary/40'
+                              : 'border-transparent hover:ring-2 hover:ring-secondary/20'
                           }`}
                           style={{ backgroundColor: color.hex }}
                           title={`${color.code} - ${color.name}`}
