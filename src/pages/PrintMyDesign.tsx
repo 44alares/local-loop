@@ -332,7 +332,7 @@ export default function PrintMyDesign() {
                           <SelectItem value="PETG">PETG - Durable</SelectItem>
                           <SelectItem value="Resin">Resin - High Detail</SelectItem>
                           <SelectItem value="Nylon">Nylon - Industrial</SelectItem>
-                          <SelectItem value="TPU">TPU Flexible (+20% vs PLA)</SelectItem>
+                          <SelectItem value="TPU">TPU Flexible</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
