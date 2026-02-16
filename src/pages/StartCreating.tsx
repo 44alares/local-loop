@@ -32,7 +32,8 @@ export default function StartCreating() {
   const [renderImage, setRenderImage] = useState<File | null>(null);
   const [scaleProofImage, setScaleProofImage] = useState<File | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState('');
-  const [selectedColor, setSelectedColor] = useState<RALColor | null>(null);
+  const [selectedRalColors, setSelectedRalColors] = useState<string[]>([]);
+  const [ralSearchQuery, setRalSearchQuery] = useState('');
   const [partCount, setPartCount] = useState('1');
   const [hasSupports, setHasSupports] = useState(false);
   const [estimatedWeight, setEstimatedWeight] = useState('');
@@ -520,7 +521,9 @@ export default function StartCreating() {
                               onClick={() => {
                                 // Pre-fill color selection with palette colors
                                 const ralMatch = ralColors.find(r => r.name.toLowerCase().includes(colors[0].toLowerCase()));
-                                if (ralMatch) setSelectedColor(ralMatch);
+                                if (ralMatch && !selectedRalColors.includes(ralMatch.code)) {
+                                  setSelectedRalColors(prev => [...prev, ralMatch.code]);
+                                }
                               }}
                               className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left ${
                                 needsSelection && !hasValidSelection
@@ -655,27 +658,55 @@ export default function StartCreating() {
                   <div className="space-y-1.5">
                     <Label className="flex items-center gap-2 text-sm">
                       <Palette className="h-3 w-3" />
-                      Recommended RAL Color
+                      Recommended RAL colors (approx.)
                     </Label>
-                    <div className="grid grid-cols-8 gap-1.5">
-                      {ralColors.slice(0, 16).map((color) => (
-                        <button
-                          key={color.code}
-                          onClick={() => setSelectedColor(color)}
-                          className={`h-7 w-7 rounded-lg border-2 transition-all ${
-                            selectedColor?.code === color.code
-                              ? 'border-secondary ring-2 ring-secondary/40'
-                              : 'border-transparent hover:ring-2 hover:ring-secondary/20'
-                          }`}
-                          style={{ backgroundColor: color.hex }}
-                          title={`${color.code} - ${color.name}`}
-                        />
-                      ))}
-                    </div>
-                    {selectedColor && (
-                      <p className="text-xs text-muted-foreground">
-                        Selected: {selectedColor.code} - {selectedColor.name}
-                      </p>
+                    <Select
+                      onValueChange={(code) => {
+                        if (!selectedRalColors.includes(code)) {
+                          setSelectedRalColors(prev => [...prev, code]);
+                        }
+                      }}
+                      value=""
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Add RAL color…" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60">
+                        {ralColors
+                          .filter(c => !selectedRalColors.includes(c.code))
+                          .filter(c => {
+                            if (!ralSearchQuery) return true;
+                            const q = ralSearchQuery.toLowerCase();
+                            return c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q);
+                          })
+                          .map((color) => (
+                            <SelectItem key={color.code} value={color.code}>
+                              <span className="flex items-center gap-2">
+                                <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                                {color.code} – {color.name}
+                              </span>
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    {selectedRalColors.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {selectedRalColors.map((code) => {
+                          const c = ralColors.find(r => r.code === code);
+                          return (
+                            <Badge
+                              key={code}
+                              variant="outline"
+                              className="gap-1.5 py-1 px-2.5 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30"
+                              onClick={() => setSelectedRalColors(prev => prev.filter(x => x !== code))}
+                            >
+                              <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c?.hex }} />
+                              {c?.code} – {c?.name}
+                              <span className="text-muted-foreground ml-0.5">×</span>
+                            </Badge>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
 
