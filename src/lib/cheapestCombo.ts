@@ -14,6 +14,7 @@ export interface CheapestCombo {
   material: string;
   quality: 'standard' | 'premium' | 'ultra';
   displayPrice: number;
+  rawBuyerPrice: number;
 }
 
 export function getCheapestCombo(product: Product): CheapestCombo {
@@ -53,12 +54,12 @@ export function getCheapestCombo(product: Product): CheapestCombo {
         const displayPrice = breakdown.buyerPrice;
 
         if (!best || displayPrice < best.displayPrice) {
-          best = { size, material, quality, displayPrice };
+          best = { size, material, quality, displayPrice, rawBuyerPrice: buyerPrice };
         }
       }
     }
   }
 
   // Fallback (should never happen)
-  return best || { size: 'M', material: materials[0] || 'PLA', quality: qualities[0] || 'standard', displayPrice: product.price };
+  return best || { size: 'M', material: materials[0] || 'PLA', quality: qualities[0] || 'standard', displayPrice: product.price, rawBuyerPrice: product.price };
 }

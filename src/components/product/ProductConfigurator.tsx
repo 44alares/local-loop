@@ -419,7 +419,7 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
   
   // Notify parent of price changes
   useEffect(() => {
-    onPriceChange?.(displayPrice);
+    onPriceChange?.(buyerPrice);
     onConfigChange?.({ 
       selectedColor: colorMode === 'single' ? selectedColor : null, 
       selectedMaterial, 
