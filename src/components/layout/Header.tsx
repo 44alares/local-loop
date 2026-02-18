@@ -18,7 +18,7 @@ export function Header() {
   const location = useLocation();
 
   return (
-    <header className="sticky top-[var(--beta-banner-h,0px)] z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-[var(--beta-banner-h,0px)] z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.05)]">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
