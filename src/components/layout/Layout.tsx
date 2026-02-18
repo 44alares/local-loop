@@ -8,12 +8,12 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
-  const bannerRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const update = () => {
-      const h = bannerRef.current?.offsetHeight ?? 0;
-      document.documentElement.style.setProperty('--beta-banner-h', `${h}px`);
+      const h = stickyRef.current?.offsetHeight ?? 0;
+      document.documentElement.style.setProperty('--nav-block-h', `${h}px`);
     };
     update();
     window.addEventListener('resize', update);
@@ -22,10 +22,13 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div ref={bannerRef}>
+      <div
+        ref={stickyRef}
+        className="sticky top-0 z-50 w-full shadow-[0_1px_3px_0_rgba(0,0,0,0.05)]"
+      >
         <BetaBanner />
+        <Header />
       </div>
-      <Header />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>

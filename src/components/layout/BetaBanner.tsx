@@ -7,7 +7,7 @@ export const BETA_BANNER_CSS_VAR = '--beta-banner-h';
 export function BetaBanner() {
   return (
     <div
-      className="sticky top-0 z-[60] w-full border-b border-border/20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 py-2 px-4 text-center text-sm text-foreground"
+      className="w-full border-b border-[hsl(48_60%_85%)] bg-[hsl(48_100%_96%/0.85)] backdrop-blur supports-[backdrop-filter]:bg-[hsl(48_100%_96%/0.75)] py-2 px-4 text-center text-sm text-foreground"
     >
       🚧 MakeHug Beta: Currently in testing mode. All listings are demo placeholders. No real transactions are processed yet.{' '}
       <Link to="/contact" className="underline font-semibold hover:opacity-80 transition-opacity">
