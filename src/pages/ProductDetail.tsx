@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { mockProducts, mockMakers, mockReviews } from '@/data/mockData';
 import { getShippingOptions } from '@/lib/pricing';
 import { calculateFullBreakdown } from '@/lib/pricing';
+import { getCheapestCombo } from '@/lib/cheapestCombo';
 import { productTypeLabels } from '@/data/categories';
 import { ProductConfigurator, ConfigState, BreakdownRows } from '@/components/product/ProductConfigurator';
 import { ArrowLeft, Heart, Share2, Star, MapPin, Clock, Package, Shield, Truck, ChevronRight, Check, Leaf, Store, Search, Loader2, Info } from 'lucide-react';
@@ -44,7 +45,8 @@ export default function ProductDetail() {
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [ndaAccepted, setNdaAccepted] = useState(false);
-  const [buyerPrice, setBuyerPrice] = useState(product.price);
+  const cheapestCombo = useMemo(() => getCheapestCombo(product), [product]);
+  const [buyerPrice, setBuyerPrice] = useState(cheapestCombo.rawBuyerPrice);
   const [config, setConfig] = useState<ConfigState | null>(null);
   const [personalizedText, setPersonalizedText] = useState('');
   const [personalizedTextError, setPersonalizedTextError] = useState('');
@@ -52,8 +54,8 @@ export default function ProductDetail() {
   const shippingOptions = getShippingOptions();
   const selectedShippingOption = shippingOptions.find(o => o.id === selectedShipping);
   const shippingCost = selectedShippingOption?.price || 0;
-  const totalPrice = (buyerPrice + shippingCost) * quantity;
   const breakdown = useMemo(() => calculateFullBreakdown(buyerPrice, product.productType), [buyerPrice, product.productType]);
+  const totalPrice = (breakdown.buyerPrice + shippingCost) * quantity;
 
   // Filter and sort makers - apply multicolor filtering when in multi-color mode
   const sortedMakers = useMemo(() => {
