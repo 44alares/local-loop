@@ -426,7 +426,7 @@ export default function TailoredConfigurator() {
             {/* Price Breakdown */}
             <div className="p-4 rounded-xl bg-card border border-border" style={{ width: '100%', maxWidth: '100%', overflowX: 'hidden', boxSizing: 'border-box' }}>
               <div className="space-y-2 w-full max-w-full">
-                <div className="flex items-center gap-2 text-xs font-medium text-stone-100">
+                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   <Info className="h-3.5 w-3.5 text-secondary" />
                   Fees & Payout Breakdown
                 </div>
