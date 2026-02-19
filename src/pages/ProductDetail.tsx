@@ -448,8 +448,8 @@ export default function ProductDetail() {
                   Add to Cart —
                   {discount.hasDiscount ? (
                     <>
-                      <span className="line-through text-muted-foreground font-normal">{discount.originalTotal.toFixed(2)}</span>
-                      <span className="text-accent font-bold">{totalPrice.toFixed(2)}</span>
+                      <span className="line-through opacity-60 font-normal">{discount.originalTotal.toFixed(2)}</span>
+                      <span className="font-bold">{totalPrice.toFixed(2)}</span>
                       <Badge variant="secondary" className="text-xs">{discount.label}</Badge>
                     </>
                   ) : (

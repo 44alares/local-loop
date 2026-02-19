@@ -189,8 +189,8 @@ export function BreakdownRows({ breakdown, productType, multicolorSurchargeAmoun
   return (
     <div className="space-y-1.5 text-sm w-full max-w-full">
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: '8px' }} className="py-1 border-b border-border/50">
-        <span className="text-stone-100" style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>Total price</span>
-        <span className="font-semibold text-stone-100" style={{ flexShrink: 0, textAlign: 'right', whiteSpace: 'nowrap' }}>{shownTotal.toFixed(2)}</span>
+        <span className="text-muted-foreground" style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>Total price</span>
+        <span className="font-semibold text-muted-foreground" style={{ flexShrink: 0, textAlign: 'right', whiteSpace: 'nowrap' }}>{shownTotal.toFixed(2)}</span>
       </div>
 
       {multicolorSurchargeAmount != null && multicolorSurchargeAmount > 0 && (
