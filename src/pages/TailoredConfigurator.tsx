@@ -14,6 +14,7 @@ import { TailoredViewer } from '@/components/tailored/TailoredViewer';
 import { RequestProductionModal } from '@/components/tailored/RequestProductionModal';
 import { ProductConfigurator, BreakdownRows } from '@/components/product/ProductConfigurator';
 import { calculateFullBreakdown } from '@/lib/pricing';
+import { computeTailoredMultiplier } from '@/lib/tailoredPricing';
 import { mockMakers, mockProducts } from '@/data/mockData';
 
 export default function TailoredConfigurator() {
@@ -41,7 +42,11 @@ export default function TailoredConfigurator() {
     return defaults;
   });
 
-  const buyerPrice = tailoredProduct?.price ?? 20;
+  const buyerPrice = useMemo(() => {
+    if (!tailoredProduct) return 20;
+    const multiplier = computeTailoredMultiplier(params, tailoredProduct.params);
+    return Math.round(tailoredProduct.price * multiplier * 100) / 100;
+  }, [params, tailoredProduct]);
   const breakdown = useMemo(() => calculateFullBreakdown(buyerPrice, 'functional'), [buyerPrice]);
 
   if (!tailoredProduct) {
