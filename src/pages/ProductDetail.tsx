@@ -196,7 +196,7 @@ export default function ProductDetail() {
             {/* Now Price — polished card */}
             <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 inline-flex flex-col">
               <span className="text-xs font-medium text-muted-foreground">Now Price</span>
-              <span className="text-2xl font-bold">{breakdown.buyerPrice.toFixed(2)}</span>
+              <span className="text-2xl font-bold">{productionTotal.toFixed(2)}</span>
             </div>
 
             {/* Product Configurator — Product Type, Material, Quality, Size, Colors */}
@@ -431,6 +431,7 @@ export default function ProductDetail() {
                   breakdown={discount.hasDiscount ? discountedBreakdown : breakdown} 
                   productType={product.productType} 
                   multicolorSurchargeAmount={config?.multicolorSurchargeAmount}
+                  quantity={quantity}
                 />
                 
                 <p className="text-xs text-muted-foreground mt-2">
@@ -441,7 +442,7 @@ export default function ProductDetail() {
 
             {/* Actions — Add to Cart after breakdown */}
             <div className="flex gap-2">
-              <Button variant="accent" size="lg" className="flex-1" disabled={!selectedMaker || !config?.selectedColor || !!personalizedTextError}>
+              <Button variant="accent" size="lg" className="flex-1 text-accent-foreground" disabled={!selectedMaker || !config?.selectedColor || !!personalizedTextError}>
                 <span className="flex items-center gap-2 flex-wrap justify-center">
                   Add to Cart —
                   {discount.hasDiscount ? (
