@@ -30,7 +30,7 @@ export const tailoredProducts: TailoredProduct[] = [
   {
     id: 'tailored-drawer-handle',
     slug: 'drawer-handle',
-    name: 'Drawer Handle — Set of 4',
+    name: 'Drawer Handle — 4 units',
     description: 'For kitchens, wardrobes and furniture. Your exact measurements.',
     tags: ['length', 'hole spacing', 'height', 'thickness'],
     price: 19,
@@ -73,7 +73,7 @@ export const tailoredProducts: TailoredProduct[] = [
   {
     id: 'tailored-shelf-bracket',
     slug: 'shelf-bracket',
-    name: 'Shelf Bracket — Set of 4',
+    name: 'Shelf Bracket — 4 units',
     description: 'Strong and adjustable. With or without diagonal reinforcement.',
     tags: ['length', 'height', 'thickness', 'reinforcement'],
     price: 22,
