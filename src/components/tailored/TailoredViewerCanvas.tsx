@@ -55,8 +55,8 @@ function ModelWithSpring({ productSlug, params, triggerKey }: { productSlug: str
       )}
 
       {labels.map((label, i) => (
-        <Html key={i} position={label.position as [number, number, number]} center distanceFactor={6}>
-          <div className="whitespace-nowrap rounded bg-[hsl(0_0%_10%/0.85)] px-1.5 py-0.5 text-[10px] text-white font-medium pointer-events-none select-none">
+        <Html key={i} position={label.position as [number, number, number]} center zIndexRange={[0, 0]}>
+          <div style={{ fontSize: '11px', whiteSpace: 'nowrap', background: 'hsla(0,0%,10%,0.85)', color: '#fff', borderRadius: '4px', padding: '2px 6px', fontWeight: 500, pointerEvents: 'none', userSelect: 'none' }}>
             {label.text}
           </div>
         </Html>
