@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { mockProducts, mockMakers, mockReviews } from '@/data/mockData';
-import { getShippingOptions } from '@/lib/pricing';
-import { calculateFullBreakdown } from '@/lib/pricing';
+import { getShippingOptions, calculateFullBreakdown } from '@/lib/pricing';
+import { getQuantityDiscount } from '@/lib/discounts';
 import { getCheapestCombo } from '@/lib/cheapestCombo';
 import { productTypeLabels } from '@/data/categories';
 import { ProductConfigurator, ConfigState, BreakdownRows } from '@/components/product/ProductConfigurator';
@@ -55,7 +55,14 @@ export default function ProductDetail() {
   const selectedShippingOption = shippingOptions.find(o => o.id === selectedShipping);
   const shippingCost = selectedShippingOption?.price || 0;
   const breakdown = useMemo(() => calculateFullBreakdown(buyerPrice, product.productType), [buyerPrice, product.productType]);
-  const totalPrice = (breakdown.buyerPrice + shippingCost) * quantity;
+  const discount = useMemo(() => getQuantityDiscount(breakdown.buyerPrice, quantity, 1), [breakdown.buyerPrice, quantity]);
+  const discountedBreakdown = useMemo(() => {
+    if (!discount.hasDiscount) return breakdown;
+    const discountedUnitPrice = discount.discountedTotal / quantity;
+    return calculateFullBreakdown(discountedUnitPrice, product.productType);
+  }, [discount, breakdown, quantity, product.productType]);
+  const productionTotal = discount.hasDiscount ? discount.discountedTotal : breakdown.buyerPrice * quantity;
+  const totalPrice = productionTotal + shippingCost;
 
   // Filter and sort makers - apply multicolor filtering when in multi-color mode
   const sortedMakers = useMemo(() => {
@@ -421,7 +428,7 @@ export default function ProductDetail() {
                 </div>
                 
                 <BreakdownRows 
-                  breakdown={breakdown} 
+                  breakdown={discount.hasDiscount ? discountedBreakdown : breakdown} 
                   productType={product.productType} 
                   multicolorSurchargeAmount={config?.multicolorSurchargeAmount}
                 />
@@ -435,7 +442,18 @@ export default function ProductDetail() {
             {/* Actions — Add to Cart after breakdown */}
             <div className="flex gap-2">
               <Button variant="accent" size="lg" className="flex-1" disabled={!selectedMaker || !config?.selectedColor || !!personalizedTextError}>
-                Add to Cart — {totalPrice.toFixed(2)}
+                <span className="flex items-center gap-2 flex-wrap justify-center">
+                  Add to Cart —
+                  {discount.hasDiscount ? (
+                    <>
+                      <span className="line-through text-muted-foreground font-normal">{discount.originalTotal.toFixed(2)}</span>
+                      <span className="text-accent font-bold">{totalPrice.toFixed(2)}</span>
+                      <Badge variant="secondary" className="text-xs">{discount.label}</Badge>
+                    </>
+                  ) : (
+                    <span>{totalPrice.toFixed(2)}</span>
+                  )}
+                </span>
               </Button>
               <Button variant="outline" size="lg">
                 <Heart className="h-4 w-4" />

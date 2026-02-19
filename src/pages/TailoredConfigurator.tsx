@@ -15,6 +15,7 @@ import { RequestProductionModal } from '@/components/tailored/RequestProductionM
 import { ProductConfigurator, ConfigState, BreakdownRows } from '@/components/product/ProductConfigurator';
 import { calculateFullBreakdown, getShippingOptions } from '@/lib/pricing';
 import { computeSurfaceMultiplier } from '@/lib/tailoredPricing';
+import { getQuantityDiscount } from '@/lib/discounts';
 import { mockMakers, mockProducts } from '@/data/mockData';
 import type { Product } from '@/types';
 
@@ -28,9 +29,11 @@ export default function TailoredConfigurator() {
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedShipping, setSelectedShipping] = useState('direct-pickup');
-  const [quantity, setQuantity] = useState(1);
   const [buyerPrice, setBuyerPrice] = useState(0);
   const [config, setConfig] = useState<ConfigState | null>(null);
+
+  const minQty = tailoredProduct?.setOf || 1;
+  const [quantity, setQuantity] = useState(minQty);
 
   // Initialize params with defaults
   const [params, setParams] = useState<Record<string, number | boolean>>(() => {
@@ -50,7 +53,6 @@ export default function TailoredConfigurator() {
   }, [params, tailoredProduct]);
 
   // Create a fake Product object for ProductConfigurator
-  // ProductConfigurator will apply material/quality surcharges on top of this base price
   const fakeProduct = useMemo<Product>(() => {
     const base = mockProducts[0];
     return {
@@ -72,8 +74,30 @@ export default function TailoredConfigurator() {
   const selectedShippingOption = shippingOptions.find(o => o.id === selectedShipping);
   const shippingCost = selectedShippingOption?.price || 0;
 
-  const breakdown = useMemo(() => calculateFullBreakdown(buyerPrice || tailoredBasePrice, 'functional'), [buyerPrice, tailoredBasePrice]);
-  const totalPrice = (breakdown.buyerPrice + shippingCost) * quantity;
+  const unitPrice = useMemo(() => {
+    const effectivePrice = buyerPrice || tailoredBasePrice;
+    const bd = calculateFullBreakdown(effectivePrice, 'functional');
+    return bd.buyerPrice;
+  }, [buyerPrice, tailoredBasePrice]);
+
+  // For set products, unit price per single item = total set price / setOf
+  const singleUnitPrice = minQty > 1 ? unitPrice / minQty : unitPrice;
+
+  const discount = useMemo(
+    () => getQuantityDiscount(singleUnitPrice, quantity, minQty),
+    [singleUnitPrice, quantity, minQty]
+  );
+
+  const breakdown = useMemo(
+    () => calculateFullBreakdown(
+      discount.hasDiscount ? discount.discountedTotal / quantity * minQty : (buyerPrice || tailoredBasePrice),
+      'functional'
+    ),
+    [discount, buyerPrice, tailoredBasePrice, quantity, minQty]
+  );
+
+  const productionTotal = discount.hasDiscount ? discount.discountedTotal : unitPrice * (quantity / minQty);
+  const totalPrice = productionTotal + shippingCost;
 
   if (!tailoredProduct) {
     return (
@@ -120,7 +144,7 @@ export default function TailoredConfigurator() {
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold">{tailoredProduct.name}</h1>
             {tailoredProduct.setOf && (
-              <Badge variant="secondary" className="text-xs">Set of {tailoredProduct.setOf} units</Badge>
+              <Badge variant="secondary" className="text-xs">{tailoredProduct.setOf} units</Badge>
             )}
           </div>
           <p className="text-sm text-muted-foreground">{tailoredProduct.description}</p>
@@ -338,24 +362,27 @@ export default function TailoredConfigurator() {
               )}
             </div>
 
-            {/* Delivery Options + Quantity — shown after maker selected (same as /shop) */}
+            {/* Delivery Options + Quantity — shown after maker selected */}
             {maker && (
               <div className="space-y-4 animate-fade-in">
                 {/* Quantity */}
                 <div>
                   <h3 className="font-semibold text-sm mb-2">Quantity</h3>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+                    <Button variant="outline" size="sm" onClick={() => setQuantity(Math.max(minQty, quantity - 1))}>
                       -
                     </Button>
                     <span className="w-10 text-center font-medium text-sm">{quantity}</span>
                     <Button variant="outline" size="sm" onClick={() => setQuantity(quantity + 1)}>
                       +
                     </Button>
+                    {minQty > 1 && (
+                      <span className="text-xs text-muted-foreground ml-1">min {minQty}</span>
+                    )}
                   </div>
                 </div>
 
-                {/* Shipping Options — reused from /shop */}
+                {/* Shipping Options */}
                 <div>
                   <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
                     <Truck className="h-4 w-4" />
@@ -397,8 +424,8 @@ export default function TailoredConfigurator() {
           {/* Right column */}
           <div className="space-y-6">
             {/* Price Breakdown */}
-            <div className="p-4 rounded-xl bg-card border border-border w-full overflow-hidden">
-              <div className="space-y-2 w-full max-w-full">
+            <div className="p-4 rounded-xl bg-card border border-border w-full max-w-full overflow-hidden">
+              <div className="space-y-2 w-full max-w-full overflow-hidden">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   <Info className="h-3.5 w-3.5 text-secondary" />
                   Fees & Payout Breakdown
@@ -415,7 +442,18 @@ export default function TailoredConfigurator() {
                 className="flex-1"
                 onClick={() => setModalOpen(true)}
               >
-                Request Production — {totalPrice.toFixed(2)}
+                <span className="flex items-center gap-2 flex-wrap justify-center">
+                  Request Production —
+                  {discount.hasDiscount ? (
+                    <>
+                      <span className="line-through text-muted-foreground font-normal">{discount.originalTotal.toFixed(2)}</span>
+                      <span className="text-accent font-bold">{totalPrice.toFixed(2)}</span>
+                      <Badge variant="secondary" className="text-xs">{discount.label}</Badge>
+                    </>
+                  ) : (
+                    <span>{totalPrice.toFixed(2)}</span>
+                  )}
+                </span>
               </Button>
               <Button variant="outline" size="lg">
                 <Heart className="h-4 w-4" />

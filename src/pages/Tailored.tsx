@@ -77,6 +77,7 @@ export default function Tailored() {
                 <div className="flex items-center justify-between pt-2">
                   <span className="text-lg font-bold">
                     From {product.price.toFixed(2)}
+                    {product.setOf && <span className="text-xs text-muted-foreground font-normal ml-1">/ {product.setOf} units</span>}
                   </span>
                   <Button variant="secondary" size="sm" asChild>
                     <Link to={`/tailored/${product.slug}`}>
