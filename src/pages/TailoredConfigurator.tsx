@@ -97,7 +97,7 @@ export default function TailoredConfigurator() {
 
   return (
     <Layout>
-      <div className="container py-6">
+      <div className="container py-6 max-w-full overflow-x-hidden">
         {/* Back + Breadcrumb */}
         <div className="flex items-center gap-4 mb-6">
           <Button asChild variant="ghost" size="sm">
@@ -134,7 +134,7 @@ export default function TailoredConfigurator() {
 
           <div className="grid lg:grid-cols-5 gap-0">
             {/* Canvas — 60% */}
-            <div className="lg:col-span-3 min-h-[360px] md:min-h-[480px]">
+            <div className="lg:col-span-3 min-h-[360px] md:min-h-[480px] w-full max-w-full overflow-hidden">
               <TailoredViewer product={tailoredProduct} params={params} />
             </div>
 
