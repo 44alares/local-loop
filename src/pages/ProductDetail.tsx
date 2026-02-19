@@ -443,15 +443,15 @@ export default function ProductDetail() {
 
             {/* Actions — Add to Cart after breakdown */}
             <div className="flex gap-2">
-              <Button variant="accent" size="lg" className="flex-1 text-accent-foreground" disabled={!selectedMaker || !config?.selectedColor || !!personalizedTextError}>
-                <span className="flex items-center gap-1.5 sm:gap-2 flex-nowrap justify-center whitespace-nowrap overflow-hidden text-ellipsis text-sm sm:text-base">
-                  <span>Add to Cart —</span>
+              <Button variant="accent" size="lg" className="flex-1 text-accent-foreground h-auto py-3 px-4" disabled={!selectedMaker || !config?.selectedColor || !!personalizedTextError}>
+                <span className="flex flex-col items-center w-full">
+                  <span>Add to Cart</span>
                   {discount.hasDiscount ? (
-                    <>
+                    <span className="flex flex-wrap items-center justify-center gap-1">
                       <span className="line-through opacity-60 font-normal">{discount.originalTotal.toFixed(2)}</span>
                       <span className="font-bold">{totalPrice.toFixed(2)}</span>
-                      <Badge variant="secondary" className="text-xs shrink-0">{discount.label}</Badge>
-                    </>
+                      <Badge variant="secondary" className="text-xs">{discount.label}</Badge>
+                    </span>
                   ) : (
                     <span>{totalPrice.toFixed(2)}</span>
                   )}
