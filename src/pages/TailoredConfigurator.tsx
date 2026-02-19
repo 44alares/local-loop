@@ -447,13 +447,13 @@ export default function TailoredConfigurator() {
                 className="flex-1 text-stone-100"
                 onClick={() => setModalOpen(true)}
               >
-                <span className="flex items-center gap-2 flex-wrap justify-center">
-                  Add to cart —
+                <span className="flex items-center gap-1.5 sm:gap-2 flex-nowrap justify-center whitespace-nowrap overflow-hidden text-ellipsis text-sm sm:text-base">
+                  <span>Add to cart —</span>
                   {discount.hasDiscount ? (
                     <>
                       <span className="line-through opacity-60 font-normal">{discount.originalTotal.toFixed(2)}</span>
                       <span className="font-bold">{totalPrice.toFixed(2)}</span>
-                      <Badge variant="secondary" className="text-xs">{discount.label}</Badge>
+                      <Badge variant="secondary" className="text-xs shrink-0">{discount.label}</Badge>
                     </>
                   ) : (
                     <span>{totalPrice.toFixed(2)}</span>
