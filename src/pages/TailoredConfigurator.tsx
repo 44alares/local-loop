@@ -14,7 +14,7 @@ import { TailoredViewer } from '@/components/tailored/TailoredViewer';
 import { RequestProductionModal } from '@/components/tailored/RequestProductionModal';
 import { ProductConfigurator, ConfigState, BreakdownRows } from '@/components/product/ProductConfigurator';
 import { calculateFullBreakdown, getShippingOptions } from '@/lib/pricing';
-import { computeTailoredMultiplier } from '@/lib/tailoredPricing';
+import { computeSurfaceMultiplier } from '@/lib/tailoredPricing';
 import { mockMakers, mockProducts } from '@/data/mockData';
 import type { Product } from '@/types';
 
@@ -45,7 +45,7 @@ export default function TailoredConfigurator() {
   // Compute tailored base price from slider positions
   const tailoredBasePrice = useMemo(() => {
     if (!tailoredProduct) return 20;
-    const multiplier = computeTailoredMultiplier(params, tailoredProduct.params);
+    const multiplier = computeSurfaceMultiplier(tailoredProduct.slug, params, tailoredProduct.params);
     return Math.round(tailoredProduct.price * multiplier * 100) / 100;
   }, [params, tailoredProduct]);
 
@@ -397,8 +397,8 @@ export default function TailoredConfigurator() {
           {/* Right column */}
           <div className="space-y-6">
             {/* Price Breakdown */}
-            <div className="p-4 rounded-xl bg-card border border-border">
-              <div className="space-y-2">
+            <div className="p-4 rounded-xl bg-card border border-border w-full overflow-hidden">
+              <div className="space-y-2 w-full max-w-full">
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                   <Info className="h-3.5 w-3.5 text-secondary" />
                   Fees & Payout Breakdown

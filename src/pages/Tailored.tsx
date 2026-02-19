@@ -49,7 +49,7 @@ export default function Tailored() {
               className="rounded-xl bg-card border border-border overflow-hidden shadow-card card-hover"
             >
               {/* 2x2 Mini preview grid */}
-              <div className="grid grid-cols-2 gap-0.5 p-1 bg-[hsl(0_0%_7%)]" style={{ minHeight: '220px' }}>
+              <div className="grid grid-cols-2 gap-0.5 p-1 bg-[hsl(0_0%_7%)]" style={{ minHeight: '240px' }}>
                 {product.previewVariants.map((variant, i) => (
                   <MiniPreview
                     key={i}
