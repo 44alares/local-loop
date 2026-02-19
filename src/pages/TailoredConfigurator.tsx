@@ -143,9 +143,6 @@ export default function TailoredConfigurator() {
         <div className="space-y-2 mb-6">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold">{tailoredProduct.name}</h1>
-            {tailoredProduct.setOf && (
-              <Badge variant="secondary" className="text-xs">{tailoredProduct.setOf} units</Badge>
-            )}
           </div>
           <p className="text-sm text-muted-foreground">{tailoredProduct.description}</p>
         </div>
@@ -249,7 +246,7 @@ export default function TailoredConfigurator() {
             {/* Now Price card */}
             <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 inline-flex flex-col">
               <span className="text-xs font-medium text-muted-foreground">Now Price</span>
-              <span className="text-2xl font-bold">{breakdown.buyerPrice.toFixed(2)}</span>
+              <span className="text-2xl font-bold">{productionTotal.toFixed(2)}</span>
             </div>
 
             {/* Reuse ProductConfigurator from /shop — Material, Quality, Color selectors */}
@@ -430,7 +427,7 @@ export default function TailoredConfigurator() {
                   <Info className="h-3.5 w-3.5 text-secondary" />
                   Fees & Payout Breakdown
                 </div>
-                <BreakdownRows breakdown={breakdown} productType="functional" />
+                <BreakdownRows breakdown={discount.hasDiscount ? { ...breakdown, buyerPrice: discount.discountedTotal / quantity * (minQty > 1 ? minQty : 1) } : breakdown} productType="functional" quantity={quantity / (minQty > 1 ? minQty : 1)} />
               </div>
             </div>
 
@@ -439,11 +436,11 @@ export default function TailoredConfigurator() {
               <Button
                 variant="secondary"
                 size="lg"
-                className="flex-1"
+                className="flex-1 text-secondary-foreground"
                 onClick={() => setModalOpen(true)}
               >
                 <span className="flex items-center gap-2 flex-wrap justify-center">
-                  Request Production —
+                  Add to cart —
                   {discount.hasDiscount ? (
                     <>
                       <span className="line-through text-muted-foreground font-normal">{discount.originalTotal.toFixed(2)}</span>

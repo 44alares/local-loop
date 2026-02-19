@@ -181,14 +181,15 @@ const breakdownRowConfig = [
   },
 ] as const;
 
-export function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount }: { breakdown: ReturnType<typeof calculateFullBreakdown>; productType: string; multicolorSurchargeAmount?: number }) {
+export function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount, quantity = 1 }: { breakdown: ReturnType<typeof calculateFullBreakdown>; productType: string; multicolorSurchargeAmount?: number; quantity?: number }) {
   const [openRow, setOpenRow] = useState<string | null>(null);
+  const q = quantity;
 
   return (
-    <div className="space-y-1.5 text-sm">
+    <div className="space-y-1.5 text-sm w-full max-w-full">
       <div className="flex justify-between py-1 border-b border-border/50">
         <span className="text-muted-foreground">Total price</span>
-        <span className="font-semibold">{breakdown.buyerPrice.toFixed(2)}</span>
+        <span className="font-semibold">{(breakdown.buyerPrice * q).toFixed(2)}</span>
       </div>
 
       {multicolorSurchargeAmount != null && multicolorSurchargeAmount > 0 && (
@@ -218,7 +219,7 @@ export function BreakdownRows({ breakdown, productType, multicolorSurchargeAmoun
                 {row.tooltip}
               </PopoverContent>
             </Popover>
-            <span className={row.valueClass}>{value.toFixed(2)}</span>
+            <span className={row.valueClass}>{(value * q).toFixed(2)}</span>
           </div>
         );
       })}
