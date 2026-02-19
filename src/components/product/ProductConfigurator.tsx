@@ -181,24 +181,25 @@ const breakdownRowConfig = [
   },
 ] as const;
 
-export function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount, quantity = 1 }: { breakdown: ReturnType<typeof calculateFullBreakdown>; productType: string; multicolorSurchargeAmount?: number; quantity?: number }) {
+export function BreakdownRows({ breakdown, productType, multicolorSurchargeAmount, quantity = 1, displayTotal }: { breakdown: ReturnType<typeof calculateFullBreakdown>; productType: string; multicolorSurchargeAmount?: number; quantity?: number; displayTotal?: number }) {
   const [openRow, setOpenRow] = useState<string | null>(null);
   const q = quantity;
+  const shownTotal = displayTotal != null ? displayTotal : (breakdown.buyerPrice * q);
 
   return (
     <div className="space-y-1.5 text-sm w-full max-w-full">
-      <div className="flex justify-between py-1 border-b border-border/50">
-        <span className="text-muted-foreground">Total price</span>
-        <span className="font-semibold">{(breakdown.buyerPrice * q).toFixed(2)}</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: '8px' }} className="py-1 border-b border-border/50">
+        <span className="text-stone-100" style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>Total price</span>
+        <span className="font-semibold text-stone-100" style={{ flexShrink: 0, textAlign: 'right', whiteSpace: 'nowrap' }}>{shownTotal.toFixed(2)}</span>
       </div>
 
       {multicolorSurchargeAmount != null && multicolorSurchargeAmount > 0 && (
-        <div className="flex justify-between py-1 border-b border-border/50">
-          <span className="text-muted-foreground text-xs flex items-center gap-1">
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: '8px' }} className="py-1 border-b border-border/50">
+          <span className="text-muted-foreground text-xs flex items-center gap-1" style={{ flex: 1, minWidth: 0 }}>
             <Palette className="h-3 w-3" />
             Multi-color +30%
           </span>
-          <span className="text-xs font-medium">{multicolorSurchargeAmount.toFixed(2)}</span>
+          <span className="text-xs font-medium" style={{ flexShrink: 0, textAlign: 'right', whiteSpace: 'nowrap' }}>{multicolorSurchargeAmount.toFixed(2)}</span>
         </div>
       )}
 
@@ -206,20 +207,20 @@ export function BreakdownRows({ breakdown, productType, multicolorSurchargeAmoun
         const IconComp = row.icon;
         const value = row.getValue(breakdown);
         return (
-          <div key={row.key} className={`flex justify-between ${row.rowClass}`}>
+          <div key={row.key} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: '8px' }} className={row.rowClass}>
             <Popover open={openRow === row.key} onOpenChange={(open) => setOpenRow(open ? row.key : null)}>
               <PopoverTrigger asChild>
-                <button type="button" className={`flex items-center gap-1.5 ${row.labelClass} cursor-pointer hover:text-foreground transition-colors`}>
-                  <IconComp className={`h-3 w-3 ${row.iconClass}`} />
+                <button type="button" className={`flex items-center gap-1.5 ${row.labelClass} cursor-pointer hover:text-foreground transition-colors`} style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <IconComp className={`h-3 w-3 shrink-0 ${row.iconClass}`} />
                   {row.label}
-                  <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center">ⓘ</span>
+                  <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center shrink-0">ⓘ</span>
                 </button>
               </PopoverTrigger>
               <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
                 {row.tooltip}
               </PopoverContent>
             </Popover>
-            <span className={row.valueClass}>{(value * q).toFixed(2)}</span>
+            <span className={row.valueClass} style={{ flexShrink: 0, textAlign: 'right', whiteSpace: 'nowrap' }}>{(value * q).toFixed(2)}</span>
           </div>
         );
       })}

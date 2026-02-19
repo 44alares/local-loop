@@ -432,6 +432,7 @@ export default function ProductDetail() {
                   productType={product.productType} 
                   multicolorSurchargeAmount={config?.multicolorSurchargeAmount}
                   quantity={quantity}
+                  displayTotal={totalPrice}
                 />
                 
                 <p className="text-xs text-muted-foreground mt-2">
