@@ -52,7 +52,7 @@ export default function MiniPreviewCanvas({ productSlug, params }: Props) {
     <Canvas
       camera={{ position: [3, 2, 3], fov: 35 }}
       gl={{ antialias: true, alpha: false }}
-      style={{ background: '#111111' }}
+      style={{ width: '100%', height: '120px', background: '#111111' }}
     >
       <SceneContent productSlug={productSlug} params={params} />
     </Canvas>
