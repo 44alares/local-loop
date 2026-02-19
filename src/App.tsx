@@ -26,8 +26,9 @@ import DesignerTerms from "./pages/DesignerTerms";
 import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
 import RALEquivalents from "./pages/RALEquivalents";
-import Tailored from "./pages/Tailored";
-import TailoredConfigurator from "./pages/TailoredConfigurator";
+import { lazy, Suspense } from "react";
+const Tailored = lazy(() => import("./pages/Tailored"));
+const TailoredConfigurator = lazy(() => import("./pages/TailoredConfigurator"));
 
 // Hub pages
 import HubLayout from "./pages/hub/HubLayout";
@@ -64,8 +65,8 @@ const App = () => (
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/cookies" element={<Cookies />} />
           <Route path="/ral-equivalents" element={<RALEquivalents />} />
-          <Route path="/tailored" element={<Tailored />} />
-          <Route path="/tailored/:product" element={<TailoredConfigurator />} />
+          <Route path="/tailored" element={<Suspense fallback={null}><Tailored /></Suspense>} />
+          <Route path="/tailored/:product" element={<Suspense fallback={null}><TailoredConfigurator /></Suspense>} />
           {/* Member Hub */}
           <Route path="/hub" element={<HubLayout />}>
             <Route index element={<HubOverview />} />
