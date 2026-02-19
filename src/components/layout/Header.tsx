@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Search, ShoppingBag, User, Heart, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { label: 'Shop', href: '/shop' },
   { label: 'Make My Design', href: '/make-my-design' },
+  { label: 'Tailored', href: '/tailored', isNew: true },
   { label: "I'm a Maker", href: '/maker' },
   { label: "I'm a Designer", href: '/designer' },
   { label: 'Member Hub', href: '/hub' },
@@ -43,6 +45,9 @@ export function Header() {
               )}
             >
               {item.label}
+              {(item as any).isNew && (
+                <Badge className="ml-1 h-4 px-1.5 text-[10px] bg-secondary text-secondary-foreground border-0">NEW</Badge>
+              )}
             </Link>
           ))}
         </nav>
@@ -91,7 +96,10 @@ export function Header() {
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
               >
-                {item.label}
+              {item.label}
+              {(item as any).isNew && (
+                <Badge className="ml-1.5 h-4 px-1.5 text-[10px] bg-secondary text-secondary-foreground border-0">NEW</Badge>
+              )}
               </Link>
             ))}
             <div className="pt-4 mt-4 border-t border-border flex gap-2">
