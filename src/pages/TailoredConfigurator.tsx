@@ -12,17 +12,15 @@ import { cn } from '@/lib/utils';
 import { getTailoredProduct } from '@/data/tailoredProducts';
 import { TailoredViewer } from '@/components/tailored/TailoredViewer';
 import { RequestProductionModal } from '@/components/tailored/RequestProductionModal';
-import { ProductConfigurator, BreakdownRows } from '@/components/product/ProductConfigurator';
-import { calculateFullBreakdown } from '@/lib/pricing';
+import { ProductConfigurator, ConfigState, BreakdownRows } from '@/components/product/ProductConfigurator';
+import { calculateFullBreakdown, getShippingOptions } from '@/lib/pricing';
 import { computeTailoredMultiplier } from '@/lib/tailoredPricing';
 import { mockMakers, mockProducts } from '@/data/mockData';
+import type { Product } from '@/types';
 
 export default function TailoredConfigurator() {
   const { product: productSlug } = useParams<{ product: string }>();
   const tailoredProduct = getTailoredProduct(productSlug || '');
-
-  // Use first mock product as a base for the configurator (reusing existing product detail UI)
-  const baseProduct = mockProducts[0];
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedMaker, setSelectedMaker] = useState<string | null>(null);
@@ -31,6 +29,8 @@ export default function TailoredConfigurator() {
   const [isSearching, setIsSearching] = useState(false);
   const [selectedShipping, setSelectedShipping] = useState('direct-pickup');
   const [quantity, setQuantity] = useState(1);
+  const [buyerPrice, setBuyerPrice] = useState(0);
+  const [config, setConfig] = useState<ConfigState | null>(null);
 
   // Initialize params with defaults
   const [params, setParams] = useState<Record<string, number | boolean>>(() => {
@@ -42,12 +42,38 @@ export default function TailoredConfigurator() {
     return defaults;
   });
 
-  const buyerPrice = useMemo(() => {
+  // Compute tailored base price from slider positions
+  const tailoredBasePrice = useMemo(() => {
     if (!tailoredProduct) return 20;
     const multiplier = computeTailoredMultiplier(params, tailoredProduct.params);
     return Math.round(tailoredProduct.price * multiplier * 100) / 100;
   }, [params, tailoredProduct]);
-  const breakdown = useMemo(() => calculateFullBreakdown(buyerPrice, 'functional'), [buyerPrice]);
+
+  // Create a fake Product object for ProductConfigurator
+  // ProductConfigurator will apply material/quality surcharges on top of this base price
+  const fakeProduct = useMemo<Product>(() => {
+    const base = mockProducts[0];
+    return {
+      ...base,
+      id: tailoredProduct?.id || 'tailored',
+      name: tailoredProduct?.name || '',
+      description: tailoredProduct?.description || '',
+      price: tailoredBasePrice,
+      category: 'functional',
+      productType: 'functional',
+      materials: ['PLA', 'PETG'],
+      supportedQualities: ['standard', 'premium'],
+      supports_multicolor: false,
+      personalizable: false,
+    };
+  }, [tailoredBasePrice, tailoredProduct]);
+
+  const shippingOptions = getShippingOptions();
+  const selectedShippingOption = shippingOptions.find(o => o.id === selectedShipping);
+  const shippingCost = selectedShippingOption?.price || 0;
+
+  const breakdown = useMemo(() => calculateFullBreakdown(buyerPrice || tailoredBasePrice, 'functional'), [buyerPrice, tailoredBasePrice]);
+  const totalPrice = (breakdown.buyerPrice + shippingCost) * quantity;
 
   if (!tailoredProduct) {
     return (
@@ -67,6 +93,7 @@ export default function TailoredConfigurator() {
   };
 
   const sortedMakers = [...mockMakers].sort((a, b) => b.rating - a.rating);
+  const maker = selectedMaker ? mockMakers.find(m => m.id === selectedMaker) : null;
 
   return (
     <Layout>
@@ -193,7 +220,7 @@ export default function TailoredConfigurator() {
 
         {/* Reuse standard product detail layout below */}
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Left column placeholder for consistency */}
+          {/* Left column */}
           <div className="space-y-6">
             {/* Now Price card */}
             <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 inline-flex flex-col">
@@ -201,46 +228,13 @@ export default function TailoredConfigurator() {
               <span className="text-2xl font-bold">{breakdown.buyerPrice.toFixed(2)}</span>
             </div>
 
-            {/* Material / Quality selectors — simplified for tailored */}
-            <div className="space-y-3">
-              <div>
-                <Label className="text-sm font-semibold mb-1.5 block">Material</Label>
-                <div className="flex gap-2">
-                  {['PLA', 'PETG'].map(mat => (
-                    <Badge key={mat} variant="secondary" className="cursor-pointer px-3 py-1.5 text-sm">
-                      {mat}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-sm font-semibold mb-1.5 block">Quality</Label>
-                <div className="flex gap-2">
-                  {['Standard', 'Premium'].map(q => (
-                    <Badge key={q} variant="outline" className="cursor-pointer px-3 py-1.5 text-sm">
-                      {q}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-sm font-semibold mb-1.5 block">Color</Label>
-                <div className="flex gap-2">
-                  {['White', 'Black', 'Grey', 'Blue', 'Green'].map(color => (
-                    <div
-                      key={color}
-                      className="h-7 w-7 rounded-full border-2 border-border cursor-pointer hover:border-secondary transition-colors"
-                      style={{
-                        backgroundColor: color === 'White' ? '#fff' : color === 'Black' ? '#1a1a1a' : color === 'Grey' ? '#808080' : color === 'Blue' ? '#1E88E5' : '#43A047'
-                      }}
-                      title={color}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
+            {/* Reuse ProductConfigurator from /shop — Material, Quality, Color selectors */}
+            <ProductConfigurator
+              product={fakeProduct}
+              selectedMakerId={selectedMaker}
+              onPriceChange={setBuyerPrice}
+              onConfigChange={setConfig}
+            />
 
             {/* Find a Maker */}
             <div className="space-y-3">
@@ -343,6 +337,61 @@ export default function TailoredConfigurator() {
                 </div>
               )}
             </div>
+
+            {/* Delivery Options + Quantity — shown after maker selected (same as /shop) */}
+            {maker && (
+              <div className="space-y-4 animate-fade-in">
+                {/* Quantity */}
+                <div>
+                  <h3 className="font-semibold text-sm mb-2">Quantity</h3>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+                      -
+                    </Button>
+                    <span className="w-10 text-center font-medium text-sm">{quantity}</span>
+                    <Button variant="outline" size="sm" onClick={() => setQuantity(quantity + 1)}>
+                      +
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Shipping Options — reused from /shop */}
+                <div>
+                  <h3 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                    <Truck className="h-4 w-4" />
+                    Delivery Option
+                  </h3>
+                  <div className="space-y-2">
+                    {shippingOptions.map(option => (
+                      <button
+                        key={option.id}
+                        onClick={() => setSelectedShipping(option.id)}
+                        className={cn(
+                          "w-full p-3 rounded-lg border-2 text-left transition-all flex items-center justify-between",
+                          selectedShipping === option.id ? "border-secondary bg-secondary/5" : "border-border hover:border-secondary/50"
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          {option.id === 'direct-pickup' ? <MapPin className="h-4 w-4 text-secondary" /> : option.id === 'local-point' ? <Store className="h-4 w-4 text-accent" /> : <Truck className="h-4 w-4 text-muted-foreground" />}
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-sm">{option.name}</p>
+                              {option.isRecommended && <Badge variant="secondary" className="text-xs h-5">Recommended</Badge>}
+                            </div>
+                            <p className="text-xs text-muted-foreground">{option.description}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className={cn("font-semibold text-sm", option.price === 0 && "text-secondary")}>
+                            {option.price === 0 ? 'FREE' : option.price.toFixed(2)}
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right column */}
@@ -366,7 +415,7 @@ export default function TailoredConfigurator() {
                 className="flex-1"
                 onClick={() => setModalOpen(true)}
               >
-                Request Production — {breakdown.buyerPrice.toFixed(2)}
+                Request Production — {totalPrice.toFixed(2)}
               </Button>
               <Button variant="outline" size="lg">
                 <Heart className="h-4 w-4" />
@@ -401,7 +450,7 @@ export default function TailoredConfigurator() {
         onClose={() => setModalOpen(false)}
         product={tailoredProduct}
         params={params}
-        buyerPrice={buyerPrice}
+        buyerPrice={buyerPrice || tailoredBasePrice}
       />
     </Layout>
   );

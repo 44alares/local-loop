@@ -20,9 +20,11 @@ export function ShelfBracketGeometry({ lengthH, heightV, thickness, reinforcemen
   const mat = { color: '#cccccc', metalness: 0.3, roughness: 0.6 } as const;
   const holeMaterial = useMemo(() => new THREE.MeshStandardMaterial({ color: '#111111' }), []);
 
-  // Diagonal: from [0,0,0] to [lengthH, heightV, 0]
-  const diagLength = Math.sqrt(lh * lh + hv * hv);
-  const diagAngle = Math.atan2(hv, lh);
+  // Diagonal: from midpoint of vertical arm [0, hv*0.5] to midpoint of horizontal arm [lh*0.5, hv]
+  const dx = lh * 0.5;
+  const dy = hv * 0.5;
+  const diagLength = Math.sqrt(dx * dx + dy * dy);
+  const diagAngle = Math.atan2(dy, dx);
 
   return (
     <group>
@@ -38,15 +40,15 @@ export function ShelfBracketGeometry({ lengthH, heightV, thickness, reinforcemen
         <meshStandardMaterial {...mat} />
       </mesh>
 
-      {/* Diagonal reinforcement — corner to corner */}
+      {/* Diagonal reinforcement — midpoint to midpoint */}
       {reinforcement && (
-        <mesh position={[lh / 2, hv / 2, 0]} rotation={[0, 0, diagAngle]}>
+        <mesh position={[lh * 0.25, hv * 0.75, 0]} rotation={[0, 0, diagAngle]}>
           <boxGeometry args={[diagLength, t * 0.8, depth]} />
           <meshStandardMaterial {...mat} />
         </mesh>
       )}
 
-      {/* Hole in horizontal arm — through Z depth */}
+      {/* Hole in horizontal arm — through Z depth (rotX = PI/2) */}
       <mesh
         position={[lh - holeDiameter * 2 * s, hv, 0]}
         rotation={[Math.PI / 2, 0, 0]}
@@ -55,7 +57,7 @@ export function ShelfBracketGeometry({ lengthH, heightV, thickness, reinforcemen
         <cylinderGeometry args={[hr, hr, depth + 0.02, 16]} />
       </mesh>
 
-      {/* Hole in vertical arm — through Z depth */}
+      {/* Hole in vertical arm — through Z depth (rotX = PI/2) */}
       <mesh
         position={[0, holeDiameter * 2 * s, 0]}
         rotation={[Math.PI / 2, 0, 0]}

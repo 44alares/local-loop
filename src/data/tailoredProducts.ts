@@ -57,8 +57,8 @@ export const tailoredProducts: TailoredProduct[] = [
     tags: ['width', 'depth', 'height', 'compartments'],
     price: 20,
     params: [
-      { key: 'totalWidth', label: 'Width', min: 50, max: 400, default: 200, step: 1, unit: 'mm', type: 'slider' },
-      { key: 'totalDepth', label: 'Depth', min: 50, max: 400, default: 150, step: 1, unit: 'mm', type: 'slider' },
+      { key: 'totalWidth', label: 'Width', min: 50, max: 250, default: 200, step: 1, unit: 'mm', type: 'slider' },
+      { key: 'totalDepth', label: 'Depth', min: 50, max: 250, default: 150, step: 1, unit: 'mm', type: 'slider' },
       { key: 'totalHeight', label: 'Height', min: 20, max: 80, default: 40, step: 1, unit: 'mm', type: 'slider' },
       { key: 'colDivisions', label: 'Columns', min: 1, max: 8, default: 3, step: 1, unit: '', type: 'integer' },
       { key: 'rowDivisions', label: 'Rows', min: 1, max: 6, default: 2, step: 1, unit: '', type: 'integer' },
