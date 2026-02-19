@@ -57,13 +57,13 @@ export function ShelfBracketGeometry({ lengthH, heightV, thickness, reinforcemen
         <cylinderGeometry args={[hr, hr, t + 0.02, 16]} />
       </mesh>
 
-      {/* Hole in vertical arm — drilled along Z axis through full depth */}
+      {/* Hole in vertical arm — drilled through wide face (along X axis through thickness) */}
       <mesh
         position={[0, holeDiameter * 3 * s, 0]}
-        rotation={[Math.PI / 2, 0, 0]}
+        rotation={[0, 0, Math.PI / 2]}
         material={holeMaterial}
       >
-        <cylinderGeometry args={[hr, hr, d + 0.02, 16]} />
+        <cylinderGeometry args={[hr, hr, t + 0.02, 16]} />
       </mesh>
     </group>
   );
