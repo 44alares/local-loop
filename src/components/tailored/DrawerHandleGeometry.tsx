@@ -31,15 +31,17 @@ export function DrawerHandleGeometry({ length, holeSpacing, legHeight, thickness
         <meshStandardMaterial {...mat} />
       </RoundedBox>
 
-      {/* Left leg — rounded */}
-      <RoundedBox args={[t, lh, t]} radius={bevel} smoothness={4} position={[-(hs / 2), lh / 2, 0]}>
+      {/* Left leg — sharp edges (standard box) */}
+      <mesh position={[-(hs / 2), lh / 2, 0]}>
+        <boxGeometry args={[t, lh, t]} />
         <meshStandardMaterial {...mat} />
-      </RoundedBox>
+      </mesh>
 
-      {/* Right leg — rounded */}
-      <RoundedBox args={[t, lh, t]} radius={bevel} smoothness={4} position={[hs / 2, lh / 2, 0]}>
+      {/* Right leg — sharp edges (standard box) */}
+      <mesh position={[hs / 2, lh / 2, 0]}>
+        <boxGeometry args={[t, lh, t]} />
         <meshStandardMaterial {...mat} />
-      </RoundedBox>
+      </mesh>
 
       {/* Hole left — vertical through leg */}
       <mesh position={[-(hs / 2), lh / 2, 0]} material={holeMaterial}>

@@ -31,7 +31,7 @@ export default function Tailored() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button variant="secondary" size="lg" asChild>
-              <a href="#products">See examples ↓</a>
+              <a href="#products">See models ↓</a>
             </Button>
             <Button variant="outline" size="lg" asChild>
               <Link to="/start-creating">Are you a designer? Upload your model</Link>
@@ -94,12 +94,12 @@ export default function Tailored() {
       <section className="bg-muted py-12 md:py-16">
         <div className="container">
           <h2 className="text-xl md:text-2xl font-bold text-center mb-10">How it works</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-3 gap-6">
             {howItWorks.map((step, i) => (
               <div key={i} className="text-center space-y-3">
-                <div className="text-3xl">{step.emoji}</div>
-                <h3 className="font-semibold">{step.title}</h3>
-                <p className="text-sm text-muted-foreground">{step.desc}</p>
+                <div className="text-3xl text-center">{step.emoji}</div>
+                <h3 className="font-semibold text-center">{step.title}</h3>
+                <p className="text-sm text-muted-foreground text-center">{step.desc}</p>
               </div>
             ))}
           </div>

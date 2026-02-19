@@ -50,6 +50,7 @@ function ModelWithSpring({ productSlug, params, triggerKey }: { productSlug: str
           thickness={params.thickness as number}
           reinforcement={params.reinforcement as boolean}
           holeDiameter={params.holeDiameter as number ?? 6}
+          depth={params.depth as number ?? 30}
         />
       )}
 
@@ -90,11 +91,13 @@ function getLabels(slug: string, params: Record<string, number | boolean>) {
     const lh = (params.lengthH as number) * s;
     const hv = (params.heightV as number) * s;
     const t = (params.thickness as number) * s;
+    const d = (params.depth as number || 30) * s;
     const hd = (params.holeDiameter as number) * s;
     return [
       { text: `← ${params.lengthH} mm →`, position: [lh / 2, hv + t + 0.1, 0] },
       { text: `↕ ${params.heightV} mm`, position: [-0.15, hv / 2, 0] },
-      { text: `⌀ ${params.holeDiameter} mm`, position: [lh - hd * 2, hv + t + 0.2, 0.2] },
+      { text: `${params.depth || 30} mm ↔`, position: [lh / 2, hv, d / 2 + 0.15] },
+      { text: `⌀ ${params.holeDiameter} mm`, position: [lh - hd * 3, hv + t + 0.2, 0.2] },
     ];
   }
   return [];

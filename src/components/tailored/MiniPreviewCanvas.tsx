@@ -39,6 +39,7 @@ function SceneContent({ productSlug, params }: Props) {
             thickness={params.thickness as number}
             reinforcement={params.reinforcement as boolean}
             holeDiameter={params.holeDiameter as number ?? 6}
+            depth={params.depth as number ?? 30}
           />
         )}
       </group>

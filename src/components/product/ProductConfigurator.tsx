@@ -552,8 +552,8 @@ export function ProductConfigurator({ product, selectedMakerId, onPriceChange, o
         </div>
       </div>
 
-      {/* Size Selector (not for gaming/repair) */}
-      {showSizeOptions && (
+      {/* Size Selector (not for gaming/repair, not for tailored) */}
+      {showSizeOptions && !product.id?.startsWith('tailored') && (
         <div className="space-y-2">
           <Label className="flex items-center gap-2 text-sm">
             <Maximize2 className="h-4 w-4" />
