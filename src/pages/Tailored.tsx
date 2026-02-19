@@ -4,13 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { tailoredProducts } from '@/data/tailoredProducts';
 import { MiniPreview } from '@/components/tailored/MiniPreview';
-import { ArrowRight, SlidersHorizontal, FileText, Printer, Package } from 'lucide-react';
+import { ArrowRight, SlidersHorizontal, FileText, Printer } from 'lucide-react';
 
 const howItWorks = [
   { icon: SlidersHorizontal, emoji: '🎛️', title: 'Customize', desc: 'Move the sliders until it fits perfectly' },
   { icon: FileText, emoji: '📐', title: 'Model generated', desc: 'Your exact file is prepared instantly' },
   { icon: Printer, emoji: '🖨️', title: 'A maker builds it', desc: 'Nearby local maker receives the order' },
-  { icon: Package, emoji: '📦', title: 'Delivered home', desc: '3–5 business days' },
 ];
 
 export default function Tailored() {
@@ -28,7 +27,7 @@ export default function Tailored() {
             Designed by you. Made near you.
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            Customize every detail — a local maker prints it and delivers it to your door.
+            Customize every detail — a local maker near you brings it to life.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button variant="secondary" size="lg" asChild>

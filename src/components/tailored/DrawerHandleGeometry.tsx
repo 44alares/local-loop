@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import * as THREE from 'three';
+import { RoundedBox } from '@react-three/drei';
 
 interface DrawerHandleGeometryProps {
   length: number;
@@ -17,27 +18,28 @@ export function DrawerHandleGeometry({ length, holeSpacing, legHeight, thickness
   const t = thickness * s;
   const hr = (holeDiameter / 2) * s;
 
+  // Bevel radius: thickness * 0.08, clamped to max 1.2mm (0.012 scene units)
+  const bevel = Math.min(thickness * 0.08 * s, 0.012);
+
   const holeMaterial = useMemo(() => new THREE.MeshStandardMaterial({ color: '#111111' }), []);
+  const mat = { color: '#cccccc', metalness: 0.3, roughness: 0.6 } as const;
 
   return (
     <group>
-      {/* Top bar */}
-      <mesh position={[0, lh + t / 2, 0]}>
-        <boxGeometry args={[l, t, t]} />
-        <meshStandardMaterial color="#cccccc" metalness={0.3} roughness={0.6} />
-      </mesh>
+      {/* Top bar — rounded */}
+      <RoundedBox args={[l, t, t]} radius={bevel} smoothness={4} position={[0, lh + t / 2, 0]}>
+        <meshStandardMaterial {...mat} />
+      </RoundedBox>
 
-      {/* Left leg */}
-      <mesh position={[-(hs / 2), lh / 2, 0]}>
-        <boxGeometry args={[t, lh, t]} />
-        <meshStandardMaterial color="#cccccc" metalness={0.3} roughness={0.6} />
-      </mesh>
+      {/* Left leg — rounded */}
+      <RoundedBox args={[t, lh, t]} radius={bevel} smoothness={4} position={[-(hs / 2), lh / 2, 0]}>
+        <meshStandardMaterial {...mat} />
+      </RoundedBox>
 
-      {/* Right leg */}
-      <mesh position={[hs / 2, lh / 2, 0]}>
-        <boxGeometry args={[t, lh, t]} />
-        <meshStandardMaterial color="#cccccc" metalness={0.3} roughness={0.6} />
-      </mesh>
+      {/* Right leg — rounded */}
+      <RoundedBox args={[t, lh, t]} radius={bevel} smoothness={4} position={[hs / 2, lh / 2, 0]}>
+        <meshStandardMaterial {...mat} />
+      </RoundedBox>
 
       {/* Hole left — vertical through leg */}
       <mesh position={[-(hs / 2), lh / 2, 0]} material={holeMaterial}>
