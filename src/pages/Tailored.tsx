@@ -61,7 +61,12 @@ export default function Tailored() {
 
               {/* Content */}
               <div className="p-5 space-y-3">
-                <h2 className="text-lg font-bold">{product.name}</h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-bold">{product.name}</h2>
+                  {product.setOf && product.setOf > 1 && (
+                    <Badge variant="outline" className="text-xs">Min. {product.setOf} units</Badge>
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground">{product.description}</p>
 
                 {/* Tags */}
@@ -77,7 +82,7 @@ export default function Tailored() {
                 <div className="flex items-center justify-between pt-2">
                   <span className="text-lg font-bold">
                     From {product.price.toFixed(2)}
-                    {product.setOf && <span className="text-xs text-muted-foreground font-normal ml-1">/ {product.setOf} units</span>}
+                    {product.setOf && product.setOf > 1 && <span className="text-xs text-muted-foreground font-normal ml-1">/ {product.setOf} units</span>}
                   </span>
                   <Button variant="secondary" size="sm" asChild>
                     <Link to={`/tailored/${product.slug}`}>

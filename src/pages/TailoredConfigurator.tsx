@@ -143,6 +143,9 @@ export default function TailoredConfigurator() {
         <div className="space-y-2 mb-6">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold">{tailoredProduct.name}</h1>
+            {minQty > 1 && (
+              <Badge variant="outline" className="text-xs">Min. {minQty} units</Badge>
+            )}
           </div>
           <p className="text-sm text-muted-foreground">{tailoredProduct.description}</p>
         </div>
@@ -421,13 +424,18 @@ export default function TailoredConfigurator() {
           {/* Right column */}
           <div className="space-y-6">
             {/* Price Breakdown */}
-            <div className="p-4 rounded-xl bg-card border border-border w-full max-w-full overflow-hidden">
-              <div className="space-y-2 w-full max-w-full overflow-hidden">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+            <div className="p-4 rounded-xl bg-card border border-border" style={{ width: '100%', maxWidth: '100%', overflowX: 'hidden', boxSizing: 'border-box' }}>
+              <div className="space-y-2 w-full max-w-full">
+                <div className="flex items-center gap-2 text-xs font-medium text-stone-100">
                   <Info className="h-3.5 w-3.5 text-secondary" />
                   Fees & Payout Breakdown
                 </div>
-                <BreakdownRows breakdown={discount.hasDiscount ? { ...breakdown, buyerPrice: discount.discountedTotal / quantity * (minQty > 1 ? minQty : 1) } : breakdown} productType="functional" quantity={quantity / (minQty > 1 ? minQty : 1)} />
+                <BreakdownRows
+                  breakdown={discount.hasDiscount ? { ...breakdown, buyerPrice: discount.discountedTotal / quantity * (minQty > 1 ? minQty : 1) } : breakdown}
+                  productType="functional"
+                  quantity={quantity / (minQty > 1 ? minQty : 1)}
+                  displayTotal={totalPrice}
+                />
               </div>
             </div>
 
@@ -436,7 +444,7 @@ export default function TailoredConfigurator() {
               <Button
                 variant="secondary"
                 size="lg"
-                className="flex-1 text-secondary-foreground"
+                className="flex-1 text-stone-100"
                 onClick={() => setModalOpen(true)}
               >
                 <span className="flex items-center gap-2 flex-wrap justify-center">

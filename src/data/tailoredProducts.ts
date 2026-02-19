@@ -30,7 +30,7 @@ export const tailoredProducts: TailoredProduct[] = [
   {
     id: 'tailored-drawer-handle',
     slug: 'drawer-handle',
-    name: 'Drawer Handle 4 units',
+    name: 'Drawer Handle',
     description: 'For kitchens, wardrobes and furniture. Your exact measurements.',
     tags: ['length', 'hole spacing', 'height', 'thickness'],
     price: 19,
@@ -52,11 +52,10 @@ export const tailoredProducts: TailoredProduct[] = [
   {
     id: 'tailored-drawer-organizer',
     slug: 'drawer-organizer',
-    name: 'Drawer Organizer 4 units',
+    name: 'Drawer Organizer',
     description: 'Custom compartments that fit perfectly inside any drawer.',
     tags: ['width', 'depth', 'height', 'compartments'],
     price: 20,
-    setOf: 4,
     params: [
       { key: 'totalWidth', label: 'Width', min: 50, max: 250, default: 200, step: 1, unit: 'mm', type: 'slider' },
       { key: 'totalDepth', label: 'Depth', min: 50, max: 250, default: 150, step: 1, unit: 'mm', type: 'slider' },
@@ -74,7 +73,7 @@ export const tailoredProducts: TailoredProduct[] = [
   {
     id: 'tailored-shelf-bracket',
     slug: 'shelf-bracket',
-    name: 'Shelf Bracket — 4 units',
+    name: 'Shelf Bracket',
     description: 'Strong and adjustable. With or without diagonal reinforcement.',
     tags: ['length', 'height', 'thickness', 'reinforcement'],
     price: 22,
