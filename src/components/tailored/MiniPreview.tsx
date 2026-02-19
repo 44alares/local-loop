@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { DrawerHandleGeometry } from './DrawerHandleGeometry';
 import { DrawerOrganizerGeometry } from './DrawerOrganizerGeometry';
@@ -48,13 +49,15 @@ function SceneContent({ productSlug, params }: MiniPreviewProps) {
 export function MiniPreview({ productSlug, params }: MiniPreviewProps) {
   return (
     <div className="w-full aspect-square rounded-md overflow-hidden bg-[hsl(0_0%_7%)]">
-      <Canvas
-        camera={{ position: [3, 2, 3], fov: 35 }}
-        gl={{ antialias: true, alpha: false }}
-        style={{ background: '#111111' }}
-      >
-        <SceneContent productSlug={productSlug} params={params} />
-      </Canvas>
+      <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">Loading…</div>}>
+        <Canvas
+          camera={{ position: [3, 2, 3], fov: 35 }}
+          gl={{ antialias: true, alpha: false }}
+          style={{ background: '#111111' }}
+        >
+          <SceneContent productSlug={productSlug} params={params} />
+        </Canvas>
+      </Suspense>
     </div>
   );
 }
