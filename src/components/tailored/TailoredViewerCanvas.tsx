@@ -5,6 +5,7 @@ import { useSpring, animated } from '@react-spring/three';
 import { DrawerHandleGeometry } from './DrawerHandleGeometry';
 import { DrawerOrganizerGeometry } from './DrawerOrganizerGeometry';
 import { ShelfBracketGeometry } from './ShelfBracketGeometry';
+import { WebGLContextRecovery } from './WebGLContextRecovery';
 import type { TailoredProduct } from '@/data/tailoredProducts';
 
 interface Props {
@@ -128,6 +129,7 @@ export default function TailoredViewerCanvas({ product, params }: Props) {
         fadeDistance={8}
         infiniteGrid
       />
+      <WebGLContextRecovery />
       <ModelWithSpring productSlug={product.slug} params={params} triggerKey={triggerKey} />
     </Canvas>
   );
