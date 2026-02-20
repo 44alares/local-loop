@@ -76,8 +76,8 @@ export default function JoinAsMaker() {
   const [makerTermsOpened, setMakerTermsOpened] = useState(false);
   const [makerTermsAccepted, setMakerTermsAccepted] = useState(false);
   const [makerTermsOpen, setMakerTermsOpen] = useState(false);
-  const [makerActivePalette, setMakerActivePalette] = useState<Record<MaterialType, string | null>>({
-    PLA: null, PETG: null, ABS: null, Nylon: null, Resin: null, TPU: null,
+  const [makerActivePalettes, setMakerActivePalettes] = useState<Record<MaterialType, string[]>>({
+    PLA: [], PETG: [], ABS: [], Nylon: [], Resin: [], TPU: [],
   });
 
   // Collect all basic colors and RAL codes across selected materials
@@ -380,15 +380,15 @@ export default function JoinAsMaker() {
                     const matBasicCodes = MATERIALS_CONFIG[mat].basicColors.map(c => c.ral);
                     const matAdditional = additionalRalColors[mat];
                     const palettes = getPalettesForMaterial(mat);
-                    const activePal = makerActivePalette[mat];
-                    // Build filter: palette color names → RAL codes from materialsConfig
+                    const activePals = makerActivePalettes[mat];
+                    // Build filter: union of selected palette color names → RAL codes from materialsConfig
                     const paletteRalFilter = (() => {
-                      if (!activePal) return null;
-                      const palette = palettes.find(p => p.id === activePal);
-                      if (!palette) return null;
+                      if (activePals.length === 0) return null;
+                      const selectedPalettes = palettes.filter(p => activePals.includes(p.id));
+                      const unionNames = [...new Set(selectedPalettes.flatMap(p => p.colors))];
                       const allMatColors = [...MATERIALS_CONFIG[mat].basicColors, ...MATERIALS_CONFIG[mat].recommendedColors];
                       return allMatColors
-                        .filter(c => palette.colors.includes(c.name) && !matBasicCodes.includes(c.ral))
+                        .filter(c => unionNames.includes(c.name) && !matBasicCodes.includes(c.ral))
                         .map(c => c.ral);
                     })();
                     return (
@@ -401,24 +401,18 @@ export default function JoinAsMaker() {
                               <PaletteInfoTooltip />
                             </Label>
                             <div className="grid grid-cols-2 gap-2">
-                              <button
-                                type="button"
-                                onClick={() => setMakerActivePalette(prev => ({ ...prev, [mat]: null }))}
-                                className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left text-xs font-medium ${
-                                  activePal === null
-                                    ? 'border-secondary bg-secondary/10 text-secondary'
-                                    : 'border-border hover:border-secondary/50'
-                                }`}
-                              >
-                                Show all
-                              </button>
                               {palettes.map((palette) => {
-                                const isActive = activePal === palette.id;
+                                const isActive = activePals.includes(palette.id);
                                 return (
                                   <button
                                     key={palette.id}
                                     type="button"
-                                    onClick={() => setMakerActivePalette(prev => ({ ...prev, [mat]: isActive ? null : palette.id }))}
+                                    onClick={() => setMakerActivePalettes(prev => ({
+                                      ...prev,
+                                      [mat]: isActive
+                                        ? prev[mat].filter(id => id !== palette.id)
+                                        : [...prev[mat], palette.id]
+                                    }))}
                                     className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left ${
                                       isActive
                                         ? 'border-secondary bg-secondary/10'

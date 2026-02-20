@@ -56,7 +56,7 @@ export default function StartCreating() {
   const [criticalColors, setCriticalColors] = useState('');
   // Display colors per palette (designer picks max 4 per palette)
   const [paletteDisplayColors, setPaletteDisplayColors] = useState<Record<string, string[]>>({});
-  const [activePalette, setActivePalette] = useState<string | null>(null);
+  const [activePalettes, setActivePalettes] = useState<string[]>([]);
 
   // Get fee range based on complexity
   const feeRange = complexity ? FIXED_FEE_RANGES[complexity] : { min: 1, max: 3 };
@@ -461,23 +461,24 @@ export default function StartCreating() {
                   {/* Material-specific basic colors + recommended colors */}
                   {selectedMaterial && MATERIALS_CONFIG[selectedMaterial as MaterialType] && (() => {
                     const matConfig = MATERIALS_CONFIG[selectedMaterial as MaterialType];
-                    const paletteColors = activePalette
-                      ? getPalettesForMaterial(selectedMaterial).find(p => p.id === activePalette)?.colors || []
+                    const paletteColorUnion = activePalettes.length > 0
+                      ? [...new Set(
+                          activePalettes.flatMap(pid =>
+                            getPalettesForMaterial(selectedMaterial).find(p => p.id === pid)?.colors || []
+                          )
+                        )]
                       : null;
-                    const filteredBasic = paletteColors
-                      ? matConfig.basicColors.filter(c => paletteColors.includes(c.name))
+                    const filteredBasic = paletteColorUnion
+                      ? matConfig.basicColors.filter(c => paletteColorUnion.includes(c.name))
                       : matConfig.basicColors;
-                    const filteredRecommended = paletteColors
-                      ? matConfig.recommendedColors.filter(c => paletteColors.includes(c.name))
+                    const filteredRecommended = paletteColorUnion
+                      ? matConfig.recommendedColors.filter(c => paletteColorUnion.includes(c.name))
                       : matConfig.recommendedColors;
                     return (
                       <div className="space-y-3">
                         <Label className="flex items-center gap-2 text-sm">
                           <Palette className="h-3 w-3" />
                           Colors for {selectedMaterial}
-                          {activePalette && (
-                            <button type="button" onClick={() => setActivePalette(null)} className="text-xs text-secondary hover:underline ml-auto">Show all</button>
-                          )}
                         </Label>
                         {/* Basic colors */}
                         {filteredBasic.length > 0 && (
@@ -527,29 +528,19 @@ export default function StartCreating() {
                         <PaletteInfoTooltip />
                       </Label>
                       <div className="grid grid-cols-2 gap-2">
-                        {/* Show all option */}
-                        <button
-                          type="button"
-                          onClick={() => setActivePalette(null)}
-                          className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left text-xs font-medium ${
-                            activePalette === null
-                              ? 'border-secondary bg-secondary/10 text-secondary'
-                              : 'border-border hover:border-secondary/50'
-                          }`}
-                        >
-                          Show all
-                        </button>
                         {getPalettesForMaterial(selectedMaterial).map((palette) => {
                           const colors = palette.colors;
                           const displayColors = paletteDisplayColors[palette.id] ?? colors.slice(0, 4);
                           const needsSelection = colors.length > 6;
                           const hasValidSelection = displayColors.length === 4;
-                          const isActive = activePalette === palette.id;
+                          const isActive = activePalettes.includes(palette.id);
                           return (
                             <button
                               key={palette.id}
                               type="button"
-                              onClick={() => setActivePalette(isActive ? null : palette.id)}
+                              onClick={() => setActivePalettes(prev =>
+                                isActive ? prev.filter(id => id !== palette.id) : [...prev, palette.id]
+                              )}
                               className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left ${
                                 isActive
                                   ? 'border-secondary bg-secondary/10'
