@@ -61,7 +61,7 @@ export default function TailoredConfigurator() {
       name: tailoredProduct?.name || '',
       description: tailoredProduct?.description || '',
       price: tailoredBasePrice,
-      category: 'functional',
+      category: 'repair',
       productType: 'functional',
       materials: ['PLA', 'PETG'],
       supportedQualities: ['standard', 'premium'],
