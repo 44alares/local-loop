@@ -461,16 +461,14 @@ export default function StartCreating() {
                   {/* Material-specific basic colors + recommended colors */}
                   {selectedMaterial && MATERIALS_CONFIG[selectedMaterial as MaterialType] && (() => {
                     const matConfig = MATERIALS_CONFIG[selectedMaterial as MaterialType];
+                    const baseColorNames = matConfig.basicColors.map(c => c.name);
                     const paletteColorUnion = activePalettes.length > 0
                       ? [...new Set(
                           activePalettes.flatMap(pid =>
                             getPalettesForMaterial(selectedMaterial).find(p => p.id === pid)?.colors || []
-                          )
+                          ).filter(name => !baseColorNames.includes(name))
                         )]
                       : null;
-                    const filteredBasic = paletteColorUnion
-                      ? matConfig.basicColors.filter(c => paletteColorUnion.includes(c.name))
-                      : matConfig.basicColors;
                     const filteredRecommended = paletteColorUnion
                       ? matConfig.recommendedColors.filter(c => paletteColorUnion.includes(c.name))
                       : matConfig.recommendedColors;
@@ -481,11 +479,11 @@ export default function StartCreating() {
                           Colors for {selectedMaterial}
                         </Label>
                         {/* Basic colors */}
-                        {filteredBasic.length > 0 && (
+                        {matConfig.basicColors.length > 0 && (
                           <div className="space-y-1.5">
-                            <p className="text-xs font-medium text-muted-foreground">Basic colors</p>
+                            <p className="text-xs font-medium text-muted-foreground">Base colors</p>
                             <div className="flex flex-wrap gap-1.5">
-                              {filteredBasic.map((color) => (
+                              {matConfig.basicColors.map((color) => (
                                 <Badge key={color.name} variant="secondary" className="gap-1.5 py-1 px-2">
                                   <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
                                   <span className="text-xs">{color.name}</span>
@@ -528,7 +526,7 @@ export default function StartCreating() {
                         <PaletteInfoTooltip />
                       </Label>
                       <div className="grid grid-cols-2 gap-2">
-                        {getPalettesForMaterial(selectedMaterial).map((palette) => {
+                        {getPalettesForMaterial(selectedMaterial).filter(p => p.id !== 'base').map((palette) => {
                           const colors = palette.colors;
                           const displayColors = paletteDisplayColors[palette.id] ?? colors.slice(0, 4);
                           const needsSelection = colors.length > 6;
@@ -572,7 +570,7 @@ export default function StartCreating() {
 
                       {/* Display colors picker for palettes with >6 colors */}
                       {getPalettesForMaterial(selectedMaterial)
-                        .filter((p) => p.colors.length > 6)
+                        .filter((p) => p.id !== 'base' && p.colors.length > 6)
                         .map((palette) => {
                           const selected = paletteDisplayColors[palette.id] || [];
                           return (

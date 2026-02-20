@@ -385,7 +385,8 @@ export default function JoinAsMaker() {
                     const paletteRalFilter = (() => {
                       if (activePals.length === 0) return null;
                       const selectedPalettes = palettes.filter(p => activePals.includes(p.id));
-                      const unionNames = [...new Set(selectedPalettes.flatMap(p => p.colors))];
+                      const matBasicNames = MATERIALS_CONFIG[mat].basicColors.map(c => c.name);
+                      const unionNames = [...new Set(selectedPalettes.flatMap(p => p.colors).filter(n => !matBasicNames.includes(n)))];
                       const allMatColors = [...MATERIALS_CONFIG[mat].basicColors, ...MATERIALS_CONFIG[mat].recommendedColors];
                       return allMatColors
                         .filter(c => unionNames.includes(c.name) && !matBasicCodes.includes(c.ral))
@@ -401,7 +402,7 @@ export default function JoinAsMaker() {
                               <PaletteInfoTooltip />
                             </Label>
                             <div className="grid grid-cols-2 gap-2">
-                              {palettes.map((palette) => {
+                              {palettes.filter(p => p.id !== 'base').map((palette) => {
                                 const isActive = activePals.includes(palette.id);
                                 return (
                                   <button
