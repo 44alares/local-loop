@@ -3,7 +3,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { tailoredProducts } from '@/data/tailoredProducts';
-import { MiniPreview } from '@/components/tailored/MiniPreview';
+import { StaticProductPreview } from '@/components/tailored/StaticProductPreview';
 import { ArrowRight, SlidersHorizontal, FileText, Printer } from 'lucide-react';
 import drawerHandleThumb from '@/assets/tailored/drawer-handle-preview.jpg';
 
@@ -62,7 +62,7 @@ export default function Tailored() {
               ) : (
                 <div className="grid grid-cols-2 gap-0.5 p-1 bg-[hsl(0_0%_7%)]" style={{ minHeight: '240px' }}>
                   {product.previewVariants.map((variant, i) => (
-                    <MiniPreview
+                    <StaticProductPreview
                       key={i}
                       productSlug={product.slug}
                       params={variant.params}

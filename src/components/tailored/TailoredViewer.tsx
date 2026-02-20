@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { AutoRetryErrorBoundary } from './AutoRetryErrorBoundary';
 import type { TailoredProduct } from '@/data/tailoredProducts';
 
 interface TailoredViewerProps {
@@ -18,11 +18,11 @@ export function TailoredViewer({ product, params }: TailoredViewerProps) {
           Approximate preview
         </Badge>
       </div>
-      <ErrorBoundary>
+      <AutoRetryErrorBoundary>
         <Suspense fallback={<div className="w-full h-full min-h-[360px] flex items-center justify-center text-sm text-muted-foreground bg-[hsl(0_0%_7%)]">Loading 3D viewer…</div>}>
           <LazyViewerCanvas product={product} params={params} />
         </Suspense>
-      </ErrorBoundary>
+      </AutoRetryErrorBoundary>
     </div>
   );
 }
