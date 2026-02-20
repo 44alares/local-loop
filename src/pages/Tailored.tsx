@@ -6,6 +6,7 @@ import { tailoredProducts } from '@/data/tailoredProducts';
 import { StaticProductPreview } from '@/components/tailored/StaticProductPreview';
 import { ArrowRight, SlidersHorizontal, FileText, Printer } from 'lucide-react';
 import drawerHandleThumb from '@/assets/tailored/drawer-handle-preview.jpg';
+import drawerOrganizerThumb from '@/assets/tailored/drawer-organizer-preview.jpg';
 
 const howItWorks = [
   { icon: SlidersHorizontal, emoji: '🎛️', title: 'Customize', desc: 'Move the sliders until it fits perfectly' },
@@ -50,10 +51,10 @@ export default function Tailored() {
               className="rounded-xl bg-card border border-border overflow-hidden shadow-card card-hover"
             >
               {/* 2x2 Mini preview grid */}
-              {product.slug === 'drawer-handle' ? (
+              {product.slug === 'drawer-handle' || product.slug === 'drawer-organizer' ? (
                 <div className="bg-[hsl(0_0%_7%)]" style={{ minHeight: '240px' }}>
                   <img
-                    src={drawerHandleThumb}
+                    src={product.slug === 'drawer-handle' ? drawerHandleThumb : drawerOrganizerThumb}
                     alt={product.name}
                     className="w-full h-full object-cover"
                     style={{ minHeight: '240px' }}
