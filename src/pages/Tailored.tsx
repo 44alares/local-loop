@@ -7,6 +7,7 @@ import { StaticProductPreview } from '@/components/tailored/StaticProductPreview
 import { ArrowRight, SlidersHorizontal, FileText, Printer } from 'lucide-react';
 import drawerHandleThumb from '@/assets/tailored/drawer-handle-preview.jpg';
 import drawerOrganizerThumb from '@/assets/tailored/drawer-organizer-preview.jpg';
+import shelfBracketThumb from '@/assets/tailored/shelf-bracket-preview.jpg';
 
 const howItWorks = [
   { icon: SlidersHorizontal, emoji: '🎛️', title: 'Customize', desc: 'Move the sliders until it fits perfectly' },
@@ -50,27 +51,15 @@ export default function Tailored() {
               key={product.id}
               className="rounded-xl bg-card border border-border overflow-hidden shadow-card card-hover"
             >
-              {/* 2x2 Mini preview grid */}
-              {product.slug === 'drawer-handle' || product.slug === 'drawer-organizer' ? (
-                <div className="bg-[hsl(0_0%_7%)]" style={{ minHeight: '240px' }}>
-                  <img
-                    src={product.slug === 'drawer-handle' ? drawerHandleThumb : drawerOrganizerThumb}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    style={{ minHeight: '240px' }}
-                  />
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-0.5 p-1 bg-[hsl(0_0%_7%)]" style={{ minHeight: '240px' }}>
-                  {product.previewVariants.map((variant, i) => (
-                    <StaticProductPreview
-                      key={i}
-                      productSlug={product.slug}
-                      params={variant.params}
-                    />
-                  ))}
-                </div>
-              )}
+              {/* Static thumbnail */}
+              <div className="bg-[hsl(0_0%_7%)]" style={{ minHeight: '240px' }}>
+                <img
+                  src={product.slug === 'drawer-handle' ? drawerHandleThumb : product.slug === 'drawer-organizer' ? drawerOrganizerThumb : shelfBracketThumb}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  style={{ minHeight: '240px' }}
+                />
+              </div>
 
               {/* Content */}
               <div className="p-5 space-y-3">
