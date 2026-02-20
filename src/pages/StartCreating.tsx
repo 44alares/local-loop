@@ -56,6 +56,7 @@ export default function StartCreating() {
   const [criticalColors, setCriticalColors] = useState('');
   // Display colors per palette (designer picks max 4 per palette)
   const [paletteDisplayColors, setPaletteDisplayColors] = useState<Record<string, string[]>>({});
+  const [activePalette, setActivePalette] = useState<string | null>(null);
 
   // Get fee range based on complexity
   const feeRange = complexity ? FIXED_FEE_RANGES[complexity] : { min: 1, max: 3 };
@@ -458,47 +459,64 @@ export default function StartCreating() {
                   </div>
 
                   {/* Material-specific basic colors + recommended colors */}
-                  {selectedMaterial && MATERIALS_CONFIG[selectedMaterial as MaterialType] && (
-                    <div className="space-y-3">
-                      <Label className="flex items-center gap-2 text-sm">
-                        <Palette className="h-3 w-3" />
-                        Colors for {selectedMaterial}
-                      </Label>
-                      {/* Basic colors - always visible */}
-                      <div className="space-y-1.5">
-                        <p className="text-xs font-medium text-muted-foreground">Basic colors</p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {MATERIALS_CONFIG[selectedMaterial as MaterialType].basicColors.map((color) => (
-                            <Badge key={color.name} variant="secondary" className="gap-1.5 py-1 px-2">
-                              <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
-                              <span className="text-xs">{color.name}</span>
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                      {/* Recommended colors - collapsible */}
-                      {MATERIALS_CONFIG[selectedMaterial as MaterialType].recommendedColors.length > 0 && (
-                        <Collapsible>
-                          <CollapsibleTrigger asChild>
-                            <Button variant="ghost" size="sm" className="w-full justify-between text-xs h-7">
-                              Recommended colors (optional)
-                              <ChevronDown className="h-3 w-3 ml-1" />
-                            </Button>
-                          </CollapsibleTrigger>
-                          <CollapsibleContent>
-                            <div className="flex flex-wrap gap-1.5 pt-2">
-                              {MATERIALS_CONFIG[selectedMaterial as MaterialType].recommendedColors.map((color) => (
-                                <Badge key={color.name} variant="outline" className="gap-1.5 py-1 px-2">
+                  {selectedMaterial && MATERIALS_CONFIG[selectedMaterial as MaterialType] && (() => {
+                    const matConfig = MATERIALS_CONFIG[selectedMaterial as MaterialType];
+                    const paletteColors = activePalette
+                      ? getPalettesForMaterial(selectedMaterial).find(p => p.id === activePalette)?.colors || []
+                      : null;
+                    const filteredBasic = paletteColors
+                      ? matConfig.basicColors.filter(c => paletteColors.includes(c.name))
+                      : matConfig.basicColors;
+                    const filteredRecommended = paletteColors
+                      ? matConfig.recommendedColors.filter(c => paletteColors.includes(c.name))
+                      : matConfig.recommendedColors;
+                    return (
+                      <div className="space-y-3">
+                        <Label className="flex items-center gap-2 text-sm">
+                          <Palette className="h-3 w-3" />
+                          Colors for {selectedMaterial}
+                          {activePalette && (
+                            <button type="button" onClick={() => setActivePalette(null)} className="text-xs text-secondary hover:underline ml-auto">Show all</button>
+                          )}
+                        </Label>
+                        {/* Basic colors */}
+                        {filteredBasic.length > 0 && (
+                          <div className="space-y-1.5">
+                            <p className="text-xs font-medium text-muted-foreground">Basic colors</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {filteredBasic.map((color) => (
+                                <Badge key={color.name} variant="secondary" className="gap-1.5 py-1 px-2">
                                   <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
                                   <span className="text-xs">{color.name}</span>
                                 </Badge>
                               ))}
                             </div>
-                          </CollapsibleContent>
-                        </Collapsible>
-                      )}
-                    </div>
-                  )}
+                          </div>
+                        )}
+                        {/* Recommended colors */}
+                        {filteredRecommended.length > 0 && (
+                          <Collapsible>
+                            <CollapsibleTrigger asChild>
+                              <Button variant="ghost" size="sm" className="w-full justify-between text-xs h-7">
+                                Recommended colors (optional)
+                                <ChevronDown className="h-3 w-3 ml-1" />
+                              </Button>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                              <div className="flex flex-wrap gap-1.5 pt-2">
+                                {filteredRecommended.map((color) => (
+                                  <Badge key={color.name} variant="outline" className="gap-1.5 py-1 px-2">
+                                    <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                                    <span className="text-xs">{color.name}</span>
+                                  </Badge>
+                                ))}
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   {/* Recommended palettes */}
                   {selectedMaterial && MATERIALS_CONFIG[selectedMaterial as MaterialType]?.supportsMulticolor && (
@@ -509,26 +527,35 @@ export default function StartCreating() {
                         <PaletteInfoTooltip />
                       </Label>
                       <div className="grid grid-cols-2 gap-2">
+                        {/* Show all option */}
+                        <button
+                          type="button"
+                          onClick={() => setActivePalette(null)}
+                          className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left text-xs font-medium ${
+                            activePalette === null
+                              ? 'border-secondary bg-secondary/10 text-secondary'
+                              : 'border-border hover:border-secondary/50'
+                          }`}
+                        >
+                          Show all
+                        </button>
                         {getPalettesForMaterial(selectedMaterial).map((palette) => {
                           const colors = palette.colors;
                           const displayColors = paletteDisplayColors[palette.id] ?? colors.slice(0, 4);
                           const needsSelection = colors.length > 6;
                           const hasValidSelection = displayColors.length === 4;
+                          const isActive = activePalette === palette.id;
                           return (
                             <button
                               key={palette.id}
                               type="button"
-                              onClick={() => {
-                                // Pre-fill color selection with palette colors
-                                const ralMatch = ralColors.find(r => r.name.toLowerCase().includes(colors[0].toLowerCase()));
-                                if (ralMatch && !selectedRalColors.includes(ralMatch.code)) {
-                                  setSelectedRalColors(prev => [...prev, ralMatch.code]);
-                                }
-                              }}
+                              onClick={() => setActivePalette(isActive ? null : palette.id)}
                               className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left ${
-                                needsSelection && !hasValidSelection
-                                  ? 'border-accent/50'
-                                  : 'border-border hover:border-secondary'
+                                isActive
+                                  ? 'border-secondary bg-secondary/10'
+                                  : needsSelection && !hasValidSelection
+                                    ? 'border-accent/50'
+                                    : 'border-border hover:border-secondary/50'
                               }`}
                             >
                               <div className="flex gap-0.5 shrink-0">

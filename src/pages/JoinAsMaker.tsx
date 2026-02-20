@@ -37,6 +37,7 @@ import { MATERIALS_CONFIG, ALL_MATERIALS, type MaterialType } from '@/data/mater
 import { ralColors } from '@/data/ralColors';
 import { PaletteInfoTooltip } from '@/components/PaletteInfoTooltip';
 import { RALEquivalentsTooltip } from '@/components/RALEquivalentsTooltip';
+import { getPalettesForMaterial, multicolorHexMap } from '@/data/multicolorPalettes';
 
 const machineTypes = ['FDM', 'Resin', 'Both'];
 
@@ -75,6 +76,9 @@ export default function JoinAsMaker() {
   const [makerTermsOpened, setMakerTermsOpened] = useState(false);
   const [makerTermsAccepted, setMakerTermsAccepted] = useState(false);
   const [makerTermsOpen, setMakerTermsOpen] = useState(false);
+  const [makerActivePalette, setMakerActivePalette] = useState<Record<MaterialType, string | null>>({
+    PLA: null, PETG: null, ABS: null, Nylon: null, Resin: null, TPU: null,
+  });
 
   // Collect all basic colors and RAL codes across selected materials
   const allBasicColors = selectedMaterials.flatMap(m => MATERIALS_CONFIG[m].basicColors);
@@ -371,12 +375,76 @@ export default function JoinAsMaker() {
                     );
                   })}
 
-                  {/* Additional RAL colors per material */}
+                  {/* Palette filter + Additional RAL colors per material */}
                   {selectedMaterials.map((mat) => {
                     const matBasicCodes = MATERIALS_CONFIG[mat].basicColors.map(c => c.ral);
                     const matAdditional = additionalRalColors[mat];
+                    const palettes = getPalettesForMaterial(mat);
+                    const activePal = makerActivePalette[mat];
+                    // Build filter: palette color names → RAL codes from materialsConfig
+                    const paletteRalFilter = (() => {
+                      if (!activePal) return null;
+                      const palette = palettes.find(p => p.id === activePal);
+                      if (!palette) return null;
+                      const allMatColors = [...MATERIALS_CONFIG[mat].basicColors, ...MATERIALS_CONFIG[mat].recommendedColors];
+                      return allMatColors
+                        .filter(c => palette.colors.includes(c.name) && !matBasicCodes.includes(c.ral))
+                        .map(c => c.ral);
+                    })();
                     return (
                       <div key={`additional-${mat}`} className="space-y-3">
+                        {/* Available palettes */}
+                        {palettes.length > 0 && (
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-2 text-sm">
+                              Available palettes
+                              <PaletteInfoTooltip />
+                            </Label>
+                            <div className="grid grid-cols-2 gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setMakerActivePalette(prev => ({ ...prev, [mat]: null }))}
+                                className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left text-xs font-medium ${
+                                  activePal === null
+                                    ? 'border-secondary bg-secondary/10 text-secondary'
+                                    : 'border-border hover:border-secondary/50'
+                                }`}
+                              >
+                                Show all
+                              </button>
+                              {palettes.map((palette) => {
+                                const isActive = activePal === palette.id;
+                                return (
+                                  <button
+                                    key={palette.id}
+                                    type="button"
+                                    onClick={() => setMakerActivePalette(prev => ({ ...prev, [mat]: isActive ? null : palette.id }))}
+                                    className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left ${
+                                      isActive
+                                        ? 'border-secondary bg-secondary/10'
+                                        : 'border-border hover:border-secondary/50'
+                                    }`}
+                                  >
+                                    <div className="flex gap-0.5 shrink-0">
+                                      {palette.colors.slice(0, 4).map((c) => (
+                                        <span
+                                          key={c}
+                                          className="h-5 w-5 rounded-full border border-border"
+                                          style={{ backgroundColor: multicolorHexMap[c] || '#CCC' }}
+                                        />
+                                      ))}
+                                    </div>
+                                    <div>
+                                      <p className="text-xs font-medium capitalize">{palette.label}</p>
+                                      <p className="text-[10px] text-muted-foreground">{palette.colors.length} colors</p>
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
                         <Label>{mat} — Additional colors (RAL approx.)</Label>
                         <Select onValueChange={(code) => handleAddAdditionalColor(mat, code)} value="">
                           <SelectTrigger>
@@ -385,6 +453,7 @@ export default function JoinAsMaker() {
                           <SelectContent className="max-h-60">
                             {ralColors
                               .filter(c => !matAdditional.includes(c.code) && !matBasicCodes.includes(c.code))
+                              .filter(c => !paletteRalFilter || paletteRalFilter.includes(c.code))
                               .map((color) => (
                                 <SelectItem key={color.code} value={color.code}>
                                   <span className="flex items-center gap-2">
