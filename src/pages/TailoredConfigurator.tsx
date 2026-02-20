@@ -49,7 +49,7 @@ export default function TailoredConfigurator() {
   const tailoredBasePrice = useMemo(() => {
     if (!tailoredProduct) return 20;
     const multiplier = computeSurfaceMultiplier(tailoredProduct.slug, params, tailoredProduct.params);
-    return Math.round(tailoredProduct.price * multiplier * 100) / 100;
+    return Math.max(tailoredProduct.price, Math.round(tailoredProduct.price * multiplier * 100) / 100);
   }, [params, tailoredProduct]);
 
   // Create a fake Product object for ProductConfigurator
@@ -88,13 +88,24 @@ export default function TailoredConfigurator() {
     [singleUnitPrice, quantity, minQty]
   );
 
-  const breakdown = useMemo(
-    () => calculateFullBreakdown(
-      discount.hasDiscount ? discount.discountedTotal / quantity * minQty : (buyerPrice || tailoredBasePrice),
-      'functional'
-    ),
-    [discount, buyerPrice, tailoredBasePrice, quantity, minQty]
-  );
+  const breakdown = useMemo(() => {
+    const base = calculateFullBreakdown(buyerPrice || tailoredBasePrice, 'functional');
+    if (!discount.hasDiscount) return base;
+
+    // Scale breakdown proportionally so actor splits sum to discounted total
+    const sets = quantity / (minQty > 1 ? minQty : 1);
+    const discountedPerSet = discount.discountedTotal / sets;
+    const scale = discountedPerSet / base.buyerPrice;
+
+    return {
+      ...base,
+      buyerPrice: discountedPerSet,
+      makerPayout: Math.round(base.makerPayout * scale * 100) / 100,
+      designerRoyalty: Math.round(base.designerRoyalty * scale * 100) / 100,
+      platformFee: Math.round(base.platformFee * scale * 100) / 100,
+      paymentProcessing: Math.round(base.paymentProcessing * scale * 100) / 100,
+    };
+  }, [discount, buyerPrice, tailoredBasePrice, quantity, minQty]);
 
   const productionTotal = discount.hasDiscount ? discount.discountedTotal : unitPrice * (quantity / minQty);
   const totalPrice = productionTotal + shippingCost;
@@ -431,7 +442,7 @@ export default function TailoredConfigurator() {
                   Fees & Payout Breakdown
                 </div>
                 <BreakdownRows
-                  breakdown={discount.hasDiscount ? { ...breakdown, buyerPrice: discount.discountedTotal / quantity * (minQty > 1 ? minQty : 1) } : breakdown}
+                  breakdown={breakdown}
                   productType="functional"
                   quantity={quantity / (minQty > 1 ? minQty : 1)}
                   displayTotal={totalPrice}
