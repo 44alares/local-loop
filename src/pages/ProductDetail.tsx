@@ -58,9 +58,22 @@ export default function ProductDetail() {
   const discount = useMemo(() => getQuantityDiscount(breakdown.buyerPrice, quantity, 1), [breakdown.buyerPrice, quantity]);
   const discountedBreakdown = useMemo(() => {
     if (!discount.hasDiscount) return breakdown;
-    const discountedUnitPrice = discount.discountedTotal / quantity;
-    return calculateFullBreakdown(discountedUnitPrice, product.productType);
-  }, [discount, breakdown, quantity, product.productType]);
+    const discountedPerUnit = discount.discountedTotal / quantity;
+    const scale = discountedPerUnit / breakdown.buyerPrice;
+    const makerPayout = Math.round(breakdown.makerPayout * scale * 100) / 100;
+    const designerRoyalty = Math.round(breakdown.designerRoyalty * scale * 100) / 100;
+    const paymentProcessing = Math.round(breakdown.paymentProcessing * scale * 100) / 100;
+    const platformFee = Math.round((discountedPerUnit - makerPayout - designerRoyalty - paymentProcessing) * 100) / 100;
+    return {
+      ...breakdown,
+      buyerPrice: discountedPerUnit,
+      makerPayout,
+      designerRoyalty,
+      paymentProcessing,
+      platformFee,
+      makerRate: makerPayout / discountedPerUnit,
+    };
+  }, [discount, breakdown, quantity]);
   const productionTotal = discount.hasDiscount ? discount.discountedTotal : breakdown.buyerPrice * quantity;
   const totalPrice = productionTotal + shippingCost;
 
