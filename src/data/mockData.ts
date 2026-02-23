@@ -7,6 +7,8 @@ import articulatedDragonImg from '@/assets/products/articulated-dragon.jpg';
 import chameleonMultiImg from '@/assets/products/chameleon-multi.jpg';
 import chameleonGreenImg from '@/assets/products/chameleon-green.jpg';
 import honeycombWallArtImg from '@/assets/products/hexagonal-connector.jpg';
+import hexagonalComponentsImg from '@/assets/products/hexagonal-components.jpeg';
+import hexagonalAquaImg from '@/assets/products/hexagonal-aqua.jpg';
 import modularPlantHolderImg from '@/assets/products/modular-plant-holder.jpg';
 // Artistic category images
 import cyberpunkSamuraiImg from '@/assets/products/cyberpunk-samurai.jpg';
@@ -183,7 +185,7 @@ export const mockProducts: Product[] = [
      id: 'p4',
      name: 'HexaConnect: Modular Connector System',
      description: 'Versatile shelf connectors for custom hexagonal layouts and freeform structures. Modular, scalable, and easy to assemble.',
-     images: [honeycombWallArtImg],
+     images: [honeycombWallArtImg, hexagonalComponentsImg, hexagonalAquaImg],
      price: 33,
      currency: 'USD',
      designer: mockDesigners[0],
