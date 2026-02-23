@@ -354,59 +354,48 @@ export default function JoinAsMaker() {
 
               {selectedMaterials.length > 0 && (
                 <>
-                  {/* Basic colors per material */}
+                  {/* Per-material independent sections */}
                   {selectedMaterials.map((mat) => {
                     const matConfig = MATERIALS_CONFIG[mat];
-                    return (
-                      <div key={mat} className="space-y-3">
-                        <div className="flex items-center gap-3">
-                          <Checkbox id={`basic-${mat}`} checked={true} disabled />
-                          <Label htmlFor={`basic-${mat}`} className="font-medium">
-                            {mat} — basic colors (required)
-                          </Label>
-                        </div>
-                        <div className="flex flex-wrap gap-2 ml-7">
-                          {matConfig.basicColors.map((color) => (
-                            <Badge key={`${mat}-${color.name}`} variant="secondary" className="gap-1.5 py-1 px-2.5">
-                              <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
-                              <div className="flex flex-col leading-tight">
-                                <span>{color.name}</span>
-                                <span className="text-[10px] text-white font-normal">{color.ral}</span>
-                              </div>
-                            </Badge>
-                          ))}
-                        </div>
-                        <p className="text-xs text-muted-foreground ml-7">
-                          Basic colors: {matConfig.basicColors.length} included
-                        </p>
-                      </div>
-                    );
-                  })}
-
-                  {/* Palette filter + Additional RAL colors per material */}
-                  {selectedMaterials.map((mat) => {
-                    const matBasicCodes = MATERIALS_CONFIG[mat].basicColors.map(c => c.ral);
+                    const matBasicCodes = matConfig.basicColors.map(c => c.ral);
                     const matAdditional = additionalRalColors[mat];
                     const palettes = getPalettesForMaterial(mat);
                     const activePals = makerActivePalettes[mat];
-                    // Build filter: union of selected palette color names → RAL codes from materialsConfig
-                    const paletteRalFilter = (() => {
-                      if (activePals.length === 0) return null;
-                      const selectedPalettes = palettes.filter(p => activePals.includes(p.id));
-                      const matBasicNames = MATERIALS_CONFIG[mat].basicColors.map(c => c.name);
-                      const unionNames = [...new Set(selectedPalettes.flatMap(p => p.colors).filter(n => !matBasicNames.includes(n)))];
-                      const allMatColors = [...MATERIALS_CONFIG[mat].basicColors, ...MATERIALS_CONFIG[mat].recommendedColors];
-                      return allMatColors
-                        .filter(c => unionNames.includes(c.name) && !matBasicCodes.includes(c.ral))
-                        .map(c => c.ral);
-                    })();
+                    const showExtraPalettes = materialSupportsExtraPalettes(mat);
+
                     return (
-                      <div key={`additional-${mat}`} className="space-y-3">
-                        {/* Available palettes */}
-                        {palettes.length > 0 && materialSupportsExtraPalettes(mat) && (
+                      <div key={mat} className="space-y-4 p-4 rounded-lg border border-border">
+                        <p className="text-sm font-semibold">{mat}</p>
+
+                        {/* Basic colors */}
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-3">
+                            <Checkbox id={`basic-${mat}`} checked={true} disabled />
+                            <Label htmlFor={`basic-${mat}`} className="font-medium text-sm">
+                              Basic colors (required)
+                            </Label>
+                          </div>
+                          <div className="flex flex-wrap gap-2 ml-7">
+                            {matConfig.basicColors.map((color) => (
+                              <Badge key={`${mat}-${color.name}`} variant="secondary" className="gap-1.5 py-1 px-2.5">
+                                <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                                <div className="flex flex-col leading-tight">
+                                  <span>{color.name}</span>
+                                  <span className="text-[10px] text-white font-normal">{color.ral}</span>
+                                </div>
+                              </Badge>
+                            ))}
+                          </div>
+                          <p className="text-xs text-muted-foreground ml-7">
+                            Basic colors: {matConfig.basicColors.length} included
+                          </p>
+                        </div>
+
+                        {/* Palettes — only PLA/PETG */}
+                        {showExtraPalettes && palettes.length > 0 && (
                           <div className="space-y-2">
                             <Label className="flex items-center gap-2 text-sm">
-                              Available palettes
+                              Palettes
                               <PaletteInfoTooltip />
                             </Label>
                             <div className="grid grid-cols-2 gap-2">
@@ -448,49 +437,51 @@ export default function JoinAsMaker() {
                           </div>
                         )}
 
-                        <Label>{mat} — Additional colors (RAL approx.)</Label>
-                        <Select onValueChange={(code) => handleAddAdditionalColor(mat, code)} value="">
-                          <SelectTrigger>
-                            <SelectValue placeholder={`Add RAL color for ${mat}…`} />
-                          </SelectTrigger>
-                          <SelectContent className="max-h-60">
-                            {ralColors
-                              .filter(c => !matAdditional.includes(c.code) && !matBasicCodes.includes(c.code))
-                              .filter(c => !paletteRalFilter || paletteRalFilter.includes(c.code))
-                              .map((color) => (
-                                <SelectItem key={color.code} value={color.code}>
-                                  <span className="flex items-center gap-2">
-                                    <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
-                                    {color.code} (approx.) – {color.name}
-                                    <RALEquivalentsTooltip color={color} />
-                                  </span>
-                                </SelectItem>
-                              ))}
-                          </SelectContent>
-                        </Select>
-                        {matAdditional.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {matAdditional.map((code) => {
-                              const c = ralColors.find(r => r.code === code);
-                              return (
-                                <Badge
-                                  key={code}
-                                  variant="outline"
-                                  className="gap-1.5 py-1 px-2.5 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30"
-                                  onClick={() => handleRemoveAdditionalColor(mat, code)}
-                                >
-                                  <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c?.hex }} />
-                                  {c?.code} – {c?.name}
-                                  {c && <RALEquivalentsTooltip color={c} />}
-                                  <span className="text-muted-foreground ml-0.5">×</span>
-                                </Badge>
-                              );
-                            })}
-                          </div>
-                        )}
-                        <p className="text-xs text-muted-foreground">
-                          Additional colors: {matAdditional.length} selected
-                        </p>
+                        {/* Additional RAL colors — always full list, never filtered */}
+                        <div className="space-y-2">
+                          <Label className="text-sm">{mat} — Additional colors (RAL approx.)</Label>
+                          <Select onValueChange={(code) => handleAddAdditionalColor(mat, code)} value="">
+                            <SelectTrigger>
+                              <SelectValue placeholder={`Add RAL color for ${mat}…`} />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-60">
+                              {ralColors
+                                .filter(c => !matAdditional.includes(c.code) && !matBasicCodes.includes(c.code))
+                                .map((color) => (
+                                  <SelectItem key={color.code} value={color.code}>
+                                    <span className="flex items-center gap-2">
+                                      <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                                      {color.code} (approx.) – {color.name}
+                                      <RALEquivalentsTooltip color={color} />
+                                    </span>
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                          {matAdditional.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {matAdditional.map((code) => {
+                                const c = ralColors.find(r => r.code === code);
+                                return (
+                                  <Badge
+                                    key={code}
+                                    variant="outline"
+                                    className="gap-1.5 py-1 px-2.5 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30"
+                                    onClick={() => handleRemoveAdditionalColor(mat, code)}
+                                  >
+                                    <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c?.hex }} />
+                                    {c?.code} – {c?.name}
+                                    {c && <RALEquivalentsTooltip color={c} />}
+                                    <span className="text-muted-foreground ml-0.5">×</span>
+                                  </Badge>
+                                );
+                              })}
+                            </div>
+                          )}
+                          <p className="text-xs text-muted-foreground">
+                            Additional colors: {matAdditional.length} selected
+                          </p>
+                        </div>
                       </div>
                     );
                   })}
