@@ -157,14 +157,27 @@ export function calculateFullBreakdown(buyerPrice: number, productType: ProductT
     platformFee = totalBuyerPrice - paymentProcessing - baseDesignerRoyalty - makerPayout;
   }
 
+  // Functional & Artistic: transfer €1 from Designer to Maker
+  let finalDesignerRoyalty = baseDesignerRoyalty;
+  let finalMakerPayout = makerPayout;
+  if (productType === 'functional' || productType === 'artistic') {
+    finalDesignerRoyalty = Math.round((baseDesignerRoyalty - 1) * 100) / 100;
+    finalMakerPayout = Math.round((makerPayout + 1) * 100) / 100;
+    // Reconcile any cent drift via platformFee
+    const diff = Math.round((totalBuyerPrice - finalMakerPayout - finalDesignerRoyalty - platformFee - paymentProcessing) * 100) / 100;
+    if (diff !== 0) {
+      platformFee = Math.round((platformFee + diff) * 100) / 100;
+    }
+  }
+
   return {
     buyerPrice: totalBuyerPrice,
     paymentProcessing,
     platformFee,
-    designerRoyalty: baseDesignerRoyalty,
+    designerRoyalty: finalDesignerRoyalty,
     designerRate,
-    makerPayout,
-    makerRate,
+    makerPayout: finalMakerPayout,
+    makerRate: finalMakerPayout / totalBuyerPrice,
   };
 }
 
