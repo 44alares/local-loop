@@ -185,7 +185,7 @@ export const mockProducts: Product[] = [
      id: 'p4',
      name: 'HexaConnect: Modular Connector System',
      description: 'Versatile shelf connectors for custom hexagonal layouts and freeform structures. Modular, scalable, and easy to assemble.',
-     images: [honeycombWallArtImg],
+     images: [honeycombWallArtImg, hexagonalComponentsImg, hexagonalAquaImg],
      price: 33,
      currency: 'USD',
      designer: mockDesigners[0],
