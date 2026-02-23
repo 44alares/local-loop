@@ -13,7 +13,7 @@ export default function HubFaq() {
         <div className="container max-w-3xl text-center space-y-4">
           <h1 className="text-display-sm font-bold">FAQ & Support</h1>
           <p className="text-muted-foreground">
-            Everything you need to know about the Member Hub.
+            Everything you need to know about the Community Hub.
           </p>
         </div>
       </section>

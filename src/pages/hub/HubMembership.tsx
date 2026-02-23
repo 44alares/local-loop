@@ -19,7 +19,7 @@ const plans = [
   {
     name: 'Member',
     price: 'Coming soon',
-    desc: 'Access the full Member Hub experience.',
+    desc: 'Access the full Community Hub experience.',
     features: [
       'All free features',
       'Join regional group buys',

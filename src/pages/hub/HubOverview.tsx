@@ -76,7 +76,7 @@ export default function HubOverview() {
       <section className="bg-gradient-hero py-16 md:py-24">
         <div className="container max-w-4xl text-center space-y-6">
           <Badge variant="outline" className="text-xs font-medium">Beta</Badge>
-          <h1 className="text-display-sm md:text-display font-bold">Member Hub</h1>
+          <h1 className="text-display-sm md:text-display font-bold">Community Hub</h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             A place where makers, designers, and buyers can save money together. Group buys, deals, and useful resources — all collected here.
           </p>

@@ -67,7 +67,7 @@ const App = () => (
           <Route path="/ral-equivalents" element={<RALEquivalents />} />
           <Route path="/tailored" element={<Suspense fallback={null}><Tailored /></Suspense>} />
           <Route path="/tailored/:product" element={<Suspense fallback={null}><TailoredConfigurator /></Suspense>} />
-          {/* Member Hub */}
+          {/* Community Hub */}
           <Route path="/hub" element={<HubLayout />}>
             <Route index element={<HubOverview />} />
           </Route>
