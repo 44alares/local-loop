@@ -334,7 +334,7 @@ export const mockSuppliers: Supplier[] = [
     agreementDetails: {
       whatMembersGet: 'Community-negotiated pricing on bulk resin orders. Access to beta formulas.',
       eligibility: 'Makers in EU and UK regions with resin printing capability.',
-      howToRedeem: 'Join group buys or contact via the Member Hub for direct orders.',
+      howToRedeem: 'Join group buys or contact via the Community Hub for direct orders.',
       limitations: 'Minimum group order: 20 L. Individual orders subject to standard pricing.',
     },
   },
@@ -350,7 +350,7 @@ export const mockSuppliers: Supplier[] = [
     agreementDetails: {
       whatMembersGet: 'Reduced pricing on eco-friendly packaging. Volume-based tiers unlock automatically.',
       eligibility: 'All member roles in all regions.',
-      howToRedeem: 'Order through the Member Hub storefront or use member code on greenship.eco.',
+      howToRedeem: 'Order through the Community Hub storefront or use member code on greenship.eco.',
       limitations: 'Free shipping on orders above €50.',
     },
   },

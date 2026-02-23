@@ -11,7 +11,7 @@ const navItems = [
   { label: 'Tailored', href: '/tailored', isNew: true },
   { label: "I'm a Maker", href: '/maker' },
   { label: "I'm a Designer", href: '/designer' },
-  { label: 'Member Hub', href: '/hub' },
+  { label: 'Community Hub', href: '/hub' },
   { label: 'Our Why', href: '/about' },
 ];
 
