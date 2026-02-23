@@ -96,7 +96,7 @@ export default function StartCreating() {
 
   // Calculate variable fee (internal 5% rule, but not displayed as %)
   const variableFee = adjustedPrice ? adjustedPrice * 0.05 : 0;
-  const totalFees = fixedFee + variableFee;
+  const totalFees = (fixedFee + variableFee) * 1.20;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
