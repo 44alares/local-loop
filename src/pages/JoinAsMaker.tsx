@@ -37,7 +37,7 @@ import { MATERIALS_CONFIG, ALL_MATERIALS, type MaterialType } from '@/data/mater
 import { ralColors } from '@/data/ralColors';
 import { PaletteInfoTooltip } from '@/components/PaletteInfoTooltip';
 import { RALEquivalentsTooltip } from '@/components/RALEquivalentsTooltip';
-import { getPalettesForMaterial, multicolorHexMap } from '@/data/multicolorPalettes';
+import { getPalettesForMaterial, multicolorHexMap, materialSupportsExtraPalettes } from '@/data/multicolorPalettes';
 
 const machineTypes = ['FDM', 'Resin', 'Both'];
 
@@ -89,6 +89,14 @@ export default function JoinAsMaker() {
       const next = prev.includes(mat) ? prev.filter(m => m !== mat) : [...prev, mat];
       if (!next.includes(mat)) {
         setAdditionalRalColors(ar => ({ ...ar, [mat]: [] }));
+        // Reset palette selections for removed material
+        setMakerActivePalettes(ap => ({ ...ap, [mat]: [] }));
+        setPaletteReadiness(pr => ({ ...pr, [mat]: { earth: false, accent: false, matte: false } }));
+      }
+      // If adding a non-PLA/PETG material, ensure no extra palettes are set
+      if (next.includes(mat) && !materialSupportsExtraPalettes(mat)) {
+        setMakerActivePalettes(ap => ({ ...ap, [mat]: [] }));
+        setPaletteReadiness(pr => ({ ...pr, [mat]: { earth: false, accent: false, matte: false } }));
       }
       return next;
     });
@@ -395,7 +403,7 @@ export default function JoinAsMaker() {
                     return (
                       <div key={`additional-${mat}`} className="space-y-3">
                         {/* Available palettes */}
-                        {palettes.length > 0 && (
+                        {palettes.length > 0 && materialSupportsExtraPalettes(mat) && (
                           <div className="space-y-2">
                             <Label className="flex items-center gap-2 text-sm">
                               Available palettes
@@ -532,7 +540,7 @@ export default function JoinAsMaker() {
                                   <Checkbox checked={true} disabled />
                                   <Label className="text-xs">Base palette (always)</Label>
                                 </div>
-                                {(['earth', 'accent', 'matte'] as const).map((p) => (
+                                {materialSupportsExtraPalettes(mat) && (['earth', 'accent', 'matte'] as const).map((p) => (
                                   <div key={p} className="flex items-center gap-2">
                                     <Checkbox
                                       checked={paletteReadiness[mat][p]}
