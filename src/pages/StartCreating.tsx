@@ -94,9 +94,12 @@ export default function StartCreating() {
   // Apply surcharges to estimated price
   const adjustedPrice = estimatedPrice ? estimatedPrice * (1 + totalSurcharge) : null;
 
-  // Calculate variable fee (internal 5% rule, but not displayed as %)
+  // SRP with silent 1.20x multiplier
+  const displaySRP = adjustedPrice ? Math.round(adjustedPrice * 1.20 * 100) / 100 : null;
+  // Variable fee: 5% of original adjusted price (no multiplier on fees)
   const variableFee = adjustedPrice ? adjustedPrice * 0.05 : 0;
-  const totalFees = (fixedFee + variableFee) * 1.20;
+  // Designer earns = fixed fee + 5% of NEW (inflated) SRP
+  const totalFees = displaySRP ? fixedFee + displaySRP * 0.05 : fixedFee + variableFee;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -899,10 +902,10 @@ You may not upload, list, resell, or monetize files you didn’t create, includi
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {adjustedPrice && complexity ? (
+                  {displaySRP && complexity ? (
                     <>
                       <div className="text-center py-3">
-                        <p className="text-3xl font-bold">€{adjustedPrice.toFixed(2)}</p>
+                        <p className="text-3xl font-bold">€{displaySRP!.toFixed(2)}</p>
                         <p className="text-muted-foreground text-sm mt-1">Suggested retail price</p>
                       </div>
 
