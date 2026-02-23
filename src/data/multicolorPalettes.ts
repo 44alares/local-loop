@@ -16,6 +16,13 @@ export const MATTE_PALETTE_COLORS = [
   { name: 'Lavender', hex: '#E4D4E8' },
 ];
 
+// Which materials support extra palettes (Earth, Accent, Matte)
+export const MATERIALS_WITH_EXTRA_PALETTES: string[] = ['PLA', 'PETG'];
+
+export function materialSupportsExtraPalettes(material: string): boolean {
+  return MATERIALS_WITH_EXTRA_PALETTES.includes(material);
+}
+
 export const MULTICOLOR_PALETTES: Record<string, PaletteDefinition[]> = {
   PLA: [
     { id: 'base', label: 'Base', required: true, colors: ['Black', 'White', 'Grey', 'Red', 'Blue', 'Green'] },
@@ -28,6 +35,18 @@ export const MULTICOLOR_PALETTES: Record<string, PaletteDefinition[]> = {
     { id: 'earth', label: 'Earth', required: false, colors: ['Beige', 'Brown', 'Grey', 'White'] },
     { id: 'accent', label: 'Accent', required: false, colors: ['Yellow', 'Orange', 'Red', 'Blue'] },
     { id: 'matte', label: 'Matte', required: false, colors: ['Rose Quartz', 'Mist Blue', 'Mint Green', 'Lavender'] },
+  ],
+  ABS: [
+    { id: 'base', label: 'Base', required: true, colors: ['Black', 'White', 'Grey'] },
+  ],
+  Nylon: [
+    { id: 'base', label: 'Base', required: true, colors: ['Black', 'Grey', 'White'] },
+  ],
+  Resin: [
+    { id: 'base', label: 'Base', required: true, colors: ['Grey', 'White'] },
+  ],
+  TPU: [
+    { id: 'base', label: 'Base', required: true, colors: ['Black', 'White', 'Grey', 'Blue', 'Red'] },
   ],
 };
 
