@@ -182,7 +182,7 @@ export const mockProducts: Product[] = [
   {
      id: 'p4',
      name: 'Honeycomb Wall Art',
-     description: 'Modular hexagonal wall tiles that create stunning geometric patterns. Mix and match colors for your unique wall installation.',
+     description: 'Versatile shelf connectors for custom hexagonal layouts and freeform structures. Modular, scalable, and easy to assemble.',
      images: [honeycombWallArtImg],
      price: 33,
      currency: 'USD',
