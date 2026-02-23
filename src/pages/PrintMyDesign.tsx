@@ -436,44 +436,43 @@ export default function PrintMyDesign() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {estimatedPrice ? (
+                      (() => {
+                        const displayPrice = Math.round(estimatedPrice * 1.30 * 100) / 100;
+                        const makerAmount = Math.round(displayPrice * 0.80 * 100) / 100;
+                        const processingAmount = Math.round(displayPrice * 0.03 * 100) / 100;
+                        const platformAmount = Math.round((displayPrice - makerAmount - processingAmount) * 100) / 100;
+                        return (
                       <>
                         <div className="text-center py-4">
-                          <p className="text-4xl font-bold">{estimatedPrice.toFixed(2)}</p>
+                          <p className="text-4xl font-bold">{displayPrice.toFixed(2)}</p>
                           <p className="text-muted-foreground text-sm mt-1">Estimated total</p>
                         </div>
 
                         <div className="space-y-3 pt-4 border-t border-border">
                           <p className="text-sm font-medium text-muted-foreground">Fee Preview:</p>
-                          {(() => {
-                            const makerAmount = Math.round(estimatedPrice * 0.80 * 100) / 100;
-                            const processingAmount = Math.round(estimatedPrice * 0.03 * 100) / 100;
-                            const platformAmount = Math.round((estimatedPrice - makerAmount - processingAmount) * 100) / 100;
-                            return (
-                              <div className="space-y-2 text-sm">
-                                <div className="flex items-center justify-between">
-                                  <span className="flex items-center gap-2">
-                                    <Printer className="h-4 w-4 text-accent" />
-                                    Maker earns
-                                  </span>
-                                  <span className="font-medium">{makerAmount.toFixed(2)}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-muted-foreground">
-                                  <span className="flex items-center gap-2">
-                                    <CreditCard className="h-4 w-4" />
-                                    Payment processing
-                                  </span>
-                                  <span>{processingAmount.toFixed(2)}</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                  <span className="flex items-center gap-2">
-                                    <Building2 className="h-4 w-4 text-secondary" />
-                                    Platform fee
-                                  </span>
-                                  <span>{platformAmount.toFixed(2)}</span>
-                                </div>
-                              </div>
-                            );
-                          })()}
+                          <div className="space-y-2 text-sm">
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-2">
+                                <Printer className="h-4 w-4 text-accent" />
+                                Maker earns
+                              </span>
+                              <span className="font-medium">{makerAmount.toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-muted-foreground">
+                              <span className="flex items-center gap-2">
+                                <CreditCard className="h-4 w-4" />
+                                Payment processing
+                              </span>
+                              <span>{processingAmount.toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-2">
+                                <Building2 className="h-4 w-4 text-secondary" />
+                                Platform fee
+                              </span>
+                              <span>{platformAmount.toFixed(2)}</span>
+                            </div>
+                          </div>
                           <p className="text-xs text-muted-foreground mt-2">You'll see exact amounts before paying.</p>
                         </div>
 
@@ -557,6 +556,8 @@ export default function PrintMyDesign() {
                           </div>
                         )}
                       </>
+                        );
+                      })()
                     ) : (
                       <div className="text-center py-8 text-muted-foreground">
                         <Calculator className="h-12 w-12 mx-auto mb-4 opacity-50" />
