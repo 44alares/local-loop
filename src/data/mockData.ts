@@ -181,7 +181,7 @@ export const mockProducts: Product[] = [
   // Decoration
   {
      id: 'p4',
-     name: 'Honeycomb Wall Art',
+     name: 'HexaConnect: Modular Connector System',
      description: 'Versatile shelf connectors for custom hexagonal layouts and freeform structures. Modular, scalable, and easy to assemble.',
      images: [honeycombWallArtImg],
      price: 33,
