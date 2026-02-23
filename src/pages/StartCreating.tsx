@@ -96,10 +96,10 @@ export default function StartCreating() {
 
   // SRP with silent 1.20x multiplier
   const displaySRP = adjustedPrice ? Math.round(adjustedPrice * 1.20 * 100) / 100 : null;
-  // Variable fee: 5% of original adjusted price (no multiplier on fees)
-  const variableFee = adjustedPrice ? adjustedPrice * 0.05 : 0;
-  // Designer earns = fixed fee + 5% of NEW (inflated) SRP
-  const totalFees = displaySRP ? fixedFee + displaySRP * 0.05 : fixedFee + variableFee;
+  // Variable fee: exactly 5% of SRP
+  const variableFee = displaySRP ? Math.round(displaySRP * 0.05 * 100) / 100 : 0;
+  // Estimated total fees = fixed fee + variable fee
+  const totalFees = fixedFee + variableFee;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
