@@ -7,6 +7,8 @@ import articulatedDragonImg from '@/assets/products/articulated-dragon.jpg';
 import chameleonMultiImg from '@/assets/products/chameleon-multi.jpg';
 import chameleonGreenImg from '@/assets/products/chameleon-green.jpg';
 import honeycombWallArtImg from '@/assets/products/hexagonal-connector.jpg';
+import hexagonalComponentsImg from '@/assets/products/hexagonal-components.jpeg';
+import hexagonalAquaImg from '@/assets/products/hexagonal-aqua.jpg';
 import modularPlantHolderImg from '@/assets/products/modular-plant-holder.jpg';
 // Artistic category images
 import cyberpunkSamuraiImg from '@/assets/products/cyberpunk-samurai.jpg';
