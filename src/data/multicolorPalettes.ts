@@ -68,6 +68,27 @@ export const multicolorHexMap: Record<string, string> = {
   'Lavender': '#E4D4E8',
 };
 
+/**
+ * Maps palette color names to their closest RAL equivalent code.
+ * null means no close RAL match exists.
+ */
+export const paletteColorToRal: Record<string, string | null> = {
+  'White': 'RAL 9010',
+  'Black': 'RAL 9005',
+  'Grey': 'RAL 7035',
+  'Red': 'RAL 3020',
+  'Blue': 'RAL 5015',
+  'Green': 'RAL 6018',
+  'Yellow': 'RAL 1023',
+  'Orange': 'RAL 2004',
+  'Beige': 'RAL 1001',
+  'Brown': 'RAL 8017',
+  'Rose Quartz': 'RAL 3015',
+  'Mist Blue': null,
+  'Mint Green': null,
+  'Lavender': null,
+};
+
 export function getPalettesForMaterial(material: string): PaletteDefinition[] {
   return MULTICOLOR_PALETTES[material] || [];
 }

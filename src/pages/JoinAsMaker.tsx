@@ -37,7 +37,8 @@ import { MATERIALS_CONFIG, ALL_MATERIALS, type MaterialType } from '@/data/mater
 import { ralColors } from '@/data/ralColors';
 import { PaletteInfoTooltip } from '@/components/PaletteInfoTooltip';
 import { RALEquivalentsTooltip } from '@/components/RALEquivalentsTooltip';
-import { getPalettesForMaterial, multicolorHexMap, materialSupportsExtraPalettes } from '@/data/multicolorPalettes';
+import { PaletteColorSwatch } from '@/components/PaletteColorSwatch';
+import { getPalettesForMaterial, multicolorHexMap, materialSupportsExtraPalettes, paletteColorToRal } from '@/data/multicolorPalettes';
 
 const machineTypes = ['FDM', 'Resin', 'Both'];
 
@@ -419,11 +420,7 @@ export default function JoinAsMaker() {
                                   >
                                     <div className="flex gap-0.5 shrink-0">
                                       {palette.colors.slice(0, 4).map((c) => (
-                                        <span
-                                          key={c}
-                                          className="h-5 w-5 rounded-full border border-border"
-                                          style={{ backgroundColor: multicolorHexMap[c] || '#CCC' }}
-                                        />
+                                        <PaletteColorSwatch key={c} colorName={c} />
                                       ))}
                                     </div>
                                     <div>
@@ -437,9 +434,46 @@ export default function JoinAsMaker() {
                           </div>
                         )}
 
-                        {/* Additional RAL colors — always full list, never filtered */}
+                        {/* Additional RAL colors — always full list, includes palette-mapped colors */}
                         <div className="space-y-2">
                           <Label className="text-sm">{mat} — Additional colors (RAL approx.)</Label>
+
+                          {/* Quick-add: palette colors mapped to RAL */}
+                          {(() => {
+                            const paletteRalOptions = palettes
+                              .flatMap(p => p.colors)
+                              .map(name => ({ name, ral: paletteColorToRal[name] }))
+                              .filter((c): c is { name: string; ral: string } =>
+                                c.ral !== null && c.ral !== undefined &&
+                                !matAdditional.includes(c.ral) &&
+                                !matBasicCodes.includes(c.ral)
+                              )
+                              .filter((c, i, arr) => arr.findIndex(x => x.ral === c.ral) === i);
+                            if (paletteRalOptions.length === 0) return null;
+                            return (
+                              <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground">Quick-add from palettes:</p>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {paletteRalOptions.map(({ name, ral }) => (
+                                    <button
+                                      key={ral}
+                                      type="button"
+                                      onClick={() => handleAddAdditionalColor(mat, ral)}
+                                      className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border hover:border-secondary/50 text-xs transition-colors"
+                                    >
+                                      <span
+                                        className="h-3 w-3 rounded-full border border-border shrink-0"
+                                        style={{ backgroundColor: multicolorHexMap[name] || '#CCC' }}
+                                      />
+                                      {name}
+                                      <span className="text-muted-foreground">({ral})</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })()}
+
                           <Select onValueChange={(code) => handleAddAdditionalColor(mat, code)} value="">
                             <SelectTrigger>
                               <SelectValue placeholder={`Add RAL color for ${mat}…`} />
