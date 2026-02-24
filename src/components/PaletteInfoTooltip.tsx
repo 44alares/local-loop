@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card';
 import { Info } from 'lucide-react';
 import { multicolorHexMap, MATTE_PALETTE_COLORS, paletteColorToRal } from '@/data/multicolorPalettes';
+import { PaletteColorSwatch } from '@/components/PaletteColorSwatch';
 
 /**
  * Click/tap-activated tooltip listing all palettes and their colors.
- * Each swatch shows name, hex value, and RAL equivalent on hover.
+ * Each swatch uses PaletteColorSwatch (HoverCard-based) so the hover info stays visible.
  */
 export function PaletteInfoTooltip() {
   const [open, setOpen] = useState(false);
@@ -52,37 +57,11 @@ export function PaletteInfoTooltip() {
             <p className="font-medium text-foreground">{p.name}</p>
             <p className="text-muted-foreground">{p.description}</p>
             {p.colors && (
-              <TooltipProvider delayDuration={150}>
-                <div className="flex gap-1">
-                  {p.colors.map((c) => {
-                    const hex = multicolorHexMap[c] || '#CCC';
-                    const ral = paletteColorToRal[c];
-                    return (
-                      <Tooltip key={c}>
-                        <TooltipTrigger asChild>
-                          <span
-                            className="h-4 w-4 rounded-full border border-border inline-block cursor-pointer"
-                            style={{ backgroundColor: hex }}
-                            tabIndex={0}
-                            aria-label={c}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="text-xs z-[200]">
-                          <div className="flex items-center gap-2">
-                            <div>
-                              <p className="font-medium">{c}</p>
-                              <p className="text-muted-foreground">{hex}</p>
-                            </div>
-                            <p className="text-muted-foreground border-l border-border pl-2">
-                              {ral || 'RAL: N/A'}
-                            </p>
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-                </div>
-              </TooltipProvider>
+              <div className="flex gap-1">
+                {p.colors.map((c) => (
+                  <PaletteColorSwatch key={c} colorName={c} size="sm" />
+                ))}
+              </div>
             )}
           </div>
         ))}

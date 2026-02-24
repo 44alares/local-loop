@@ -3,7 +3,7 @@ import StlPreview from '@/components/StlPreview';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,10 +14,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Upload, Image, Camera, Settings, Calculator, Printer, Building2, Palette, CreditCard, CheckCircle2, FileText, AlertCircle, Info, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { ralColors, RALColor } from '@/data/ralColors';
-import { MATERIALS_CONFIG, type MaterialType } from '@/data/materialsConfig';
-import { getPalettesForMaterial, multicolorHexMap, paletteColorToRal, type PaletteId } from '@/data/multicolorPalettes';
+import { MATERIALS_CONFIG, ALL_MATERIALS, type MaterialType } from '@/data/materialsConfig';
+import { getPalettesForMaterial, multicolorHexMap, paletteColorToRal, materialSupportsExtraPalettes, type PaletteId } from '@/data/multicolorPalettes';
 import { PaletteInfoTooltip } from '@/components/PaletteInfoTooltip';
 import { PaletteColorSwatch } from '@/components/PaletteColorSwatch';
+import { RALEquivalentsTooltip } from '@/components/RALEquivalentsTooltip';
 import { calculatePrintPrice } from '@/lib/pricing';
 import { Link } from 'react-router-dom';
 
@@ -32,9 +33,11 @@ export default function StartCreating() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [renderImage, setRenderImage] = useState<File | null>(null);
   const [scaleProofImage, setScaleProofImage] = useState<File | null>(null);
-  const [selectedMaterial, setSelectedMaterial] = useState('');
-  const [selectedRalColors, setSelectedRalColors] = useState<string[]>([]);
-  const [ralSearchQuery, setRalSearchQuery] = useState('');
+  const [selectedMaterials, setSelectedMaterials] = useState<MaterialType[]>([]);
+  const [selectedRalColors, setSelectedRalColors] = useState<Record<MaterialType, string[]>>({
+    PLA: [], PETG: [], ABS: [], Nylon: [], Resin: [], TPU: [],
+  });
+  
   const [partCount, setPartCount] = useState('1');
   const [hasSupports, setHasSupports] = useState(false);
   const [estimatedWeight, setEstimatedWeight] = useState('');
@@ -51,20 +54,20 @@ export default function StartCreating() {
   // Multi-color design fields
   const [supportsMulticolor, setSupportsMulticolor] = useState(false);
   const [multicolorMethod, setMulticolorMethod] = useState<'automatic' | 'by-parts' | 'manual-layer'>('automatic');
-  const [recommendedPalettes, setRecommendedPalettes] = useState<Record<string, boolean>>({ base: true, earth: false, accent: false });
+  
   const [minColors, setMinColors] = useState(2);
   const [maxColors, setMaxColors] = useState(4);
   const [criticalColors, setCriticalColors] = useState('');
-  // Display colors per palette (designer picks max 4 per palette)
-  const [paletteDisplayColors, setPaletteDisplayColors] = useState<Record<string, string[]>>({});
-  const [activePalettes, setActivePalettes] = useState<string[]>([]);
+  // Palette display colors (unused for now, kept for future)
+  const [activePalettes, setActivePalettes] = useState<Record<string, string[]>>({});
 
   // Get fee range based on complexity
   const feeRange = complexity ? FIXED_FEE_RANGES[complexity] : { min: 1, max: 3 };
 
   // Calculate estimated price based on inputs
   const calculateEstimate = () => {
-    if (!estimatedWeight || !estimatedPrintTime || !selectedMaterial) return null;
+    if (!estimatedWeight || !estimatedPrintTime || selectedMaterials.length === 0) return null;
+    const firstMat = selectedMaterials[0];
     const materialCosts: Record<string, number> = {
       'PLA': 25,
       'ABS': 28,
@@ -76,7 +79,7 @@ export default function StartCreating() {
       weightGrams: parseFloat(estimatedWeight),
       printTimeMinutes: parseFloat(estimatedPrintTime),
       materialDensity: 1.24,
-      materialCostPerKg: materialCosts[selectedMaterial] || 25,
+      materialCostPerKg: materialCosts[firstMat] || 25,
       laborRatePerHour: 15
     });
     return price;
@@ -123,7 +126,27 @@ export default function StartCreating() {
     }
   };
 
-  const canSubmit = uploadedFile && scaleProofImage && creatorTermsAccepted && originalWorkCertified && selectedMaterial;
+  const canSubmit = uploadedFile && scaleProofImage && creatorTermsAccepted && originalWorkCertified && selectedMaterials.length > 0;
+
+  const handleMaterialToggle = (mat: MaterialType) => {
+    setSelectedMaterials(prev =>
+      prev.includes(mat) ? prev.filter(m => m !== mat) : [...prev, mat]
+    );
+  };
+
+  const handleAddRalColor = (mat: MaterialType, code: string) => {
+    setSelectedRalColors(prev => ({
+      ...prev,
+      [mat]: prev[mat].includes(code) ? prev[mat] : [...prev[mat], code],
+    }));
+  };
+
+  const handleRemoveRalColor = (mat: MaterialType, code: string) => {
+    setSelectedRalColors(prev => ({
+      ...prev,
+      [mat]: prev[mat].filter((c: string) => c !== code),
+    }));
+  };
 
   if (submitted) {
     return (
@@ -305,22 +328,253 @@ export default function StartCreating() {
                     </div>
                   </div>
 
+                  {/* Multi-select materials */}
                   <div className="space-y-1.5">
-                    <Label className="text-sm">Recommended Material(s)</Label>
-                    <Select value={selectedMaterial} onValueChange={setSelectedMaterial}>
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Select material" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="PLA">PLA - Standard</SelectItem>
-                        <SelectItem value="ABS">ABS - Heat Resistant</SelectItem>
-                        <SelectItem value="PETG">PETG - Durable</SelectItem>
-                        <SelectItem value="Resin">Resin - High Detail</SelectItem>
-                        <SelectItem value="Nylon">Nylon - Industrial</SelectItem>
-                        <SelectItem value="TPU">TPU Flexible</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label className="text-sm">Recommended Material(s) *</Label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {ALL_MATERIALS.map((m) => (
+                        <label
+                          key={m}
+                          htmlFor={`sc-mat-${m}`}
+                          className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors cursor-pointer text-sm ${
+                            selectedMaterials.includes(m)
+                              ? 'border-secondary bg-secondary/5'
+                              : 'border-border hover:border-muted-foreground'
+                          }`}
+                        >
+                          <Checkbox
+                            id={`sc-mat-${m}`}
+                            checked={selectedMaterials.includes(m)}
+                            onCheckedChange={() => handleMaterialToggle(m)}
+                          />
+                          <span className="font-medium">{m}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
+
+                  {/* Per-material sections */}
+                  {selectedMaterials.map((mat) => {
+                    const matConfig = MATERIALS_CONFIG[mat];
+                    const matBasicCodes = matConfig.basicColors.map(c => c.ral);
+                    const matRalColors = selectedRalColors[mat] || [];
+                    const palettes = getPalettesForMaterial(mat);
+                    const matActivePalettes = activePalettes[mat] || [];
+                    const showExtraPalettes = materialSupportsExtraPalettes(mat);
+
+                    return (
+                      <div key={mat} className="space-y-3 p-4 rounded-lg border border-border">
+                        <p className="text-sm font-semibold">{mat}</p>
+
+                        {/* Basic colors */}
+                        <div className="space-y-1.5">
+                          <p className="text-xs font-medium text-muted-foreground">Base colors (included)</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {matConfig.basicColors.map((color) => (
+                              <Badge key={color.name} variant="secondary" className="gap-1.5 py-1 px-2">
+                                <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                                <span className="text-xs">{color.name}</span>
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Palettes — only PLA/PETG */}
+                        {showExtraPalettes && palettes.length > 0 && (
+                          <div className="space-y-2">
+                            <Label className="flex items-center gap-2 text-sm">
+                              Palettes
+                              <PaletteInfoTooltip />
+                            </Label>
+                            <div className="grid grid-cols-2 gap-2">
+                              {palettes.filter(p => p.id !== 'base').map((palette) => {
+                                const isActive = matActivePalettes.includes(palette.id);
+                                return (
+                                  <button
+                                    key={palette.id}
+                                    type="button"
+                                    onClick={() => setActivePalettes(prev => ({
+                                      ...prev,
+                                      [mat]: isActive
+                                        ? (prev[mat] || []).filter((id: string) => id !== palette.id)
+                                        : [...(prev[mat] || []), palette.id]
+                                    }))}
+                                    className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left ${
+                                      isActive
+                                        ? 'border-secondary bg-secondary/10'
+                                        : 'border-border hover:border-secondary/50'
+                                    }`}
+                                  >
+                                    <div className="flex gap-0.5 shrink-0">
+                                      {palette.colors.slice(0, 4).map((c) => (
+                                        <PaletteColorSwatch key={c} colorName={c} />
+                                      ))}
+                                    </div>
+                                    <div>
+                                      <p className="text-xs font-medium capitalize">{palette.label}</p>
+                                      <p className="text-[10px] text-muted-foreground">{palette.colors.length} colors</p>
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Multi-color support (only PLA/PETG) */}
+                        {matConfig.supportsMulticolor && (
+                          <div className="space-y-3 p-3 rounded-lg border border-border">
+                            <div className="flex items-center gap-3">
+                              <Checkbox
+                                id={`mc-${mat}`}
+                                checked={supportsMulticolor}
+                                onCheckedChange={(checked) => setSupportsMulticolor(checked as boolean)}
+                              />
+                              <Label htmlFor={`mc-${mat}`} className="cursor-pointer text-sm font-medium">
+                                Supports multi-color
+                              </Label>
+                            </div>
+
+                            {supportsMulticolor && (
+                              <div className="space-y-3 ml-7">
+                                <div className="space-y-1.5">
+                                  <Label className="text-xs text-muted-foreground">Multi-color method</Label>
+                                  <Select value={multicolorMethod} onValueChange={(v) => setMulticolorMethod(v as typeof multicolorMethod)}>
+                                    <SelectTrigger className="h-8 text-xs">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="automatic">Automatic (AMS/MMU)</SelectItem>
+                                      <SelectItem value="by-parts">By-parts assembly</SelectItem>
+                                      <SelectItem value="manual-layer">Manual by-layer</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div className="space-y-1">
+                                    <Label className="text-xs text-muted-foreground">Min colors</Label>
+                                    <Select value={String(minColors)} onValueChange={(v) => setMinColors(Number(v))}>
+                                      <SelectTrigger className="h-8 text-xs">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {[2, 3, 4].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <Label className="text-xs text-muted-foreground">Max colors</Label>
+                                    <Select value={String(maxColors)} onValueChange={(v) => setMaxColors(Math.max(Number(v), minColors))}>
+                                      <SelectTrigger className="h-8 text-xs">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {[2, 3, 4].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                </div>
+
+                                <div className="space-y-1">
+                                  <Label className="text-xs text-muted-foreground">Critical colors (optional)</Label>
+                                  <Input
+                                    placeholder="e.g., Black body, Red accents"
+                                    value={criticalColors}
+                                    onChange={(e) => setCriticalColors(e.target.value)}
+                                    className="h-8 text-xs"
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Additional RAL colors — always full list */}
+                        <div className="space-y-2">
+                          <Label className="flex items-center gap-2 text-sm">
+                            <Palette className="h-3 w-3" />
+                            Recommended RAL colors (approx.)
+                          </Label>
+
+                          {/* Quick-add from palettes */}
+                          {(() => {
+                            const paletteRalOptions = palettes
+                              .flatMap(p => p.colors)
+                              .map(name => ({ name, ral: paletteColorToRal[name] }))
+                              .filter((c): c is { name: string; ral: string } =>
+                                c.ral !== null && c.ral !== undefined &&
+                                !matRalColors.includes(c.ral) &&
+                                !matBasicCodes.includes(c.ral)
+                              )
+                              .filter((c, i, arr) => arr.findIndex(x => x.ral === c.ral) === i);
+                            if (paletteRalOptions.length === 0) return null;
+                            return (
+                              <div className="space-y-1">
+                                <p className="text-xs text-muted-foreground">Quick-add from palettes:</p>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {paletteRalOptions.map(({ name, ral }) => (
+                                    <button
+                                      key={ral}
+                                      type="button"
+                                      onClick={() => handleAddRalColor(mat, ral)}
+                                      className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border hover:border-secondary/50 text-xs transition-colors"
+                                    >
+                                      <span
+                                        className="h-3 w-3 rounded-full border border-border shrink-0"
+                                        style={{ backgroundColor: multicolorHexMap[name] || '#CCC' }}
+                                      />
+                                      {name}
+                                      <span className="text-muted-foreground">({ral})</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })()}
+
+                          <Select onValueChange={(code) => handleAddRalColor(mat, code)} value="">
+                            <SelectTrigger className="h-9">
+                              <SelectValue placeholder={`Add RAL color for ${mat}…`} />
+                            </SelectTrigger>
+                            <SelectContent className="max-h-60">
+                              {ralColors
+                                .filter(c => !matRalColors.includes(c.code) && !matBasicCodes.includes(c.code))
+                                .map((color) => (
+                                  <SelectItem key={color.code} value={color.code}>
+                                    <span className="flex items-center gap-2">
+                                      <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
+                                      {color.code} – {color.name}
+                                      <RALEquivalentsTooltip color={color} />
+                                    </span>
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                          {matRalColors.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {matRalColors.map((code: string) => {
+                                const c = ralColors.find(r => r.code === code);
+                                return (
+                                  <Badge
+                                    key={code}
+                                    variant="outline"
+                                    className="gap-1.5 py-1 px-2.5 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30"
+                                    onClick={() => handleRemoveRalColor(mat, code)}
+                                  >
+                                    <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c?.hex }} />
+                                    {c?.code} – {c?.name}
+                                    {c && <RALEquivalentsTooltip color={c} />}
+                                    <span className="text-muted-foreground ml-0.5">×</span>
+                                  </Badge>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
 
                   <div className="space-y-1.5">
                     <Label className="flex items-center gap-2 text-sm">
@@ -378,394 +632,6 @@ export default function StartCreating() {
                       </p>
                     </div>
                   )}
-
-                  {/* Multi-color support */}
-                  <div className="space-y-3 p-3 rounded-lg border border-border">
-                    <div className="flex items-center gap-3">
-                      <Checkbox
-                        id="supports-multicolor"
-                        checked={supportsMulticolor}
-                        onCheckedChange={(checked) => setSupportsMulticolor(checked as boolean)}
-                      />
-                      <Label htmlFor="supports-multicolor" className="cursor-pointer text-sm font-medium">
-                        Supports multi-color (only PLA and PETG)
-                      </Label>
-                    </div>
-
-                    {supportsMulticolor && (
-                      <div className="space-y-3 ml-7">
-                        <div className="space-y-1.5">
-                          <Label className="text-xs text-muted-foreground">Multi-color method</Label>
-                          <Select value={multicolorMethod} onValueChange={(v) => setMulticolorMethod(v as typeof multicolorMethod)}>
-                            <SelectTrigger className="h-8 text-xs">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="automatic">Automatic (AMS/MMU)</SelectItem>
-                              <SelectItem value="by-parts">By-parts assembly</SelectItem>
-                              <SelectItem value="manual-layer">Manual by-layer</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <div className="space-y-1.5">
-                          <Label className="text-xs text-muted-foreground flex items-center gap-1">Available palettes <PaletteInfoTooltip /></Label>
-                          <div className="flex flex-wrap gap-3">
-                            {['base', 'earth', 'accent', 'matte'].map((p) => (
-                              <div key={p} className="flex items-center gap-1.5">
-                                <Checkbox
-                                  checked={recommendedPalettes[p] ?? false}
-                                  disabled={p === 'base'}
-                                  onCheckedChange={(checked) => setRecommendedPalettes(prev => ({ ...prev, [p]: checked as boolean }))}
-                                />
-                                <Label className="text-xs capitalize cursor-pointer">{p}</Label>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="space-y-1">
-                            <Label className="text-xs text-muted-foreground">Min colors</Label>
-                            <Select value={String(minColors)} onValueChange={(v) => setMinColors(Number(v))}>
-                              <SelectTrigger className="h-8 text-xs">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {[2, 3, 4].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-1">
-                            <Label className="text-xs text-muted-foreground">Max colors</Label>
-                            <Select value={String(maxColors)} onValueChange={(v) => setMaxColors(Math.max(Number(v), minColors))}>
-                              <SelectTrigger className="h-8 text-xs">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {[2, 3, 4].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-
-                        <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">Critical colors (optional)</Label>
-                          <Input
-                            placeholder="e.g., Black body, Red accents"
-                            value={criticalColors}
-                            onChange={(e) => setCriticalColors(e.target.value)}
-                            className="h-8 text-xs"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Material-specific basic colors + recommended colors */}
-                  {selectedMaterial && MATERIALS_CONFIG[selectedMaterial as MaterialType] && (() => {
-                    const matConfig = MATERIALS_CONFIG[selectedMaterial as MaterialType];
-                    const baseColorNames = matConfig.basicColors.map(c => c.name);
-                    const paletteColorUnion = activePalettes.length > 0
-                      ? [...new Set(
-                          activePalettes.flatMap(pid =>
-                            getPalettesForMaterial(selectedMaterial).find(p => p.id === pid)?.colors || []
-                          ).filter(name => !baseColorNames.includes(name))
-                        )]
-                      : null;
-                    const filteredRecommended = paletteColorUnion
-                      ? matConfig.recommendedColors.filter(c => paletteColorUnion.includes(c.name))
-                      : matConfig.recommendedColors;
-                    return (
-                      <div className="space-y-3">
-                        <Label className="flex items-center gap-2 text-sm">
-                          <Palette className="h-3 w-3" />
-                          Colors for {selectedMaterial}
-                        </Label>
-                        {/* Basic colors */}
-                        {matConfig.basicColors.length > 0 && (
-                          <div className="space-y-1.5">
-                            <p className="text-xs font-medium text-muted-foreground">Base colors</p>
-                            <div className="flex flex-wrap gap-1.5">
-                              {matConfig.basicColors.map((color) => (
-                                <Badge key={color.name} variant="secondary" className="gap-1.5 py-1 px-2">
-                                  <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
-                                  <span className="text-xs">{color.name}</span>
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        {/* Recommended colors */}
-                        {filteredRecommended.length > 0 && (
-                          <Collapsible>
-                            <CollapsibleTrigger asChild>
-                              <Button variant="ghost" size="sm" className="w-full justify-between text-xs h-7">
-                                Recommended colors (optional)
-                                <ChevronDown className="h-3 w-3 ml-1" />
-                              </Button>
-                            </CollapsibleTrigger>
-                            <CollapsibleContent>
-                              <div className="flex flex-wrap gap-1.5 pt-2">
-                                {filteredRecommended.map((color) => (
-                                  <Badge key={color.name} variant="outline" className="gap-1.5 py-1 px-2">
-                                    <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
-                                    <span className="text-xs">{color.name}</span>
-                                  </Badge>
-                                ))}
-                              </div>
-                            </CollapsibleContent>
-                          </Collapsible>
-                        )}
-                      </div>
-                    );
-                  })()}
-
-                  {/* Recommended palettes */}
-                  {selectedMaterial && MATERIALS_CONFIG[selectedMaterial as MaterialType]?.supportsMulticolor && (
-                    <div className="space-y-2">
-                      <Label className="flex items-center gap-2 text-sm">
-                        <Palette className="h-3 w-3" />
-                        Available palettes
-                        <PaletteInfoTooltip />
-                      </Label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {getPalettesForMaterial(selectedMaterial).filter(p => p.id !== 'base').map((palette) => {
-                          const colors = palette.colors;
-                          const displayColors = paletteDisplayColors[palette.id] ?? colors.slice(0, 4);
-                          const needsSelection = colors.length > 6;
-                          const hasValidSelection = displayColors.length === 4;
-                          const isActive = activePalettes.includes(palette.id);
-                          return (
-                            <button
-                              key={palette.id}
-                              type="button"
-                              onClick={() => setActivePalettes(prev =>
-                                isActive ? prev.filter(id => id !== palette.id) : [...prev, palette.id]
-                              )}
-                              className={`flex items-center gap-2 p-2.5 rounded-lg border transition-colors text-left ${
-                                isActive
-                                  ? 'border-secondary bg-secondary/10'
-                                  : needsSelection && !hasValidSelection
-                                    ? 'border-accent/50'
-                                    : 'border-border hover:border-secondary/50'
-                              }`}
-                            >
-                              <div className="flex gap-0.5 shrink-0">
-                                {displayColors.slice(0, 4).map((c) => (
-                                  <PaletteColorSwatch key={c} colorName={c} />
-                                ))}
-                              </div>
-                              <div>
-                                <p className="text-xs font-medium capitalize">{palette.label}</p>
-                                <p className="text-[10px] text-muted-foreground">
-                                  {colors.length} colors
-                                  {colors.length > 4 && ` · showing ${Math.min(displayColors.length, 4)}`}
-                                </p>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Display colors picker for palettes with >6 colors */}
-                      {getPalettesForMaterial(selectedMaterial)
-                        .filter((p) => p.id !== 'base' && p.colors.length > 6)
-                        .map((palette) => {
-                          const selected = paletteDisplayColors[palette.id] || [];
-                          return (
-                            <div key={`display-${palette.id}`} className="space-y-1.5 p-2.5 rounded-lg border border-accent/30 bg-accent/5">
-                              <p className="text-xs font-medium">
-                                Display colors for "{palette.label}" (choose exactly 4) *
-                              </p>
-                              <div className="flex flex-wrap gap-1.5">
-                                {palette.colors.map((c) => {
-                                  const isSelected = selected.includes(c);
-                                  return (
-                                    <button
-                                      key={c}
-                                      type="button"
-                                      onClick={() => {
-                                        setPaletteDisplayColors((prev) => {
-                                          const current = prev[palette.id] || [];
-                                          if (isSelected) {
-                                            return { ...prev, [palette.id]: current.filter((x) => x !== c) };
-                                          }
-                                          if (current.length >= 4) return prev;
-                                          return { ...prev, [palette.id]: [...current, c] };
-                                        });
-                                      }}
-                                      className={`flex items-center gap-1 px-2 py-1 rounded-md border text-xs transition-colors ${
-                                        isSelected
-                                          ? 'border-secondary bg-secondary/10 text-secondary'
-                                          : 'border-border hover:border-secondary/50'
-                                      }`}
-                                    >
-                                      <span
-                                        className="h-3 w-3 rounded-full border border-border shrink-0"
-                                        style={{ backgroundColor: multicolorHexMap[c] || '#CCC' }}
-                                      />
-                                      {c}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                              <p className="text-[10px] text-muted-foreground">
-                                {selected.length}/4 selected
-                                {selected.length !== 4 && ' — exactly 4 required to publish'}
-                              </p>
-                            </div>
-                          );
-                        })}
-
-                      {/* Display colors override for palettes with ≤6 colors (optional) */}
-                      {getPalettesForMaterial(selectedMaterial)
-                        .filter((p) => p.colors.length > 4 && p.colors.length <= 6)
-                        .map((palette) => {
-                          const selected = paletteDisplayColors[palette.id] || palette.colors.slice(0, 4);
-                          const isCustom = !!paletteDisplayColors[palette.id];
-                          return (
-                            <div key={`display-opt-${palette.id}`} className="space-y-1.5 p-2.5 rounded-lg border border-border">
-                              <p className="text-xs font-medium flex items-center gap-1.5">
-                                Display colors for "{palette.label}" (optional override)
-                              </p>
-                              <div className="flex flex-wrap gap-1.5">
-                                {palette.colors.map((c) => {
-                                  const isSelected = selected.includes(c);
-                                  return (
-                                    <button
-                                      key={c}
-                                      type="button"
-                                      onClick={() => {
-                                        setPaletteDisplayColors((prev) => {
-                                          const current = prev[palette.id] || palette.colors.slice(0, 4);
-                                          if (isSelected && current.length <= 1) return prev;
-                                          if (isSelected) {
-                                            return { ...prev, [palette.id]: current.filter((x) => x !== c) };
-                                          }
-                                          if (current.length >= 4) return prev;
-                                          return { ...prev, [palette.id]: [...current, c] };
-                                        });
-                                      }}
-                                      className={`flex items-center gap-1 px-2 py-1 rounded-md border text-xs transition-colors ${
-                                        isSelected
-                                          ? 'border-secondary bg-secondary/10 text-secondary'
-                                          : 'border-border hover:border-secondary/50'
-                                      }`}
-                                    >
-                                      <span
-                                        className="h-3 w-3 rounded-full border border-border shrink-0"
-                                        style={{ backgroundColor: multicolorHexMap[c] || '#CCC' }}
-                                      />
-                                      {c}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                              <p className="text-[10px] text-muted-foreground">
-                                Showing {selected.length} of {palette.colors.length} · first 4 used by default
-                              </p>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  )}
-
-                  <div className="space-y-1.5">
-                    <Label className="flex items-center gap-2 text-sm">
-                      <Palette className="h-3 w-3" />
-                      Recommended RAL colors (approx.)
-                    </Label>
-
-                    {/* Quick-add: palette colors mapped to RAL */}
-                    {selectedMaterial && (() => {
-                      const allPaletteColors = getPalettesForMaterial(selectedMaterial)
-                        .flatMap(p => p.colors);
-                      const paletteRalOptions = allPaletteColors
-                        .map(name => ({ name, ral: paletteColorToRal[name] }))
-                        .filter((c): c is { name: string; ral: string } =>
-                          c.ral !== null && c.ral !== undefined &&
-                          !selectedRalColors.includes(c.ral)
-                        )
-                        .filter((c, i, arr) => arr.findIndex(x => x.ral === c.ral) === i);
-                      if (paletteRalOptions.length === 0) return null;
-                      return (
-                        <div className="space-y-1">
-                          <p className="text-xs text-muted-foreground">Quick-add from palettes:</p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {paletteRalOptions.map(({ name, ral }) => (
-                              <button
-                                key={ral}
-                                type="button"
-                                onClick={() => {
-                                  if (!selectedRalColors.includes(ral)) {
-                                    setSelectedRalColors(prev => [...prev, ral]);
-                                  }
-                                }}
-                                className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border hover:border-secondary/50 text-xs transition-colors"
-                              >
-                                <span
-                                  className="h-3 w-3 rounded-full border border-border shrink-0"
-                                  style={{ backgroundColor: multicolorHexMap[name] || '#CCC' }}
-                                />
-                                {name}
-                                <span className="text-muted-foreground">({ral})</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })()}
-
-                    <Select
-                      onValueChange={(code) => {
-                        if (!selectedRalColors.includes(code)) {
-                          setSelectedRalColors(prev => [...prev, code]);
-                        }
-                      }}
-                      value=""
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Add RAL color…" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-60">
-                        {ralColors
-                          .filter(c => !selectedRalColors.includes(c.code))
-                          .filter(c => {
-                            if (!ralSearchQuery) return true;
-                            const q = ralSearchQuery.toLowerCase();
-                            return c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q);
-                          })
-                          .map((color) => (
-                            <SelectItem key={color.code} value={color.code}>
-                              <span className="flex items-center gap-2">
-                                <span className="inline-block h-3 w-3 rounded-full border border-border" style={{ backgroundColor: color.hex }} />
-                                {color.code} – {color.name}
-                              </span>
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                    {selectedRalColors.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {selectedRalColors.map((code) => {
-                          const c = ralColors.find(r => r.code === code);
-                          return (
-                            <Badge
-                              key={code}
-                              variant="outline"
-                              className="gap-1.5 py-1 px-2.5 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30"
-                              onClick={() => setSelectedRalColors(prev => prev.filter(x => x !== code))}
-                            >
-                              <div className="h-3 w-3 rounded-full border border-border" style={{ backgroundColor: c?.hex }} />
-                              {c?.code} – {c?.name}
-                              <span className="text-muted-foreground ml-0.5">×</span>
-                            </Badge>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
