@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import StlPreview from '@/components/StlPreview';
 import { Layout } from '@/components/layout/Layout';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -10,57 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Upload, Settings, Calculator, Printer, Building2, Palette, CreditCard, Info, AlertCircle } from 'lucide-react';
-import { calculatePrintPrice, calculateFullBreakdown, MATERIAL_SURCHARGES, QUALITY_SURCHARGES, ARTISTIC_QUALITY_SURCHARGES, ARTISTIC_MATERIAL_SURCHARGES, calculateBuyerPrice, MULTICOLOR_SURCHARGE_RATE } from '@/lib/pricing';
+import { calculatePrintPrice, COMMISSION_RATES, DESIGNER_RATES } from '@/lib/pricing';
 import type { ProductType } from '@/types';
 
-// Breakdown row config matching ProductConfigurator
-const breakdownRowConfig = [
-  {
-    key: 'maker',
-    label: 'Maker earns',
-    icon: Printer,
-    iconClass: 'text-accent',
-    tooltip: 'What the maker receives for production (time + materials), before taxes.',
-    rowClass: 'py-1.5 border-t border-border bg-accent/5 -mx-4 px-4',
-    valueClass: 'font-bold text-accent text-sm',
-    labelClass: 'font-medium text-xs',
-    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.makerPayout,
-  },
-  {
-    key: 'designer',
-    label: 'Designer earns',
-    icon: Palette,
-    iconClass: 'text-muted-foreground',
-    tooltip: 'Royalty paid to the designer when applicable, before taxes.',
-    rowClass: 'py-1',
-    valueClass: 'text-xs text-muted-foreground',
-    labelClass: 'text-muted-foreground text-xs',
-    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.designerRoyalty,
-  },
-  {
-    key: 'platform',
-    label: 'Platform fee',
-    icon: Building2,
-    iconClass: 'text-muted-foreground',
-    tooltip: "MakeHug's service fee to operate and support the marketplace.",
-    rowClass: 'py-1',
-    valueClass: 'text-xs text-muted-foreground',
-    labelClass: 'text-muted-foreground text-xs',
-    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.platformFee,
-  },
-  {
-    key: 'payment',
-    label: 'Payment processing',
-    icon: CreditCard,
-    iconClass: 'text-muted-foreground',
-    tooltip: 'Estimated payment provider costs (e.g., card processing).',
-    rowClass: 'py-1',
-    valueClass: 'text-xs text-muted-foreground',
-    labelClass: 'text-muted-foreground text-xs',
-    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.paymentProcessing,
-  },
-] as const;
-
+// ── Tooltip helper ──────────────────────────────────────────
 const InfoTooltip = ({ text }: { text: string }) => {
   const [open, setOpen] = useState(false);
   return (
@@ -77,6 +29,79 @@ const InfoTooltip = ({ text }: { text: string }) => {
   );
 };
 
+// ── Internal multipliers (never shown in UI) ────────────────
+const MATERIAL_MULTIPLIERS: Record<string, number> = {
+  PLA: 1.00,
+  PETG: 1.10,
+  ABS: 1.15,
+  TPU: 1.20,
+  Nylon: 1.50,
+  Resin: 1.80,
+};
+
+const PRODUCT_TYPE_MULTIPLIERS: Record<ProductType, number> = {
+  basic: 1.00,
+  functional: 1.05,
+  artistic: 1.10,
+};
+
+const DESIGNER_BONUS_CENTS: Record<ProductType, number> = {
+  basic: 0,
+  functional: 100, // €1
+  artistic: 200,   // €2
+};
+
+const QUALITY_MULTIPLIERS: Record<string, number> = {
+  standard: 1.00,
+  premium: 1.20,
+  ultra: 1.25,
+};
+
+// ── Breakdown row rendering config ──────────────────────────
+const breakdownRowConfig = [
+  {
+    key: 'maker',
+    label: 'Maker earns',
+    icon: Printer,
+    iconClass: 'text-accent',
+    tooltip: 'This amount covers file and printer setup, supervision, support removal, basic post-processing, and quality checks before shipping.',
+    rowClass: 'py-1.5 border-t border-border bg-accent/5 -mx-4 px-4',
+    valueClass: 'font-bold text-accent text-sm',
+    labelClass: 'font-medium text-xs',
+  },
+  {
+    key: 'designer',
+    label: 'Designer earns',
+    icon: Palette,
+    iconClass: 'text-muted-foreground',
+    tooltip: 'Creative design license. It supports the designer and helps them keep creating new models.',
+    rowClass: 'py-1',
+    valueClass: 'text-xs text-muted-foreground',
+    labelClass: 'text-muted-foreground text-xs',
+  },
+  {
+    key: 'platform',
+    label: 'Platform fee',
+    icon: Building2,
+    iconClass: 'text-muted-foreground',
+    tooltip: 'Platform service: support and mediation if issues arise, order management, and coordination between the designer and the maker. It also covers platform maintenance and development.',
+    rowClass: 'py-1',
+    valueClass: 'text-xs text-muted-foreground',
+    labelClass: 'text-muted-foreground text-xs',
+  },
+  {
+    key: 'payment',
+    label: 'Payment processing',
+    icon: CreditCard,
+    iconClass: 'text-muted-foreground',
+    tooltip: 'Charged by the payment provider to process the transaction and help prevent fraud; calculated on the order total.',
+    rowClass: 'py-1',
+    valueClass: 'text-xs text-muted-foreground',
+    labelClass: 'text-muted-foreground text-xs',
+  },
+] as const;
+
+// ── Component ───────────────────────────────────────────────
 export default function FeesAndPayoutBreakdown() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [productType, setProductType] = useState<ProductType>('basic');
@@ -89,47 +114,45 @@ export default function FeesAndPayoutBreakdown() {
   const [supportsMulticolor, setSupportsMulticolor] = useState(false);
 
   const isArtistic = productType === 'artistic';
-
-  // Material options based on product type
   const availableMaterials = isArtistic ? ['PLA', 'Resin'] : ['PLA', 'ABS', 'PETG', 'Nylon', 'Resin', 'TPU'];
-  const availableQualities = isArtistic
-    ? (['premium', 'ultra'] as const)
-    : (['standard', 'premium'] as const);
 
-  // Handle Resin ↔ Ultra pairing
+  // ── Handlers with strict Ultra ↔ Resin coupling ──────────
   const handleMaterialChange = (mat: string) => {
     setSelectedMaterial(mat);
-    if (isArtistic && mat === 'Resin') setSelectedQuality('ultra');
-    else if (isArtistic && mat !== 'Resin' && selectedQuality === 'ultra') setSelectedQuality('premium');
+    if (mat === 'Resin') {
+      setSelectedQuality('ultra');
+    } else if (selectedQuality === 'ultra') {
+      setSelectedQuality('premium');
+    }
     if (mat === 'Resin' && supportsMulticolor) setSupportsMulticolor(false);
   };
 
   const handleQualityChange = (q: 'standard' | 'premium' | 'ultra') => {
+    if (q === 'ultra' && selectedMaterial !== 'Resin') return; // guard
     setSelectedQuality(q);
-    if (isArtistic && q === 'ultra' && selectedMaterial !== 'Resin') setSelectedMaterial('Resin');
-    else if (isArtistic && q === 'premium' && selectedMaterial === 'Resin') setSelectedMaterial('PLA');
   };
 
   const handleProductTypeChange = (pt: ProductType) => {
     setProductType(pt);
     if (pt === 'artistic') {
       if (!['PLA', 'Resin'].includes(selectedMaterial)) setSelectedMaterial('PLA');
-      if (!['premium', 'ultra'].includes(selectedQuality)) setSelectedQuality('premium');
-    } else {
-      if (selectedQuality === 'ultra') setSelectedQuality('standard');
+      if (selectedQuality === 'standard') setSelectedQuality('premium');
     }
+    // Ultra stays only if material is Resin – already enforced
   };
 
-  // Surcharges
+  // ── Surcharges ────────────────────────────────────────────
   const partCountNum = parseInt(partCount) || 1;
   const partCountSurcharge = partCountNum >= 4 ? 0.15 : partCountNum >= 3 ? 0.10 : partCountNum >= 2 ? 0.05 : 0;
   const supportsSurcharge = hasSupports ? 0.10 : 0;
   const totalSurcharge = partCountSurcharge + supportsSurcharge;
 
-  // Base print price
-  const basePrintPrice = useMemo(() => {
+  // ── Pricing calculation (all in cents for exact sums) ─────
+  const breakdown = useMemo(() => {
     if (!estimatedWeight || !estimatedPrintTime) return null;
-    return calculatePrintPrice({
+
+    // Step 1: raw print price
+    const rawPrice = calculatePrintPrice({
       weightGrams: parseFloat(estimatedWeight),
       printTimeMinutes: parseFloat(estimatedPrintTime),
       materialDensity: 1.24,
@@ -137,30 +160,75 @@ export default function FeesAndPayoutBreakdown() {
       laborRatePerHour: 15,
       material: selectedMaterial,
     });
-  }, [estimatedWeight, estimatedPrintTime, selectedMaterial]);
 
-  // Apply surcharges + material/quality/multicolor via buyer price logic
-  const buyerPrice = useMemo(() => {
-    if (!basePrintPrice) return null;
-    const afterSurcharges = basePrintPrice * (1 + totalSurcharge);
-    return calculateBuyerPrice({
-      basePrice: afterSurcharges,
-      material: selectedMaterial,
-      quality: selectedQuality,
-      isArtistic,
-      multicolorCount: supportsMulticolor ? 2 : 0,
-    });
-  }, [basePrintPrice, totalSurcharge, selectedMaterial, selectedQuality, isArtistic, supportsMulticolor]);
+    // Step 2: +20% silent uplift → PLA baseline
+    const plaBaseline = rawPrice * 1.20;
 
-  const breakdown = useMemo(() => {
-    if (!buyerPrice) return null;
-    return calculateFullBreakdown(buyerPrice, productType);
-  }, [buyerPrice, productType]);
+    // Step 3: material multiplier
+    const afterMaterial = plaBaseline * (MATERIAL_MULTIPLIERS[selectedMaterial] ?? 1);
+
+    // Step 4: quality multiplier
+    const afterQuality = afterMaterial * (QUALITY_MULTIPLIERS[selectedQuality] ?? 1);
+
+    // Step 5: part count + supports surcharges
+    const afterSurcharges = afterQuality * (1 + totalSurcharge);
+
+    // Step 6: multicolor surcharge
+    const afterMulticolor = supportsMulticolor ? afterSurcharges * 1.30 : afterSurcharges;
+
+    // Step 7: product type multiplier
+    const finalPrice = afterMulticolor * (PRODUCT_TYPE_MULTIPLIERS[productType] ?? 1);
+
+    // Convert to cents for integer math
+    const totalCents = Math.round(finalPrice * 100);
+
+    // Initial split using existing rates
+    const paymentCents = Math.round(totalCents * COMMISSION_RATES.PAYMENT_GATEWAY);
+    const designerRate = DESIGNER_RATES[productType];
+    let designerCents = Math.round(totalCents * designerRate);
+    let platformCents = Math.round(totalCents * COMMISSION_RATES.PLATFORM);
+    let makerCents = totalCents - paymentCents - designerCents - platformCents;
+
+    // Ensure maker ≥ 70%
+    const minMakerCents = Math.round(totalCents * 0.70);
+    if (makerCents < minMakerCents) {
+      const deficit = minMakerCents - makerCents;
+      platformCents -= deficit;
+      makerCents = minMakerCents;
+    }
+
+    // Apply designer bonus (transfer from platform → designer)
+    const bonusCents = DESIGNER_BONUS_CENTS[productType];
+    if (bonusCents > 0) {
+      designerCents += bonusCents;
+      platformCents -= bonusCents;
+      // Clamp: if platform went negative, take from maker
+      if (platformCents < 0) {
+        makerCents += platformCents; // platformCents is negative, so this reduces maker
+        platformCents = 0;
+      }
+    }
+
+    // Derive total from components (guaranteed exact sum)
+    const derivedTotalCents = makerCents + designerCents + platformCents + paymentCents;
+
+    return {
+      total: derivedTotalCents / 100,
+      maker: makerCents / 100,
+      designer: designerCents / 100,
+      platform: platformCents / 100,
+      payment: paymentCents / 100,
+    };
+  }, [estimatedWeight, estimatedPrintTime, selectedMaterial, selectedQuality, totalSurcharge, supportsMulticolor, productType]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setUploadedFile(file);
   };
+
+  const breakdownValues = breakdown
+    ? { maker: breakdown.maker, designer: breakdown.designer, platform: breakdown.platform, payment: breakdown.payment }
+    : null;
 
   return (
     <Layout>
@@ -169,9 +237,7 @@ export default function FeesAndPayoutBreakdown() {
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <Badge variant="secondary" className="mb-3">Transparency</Badge>
-            <h1 className="text-2xl md:text-3xl font-bold mb-3">
-              Fees &amp; Payout Breakdown
-            </h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-3">Fees &amp; Payout Breakdown</h1>
             <p className="text-muted-foreground">
               See how revenue is split between makers, designers, and the platform. Enter your print details to get a live estimate.
             </p>
@@ -186,40 +252,7 @@ export default function FeesAndPayoutBreakdown() {
             {/* Left: Configuration */}
             <div className="lg:col-span-3 space-y-5">
 
-              {/* Product Type */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <Settings className="h-4 w-4 text-secondary" />
-                    Product Type
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(['basic', 'functional', 'artistic'] as const).map((option) => (
-                      <button
-                        key={option}
-                        type="button"
-                        onClick={() => handleProductTypeChange(option)}
-                        className={`p-2.5 rounded-lg border-2 text-sm font-medium capitalize transition-all ${
-                          productType === option
-                            ? 'border-secondary bg-secondary/10 text-secondary'
-                            : 'border-border hover:border-secondary/50'
-                        }`}
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {productType === 'basic' && 'Simple items that don\'t need precise fit or special materials.'}
-                    {productType === 'functional' && 'Parts where fit, tolerances, and durability matter.'}
-                    {productType === 'artistic' && 'Aesthetic/collectible pieces where surface finish and detail are the priority.'}
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* Design File Upload */}
+              {/* 1) Design File Upload */}
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
@@ -256,7 +289,93 @@ export default function FeesAndPayoutBreakdown() {
                 </CardContent>
               </Card>
 
-              {/* Print Settings */}
+              {/* 2) Product Type */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Settings className="h-4 w-4 text-secondary" />
+                    Product Type
+                    <InfoTooltip text={
+                      "Basic: simple items that don't need precise fit, special materials, or extra strength/heat resistance (desk organizers, basic holders, non-critical accessories).\n\n" +
+                      "Functional: parts where fit, tolerances, and durability matter (tools, replacements, brackets, mounts, adapters).\n\n" +
+                      "Artistic: aesthetic/collectible pieces where surface finish and detail are the priority (figures, sculptures, display pieces).\n\n" +
+                      "Functional and Artistic objects always require manual team validation before publishing."
+                    } />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['basic', 'functional', 'artistic'] as const).map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => handleProductTypeChange(option)}
+                        className={`p-2.5 rounded-lg border-2 text-sm font-medium capitalize transition-all ${
+                          productType === option
+                            ? 'border-secondary bg-secondary/10 text-secondary'
+                            : 'border-border hover:border-secondary/50'
+                        }`}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {productType === 'basic' && "Simple items that don't need precise fit or special materials."}
+                    {productType === 'functional' && 'Parts where fit, tolerances, and durability matter.'}
+                    {productType === 'artistic' && 'Aesthetic/collectible pieces where surface finish and detail are the priority.'}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* 3) Quality */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    Quality
+                    <InfoTooltip text={
+                      "Standard: FDM, 0.32 height layer\n" +
+                      "Premium: FDM, 0.16 mm layer height\n" +
+                      "Ultra: Resin, 0.05 height layer"
+                    } />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['standard', 'premium', 'ultra'] as const).map((q) => {
+                      const ultraDisabled = q === 'ultra' && selectedMaterial !== 'Resin';
+                      const artisticNoStandard = q === 'standard' && isArtistic;
+                      const disabled = ultraDisabled || artisticNoStandard;
+                      return (
+                        <button
+                          key={q}
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => !disabled && handleQualityChange(q)}
+                          className={`p-2.5 rounded-lg border-2 text-sm font-medium capitalize transition-all ${
+                            selectedQuality === q
+                              ? 'border-secondary bg-secondary/10 text-secondary'
+                              : disabled
+                              ? 'border-border opacity-40 cursor-not-allowed'
+                              : 'border-border hover:border-secondary/50'
+                          }`}
+                        >
+                          {q}
+                          {q === 'standard' && <span className="block text-[10px] text-muted-foreground font-normal">Base</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {selectedMaterial !== 'Resin' && (
+                    <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+                      <Info className="h-3 w-3" />
+                      Ultra is only available for Resin.
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* 4) Print Settings (includes Material) */}
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
@@ -265,6 +384,27 @@ export default function FeesAndPayoutBreakdown() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Material */}
+                  <div className="space-y-1.5">
+                    <Label className="text-sm">Material</Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {availableMaterials.map((mat) => (
+                        <button
+                          key={mat}
+                          type="button"
+                          onClick={() => handleMaterialChange(mat)}
+                          className={`p-2 rounded-lg border text-sm font-medium transition-colors ${
+                            selectedMaterial === mat
+                              ? 'border-secondary bg-secondary/5'
+                              : 'border-border hover:border-muted-foreground'
+                          }`}
+                        >
+                          {mat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <Label className="flex items-center gap-2 text-sm">
@@ -292,27 +432,6 @@ export default function FeesAndPayoutBreakdown() {
                     </div>
                   </div>
 
-                  {/* Material */}
-                  <div className="space-y-1.5">
-                    <Label className="text-sm">Material</Label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {availableMaterials.map((mat) => (
-                        <button
-                          key={mat}
-                          type="button"
-                          onClick={() => handleMaterialChange(mat)}
-                          className={`p-2 rounded-lg border text-sm font-medium transition-colors ${
-                            selectedMaterial === mat
-                              ? 'border-secondary bg-secondary/5'
-                              : 'border-border hover:border-muted-foreground'
-                          }`}
-                        >
-                          {mat}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* Multi-color toggle */}
                   {selectedMaterial !== 'Resin' && (
                     <div className="flex items-center gap-3 p-3 rounded-lg border border-border">
@@ -324,9 +443,6 @@ export default function FeesAndPayoutBreakdown() {
                       <Label htmlFor="mc-fees" className="cursor-pointer text-sm font-medium">
                         Supports multicolor
                       </Label>
-                      {supportsMulticolor && (
-                        <Badge variant="secondary" className="text-xs">+30%</Badge>
-                      )}
                     </div>
                   )}
 
@@ -362,61 +478,6 @@ export default function FeesAndPayoutBreakdown() {
                   </div>
                 </CardContent>
               </Card>
-
-              {/* Quality */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    Quality
-                    <InfoTooltip text="Higher quality settings use finer layer heights for better surface finish, but increase print time and cost." />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(['standard', 'premium', 'ultra'] as const).map((q) => {
-                      const isAvailable = (availableQualities as readonly string[]).includes(q);
-                      const isUltraWithoutResin = q === 'ultra' && selectedMaterial !== 'Resin' && !isArtistic;
-                      const disabled = !isAvailable && !isUltraWithoutResin;
-                      return (
-                        <button
-                          key={q}
-                          type="button"
-                          disabled={disabled && q !== 'ultra'}
-                          onClick={() => {
-                            if (q === 'ultra' && selectedMaterial !== 'Resin') {
-                              handleMaterialChange('Resin');
-                              handleQualityChange('ultra');
-                            } else if (isAvailable) {
-                              handleQualityChange(q);
-                            }
-                          }}
-                          className={`p-2.5 rounded-lg border-2 text-sm font-medium capitalize transition-all ${
-                            selectedQuality === q
-                              ? 'border-secondary bg-secondary/10 text-secondary'
-                              : disabled && q !== 'ultra'
-                              ? 'border-border opacity-40 cursor-not-allowed'
-                              : 'border-border hover:border-secondary/50'
-                          }`}
-                        >
-                          {q}
-                          {q === 'standard' && <span className="block text-[10px] text-muted-foreground font-normal">Base</span>}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {selectedQuality === 'ultra' && selectedMaterial !== 'Resin' && (
-                    <p className="text-xs text-accent mt-2 flex items-center gap-1">
-                      <Info className="h-3 w-3" />
-                      Ultra is available for resin prints. Material has been switched to Resin.
-                    </p>
-                  )}
-                  {!isArtistic && selectedQuality !== 'ultra' && (
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Ultra quality is available for resin prints only.
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
             </div>
 
             {/* Right: Live Breakdown */}
@@ -429,10 +490,10 @@ export default function FeesAndPayoutBreakdown() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {breakdown ? (
+                  {breakdown && breakdownValues ? (
                     <>
                       <div className="text-center py-3">
-                        <p className="text-3xl font-bold">{breakdown.buyerPrice.toFixed(2)}</p>
+                        <p className="text-3xl font-bold">{breakdown.total.toFixed(2)}</p>
                         <p className="text-muted-foreground text-sm mt-1">Total price</p>
                       </div>
 
@@ -454,20 +515,10 @@ export default function FeesAndPayoutBreakdown() {
                         </div>
                       )}
 
-                      {supportsMulticolor && (
-                        <div className="flex justify-between text-xs py-1 border-b border-border/50">
-                          <span className="text-muted-foreground flex items-center gap-1">
-                            <Palette className="h-3 w-3" />
-                            Multi-color +30%
-                          </span>
-                          <span className="font-medium">Included</span>
-                        </div>
-                      )}
-
                       <div className="space-y-1.5 text-sm">
                         {breakdownRowConfig.map((row) => {
                           const IconComp = row.icon;
-                          const value = row.getValue(breakdown);
+                          const value = breakdownValues[row.key as keyof typeof breakdownValues];
                           return (
                             <div key={row.key} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: '8px' }} className={row.rowClass}>
                               <Popover>
