@@ -106,8 +106,7 @@ export default function FeesAndPayoutBreakdown() {
   const [selectedQuality, setSelectedQuality] = useState<'standard' | 'premium' | 'ultra'>('standard');
   const [supportsMulticolor, setSupportsMulticolor] = useState(false);
 
-  const isArtistic = productType === 'artistic';
-  const availableMaterials = isArtistic ? ['PLA', 'Resin'] : ['PLA', 'ABS', 'PETG', 'Nylon', 'Resin', 'TPU'];
+  const availableMaterials = ['PLA', 'PETG', 'ABS', 'TPU', 'Nylon', 'Resin'];
 
   // ── Handlers with strict Ultra ↔ Resin coupling ──────────
   const handleMaterialChange = (mat: string) => {
@@ -128,16 +127,12 @@ export default function FeesAndPayoutBreakdown() {
       if (supportsMulticolor) setSupportsMulticolor(false);
       return;
     }
-    if (q === 'standard' && isArtistic) return; // guard
+    setSelectedQuality(q);
     setSelectedQuality(q);
   };
 
   const handleProductTypeChange = (pt: ProductType) => {
     setProductType(pt);
-    if (pt === 'artistic') {
-      if (!['PLA', 'Resin'].includes(selectedMaterial)) setSelectedMaterial('PLA');
-      if (selectedQuality === 'standard') setSelectedQuality('premium');
-    }
   };
 
   // ── Surcharges ────────────────────────────────────────────
@@ -318,9 +313,10 @@ export default function FeesAndPayoutBreakdown() {
                 <CardContent>
                   <div className="grid grid-cols-3 gap-2">
                     {(['standard', 'premium', 'ultra'] as const).map((q) => {
-                      const ultraDisabled = q === 'ultra' && selectedMaterial !== 'Resin';
-                      const artisticNoStandard = q === 'standard' && isArtistic;
-                      const disabled = ultraDisabled || artisticNoStandard;
+                      const isResin = selectedMaterial === 'Resin';
+                      // When Resin: only Ultra available. When not Resin: Ultra disabled.
+                      const disabled = isResin ? q !== 'ultra' : q === 'ultra';
+                      if (isResin && q !== 'ultra') return null; // hide Standard/Premium when Resin
                       return (
                         <button
                           key={q}
