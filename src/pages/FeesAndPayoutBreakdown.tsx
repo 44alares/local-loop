@@ -8,12 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Upload, Settings, Calculator, Printer, Building2, Palette, CreditCard, Info, AlertCircle } from 'lucide-react';
-import { calculatePrintPrice, COMMISSION_RATES, DESIGNER_RATES } from '@/lib/pricing';
+import { Upload, Settings, Calculator, Printer, Building2, Palette, CreditCard, Info } from 'lucide-react';
 import type { ProductType } from '@/types';
 
-// ── Tooltip helper ──────────────────────────────────────────
-const InfoTooltip = ({ text }: { text: string }) => {
+// ── Tooltip helper (supports JSX children for line breaks) ──
+const InfoTooltip = ({ children, text }: { children?: React.ReactNode; text?: string }) => {
   const [open, setOpen] = useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -23,7 +22,7 @@ const InfoTooltip = ({ text }: { text: string }) => {
         </button>
       </PopoverTrigger>
       <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
-        {text}
+        {children ?? text}
       </PopoverContent>
     </Popover>
   );
@@ -45,16 +44,10 @@ const PRODUCT_TYPE_MULTIPLIERS: Record<ProductType, number> = {
   artistic: 1.10,
 };
 
-const DESIGNER_BONUS_CENTS: Record<ProductType, number> = {
-  basic: 0,
-  functional: 100, // €1
-  artistic: 200,   // €2
-};
-
 const QUALITY_MULTIPLIERS: Record<string, number> = {
   standard: 1.00,
-  premium: 1.20,
-  ultra: 1.25,
+  premium: 1.15,
+  ultra: 1.00, // Ultra is driven by Resin 1.80, no extra multiplier
 };
 
 // ── Breakdown row rendering config ──────────────────────────
@@ -128,7 +121,14 @@ export default function FeesAndPayoutBreakdown() {
   };
 
   const handleQualityChange = (q: 'standard' | 'premium' | 'ultra') => {
-    if (q === 'ultra' && selectedMaterial !== 'Resin') return; // guard
+    if (q === 'ultra') {
+      // Selecting Ultra forces material to Resin
+      setSelectedQuality('ultra');
+      setSelectedMaterial('Resin');
+      if (supportsMulticolor) setSupportsMulticolor(false);
+      return;
+    }
+    if (q === 'standard' && isArtistic) return; // guard
     setSelectedQuality(q);
   };
 
@@ -138,7 +138,6 @@ export default function FeesAndPayoutBreakdown() {
       if (!['PLA', 'Resin'].includes(selectedMaterial)) setSelectedMaterial('PLA');
       if (selectedQuality === 'standard') setSelectedQuality('premium');
     }
-    // Ultra stays only if material is Resin – already enforced
   };
 
   // ── Surcharges ────────────────────────────────────────────
@@ -147,73 +146,49 @@ export default function FeesAndPayoutBreakdown() {
   const supportsSurcharge = hasSupports ? 0.10 : 0;
   const totalSurcharge = partCountSurcharge + supportsSurcharge;
 
-  // ── Pricing calculation (all in cents for exact sums) ─────
+  // ── Pricing calculation (new baseline from Maker earns) ───
   const breakdown = useMemo(() => {
-    if (!estimatedWeight || !estimatedPrintTime) return null;
+    const W = parseFloat(estimatedWeight);
+    const T = parseFloat(estimatedPrintTime);
+    if (!W || !T || W <= 0 || T <= 0) return null;
 
-    // Step 1: raw print price
-    const rawPrice = calculatePrintPrice({
-      weightGrams: parseFloat(estimatedWeight),
-      printTimeMinutes: parseFloat(estimatedPrintTime),
-      materialDensity: 1.24,
-      materialCostPerKg: 25,
-      laborRatePerHour: 15,
-      material: selectedMaterial,
-    });
+    // Baseline (Basic + Standard + PLA)
+    const baseMakerEarns = (((W * 0.02) + ((T * 0.17) / 60)) * 4) + 6;
+    const baseTotalPrice = baseMakerEarns / 0.75;
+    const baseDesignerEarns = baseTotalPrice * 0.12;
+    const basePaymentProcessing = baseTotalPrice * 0.03;
+    // basePlatformFee = baseTotalPrice * 0.10 (implicit, used via total)
 
-    // Step 2: +20% silent uplift → PLA baseline
-    const plaBaseline = rawPrice * 1.20;
+    // Combined multiplier
+    const M =
+      (PRODUCT_TYPE_MULTIPLIERS[productType] ?? 1) *
+      (MATERIAL_MULTIPLIERS[selectedMaterial] ?? 1) *
+      (QUALITY_MULTIPLIERS[selectedQuality] ?? 1);
 
-    // Step 3: material multiplier
-    const afterMaterial = plaBaseline * (MATERIAL_MULTIPLIERS[selectedMaterial] ?? 1);
+    // Surcharges multiplier
+    const S = (1 + totalSurcharge) * (supportsMulticolor ? 1.30 : 1);
 
-    // Step 4: quality multiplier
-    const afterQuality = afterMaterial * (QUALITY_MULTIPLIERS[selectedQuality] ?? 1);
+    const totalM = M * S;
 
-    // Step 5: part count + supports surcharges
-    const afterSurcharges = afterQuality * (1 + totalSurcharge);
+    // Final values in cents
+    const totalCents = Math.round(baseTotalPrice * totalM * 100);
+    const makerCents = Math.round(baseMakerEarns * totalM * 100);
+    let designerCents = Math.round(baseDesignerEarns * totalM * 100);
+    const paymentCents = Math.round(basePaymentProcessing * totalM * 100);
 
-    // Step 6: multicolor surcharge
-    const afterMulticolor = supportsMulticolor ? afterSurcharges * 1.30 : afterSurcharges;
+    // Platform fee is the balancing line
+    let platformCents = totalCents - makerCents - designerCents - paymentCents;
 
-    // Step 7: product type multiplier
-    const finalPrice = afterMulticolor * (PRODUCT_TYPE_MULTIPLIERS[productType] ?? 1);
-
-    // Convert to cents for integer math
-    const totalCents = Math.round(finalPrice * 100);
-
-    // Initial split using existing rates
-    const paymentCents = Math.round(totalCents * COMMISSION_RATES.PAYMENT_GATEWAY);
-    const designerRate = DESIGNER_RATES[productType];
-    let designerCents = Math.round(totalCents * designerRate);
-    let platformCents = Math.round(totalCents * COMMISSION_RATES.PLATFORM);
-    let makerCents = totalCents - paymentCents - designerCents - platformCents;
-
-    // Ensure maker ≥ 70%
-    const minMakerCents = Math.round(totalCents * 0.70);
-    if (makerCents < minMakerCents) {
-      const deficit = minMakerCents - makerCents;
-      platformCents -= deficit;
-      makerCents = minMakerCents;
+    // Clamp: never negative
+    if (platformCents < 0) {
+      // Reduce designer minimally
+      const deficit = -platformCents;
+      designerCents = Math.max(0, designerCents - deficit);
+      platformCents = totalCents - makerCents - designerCents - paymentCents;
     }
-
-    // Apply designer bonus (transfer from platform → designer)
-    const bonusCents = DESIGNER_BONUS_CENTS[productType];
-    if (bonusCents > 0) {
-      designerCents += bonusCents;
-      platformCents -= bonusCents;
-      // Clamp: if platform went negative, take from maker
-      if (platformCents < 0) {
-        makerCents += platformCents; // platformCents is negative, so this reduces maker
-        platformCents = 0;
-      }
-    }
-
-    // Derive total from components (guaranteed exact sum)
-    const derivedTotalCents = makerCents + designerCents + platformCents + paymentCents;
 
     return {
-      total: derivedTotalCents / 100,
+      total: totalCents / 100,
       maker: makerCents / 100,
       designer: designerCents / 100,
       platform: platformCents / 100,
@@ -262,10 +237,6 @@ export default function FeesAndPayoutBreakdown() {
                   <CardDescription className="text-xs">Supported formats: STL, 3MF</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-accent font-medium mb-3 flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4" />
-                    You must be registered to upload files.
-                  </p>
                   <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-secondary transition-colors">
                     <input type="file" accept=".stl,.3mf" onChange={handleFileUpload} className="hidden" id="file-upload-fees" />
                     <label htmlFor="file-upload-fees" className="cursor-pointer">
@@ -295,12 +266,14 @@ export default function FeesAndPayoutBreakdown() {
                   <CardTitle className="flex items-center gap-2 text-base">
                     <Settings className="h-4 w-4 text-secondary" />
                     Product Type
-                    <InfoTooltip text={
-                      "Basic: simple items that don't need precise fit, special materials, or extra strength/heat resistance (desk organizers, basic holders, non-critical accessories).\n\n" +
-                      "Functional: parts where fit, tolerances, and durability matter (tools, replacements, brackets, mounts, adapters).\n\n" +
-                      "Artistic: aesthetic/collectible pieces where surface finish and detail are the priority (figures, sculptures, display pieces).\n\n" +
-                      "Functional and Artistic objects always require manual team validation before publishing."
-                    } />
+                    <InfoTooltip>
+                      <div className="space-y-1.5">
+                        <p><strong>Basic:</strong> simple items that don't need precise fit, special materials, or extra strength/heat resistance (desk organizers, basic holders, non-critical accessories).</p>
+                        <p><strong>Functional:</strong> parts where fit, tolerances, and durability matter (tools, replacements, brackets, mounts, adapters).</p>
+                        <p><strong>Artistic:</strong> aesthetic/collectible pieces where surface finish and detail are the priority (figures, sculptures, display pieces).</p>
+                        <p className="text-muted-foreground italic">Functional and Artistic objects always require manual team validation before publishing.</p>
+                      </div>
+                    </InfoTooltip>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -333,11 +306,13 @@ export default function FeesAndPayoutBreakdown() {
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
                     Quality
-                    <InfoTooltip text={
-                      "Standard: FDM, 0.32 height layer\n" +
-                      "Premium: FDM, 0.16 mm layer height\n" +
-                      "Ultra: Resin, 0.05 height layer"
-                    } />
+                    <InfoTooltip>
+                      <div className="space-y-1">
+                        <p><strong>Standard:</strong> FDM, 0.32 height layer</p>
+                        <p><strong>Premium:</strong> FDM · 0.16 mm layer height</p>
+                        <p><strong>Ultra:</strong> Resin, 0.05 height layer</p>
+                      </div>
+                    </InfoTooltip>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -496,24 +471,6 @@ export default function FeesAndPayoutBreakdown() {
                         <p className="text-3xl font-bold">{breakdown.total.toFixed(2)}</p>
                         <p className="text-muted-foreground text-sm mt-1">Total price</p>
                       </div>
-
-                      {totalSurcharge > 0 && (
-                        <div className="space-y-1 text-sm bg-accent/5 rounded-lg p-3">
-                          <p className="text-xs font-medium text-muted-foreground">Surcharges applied:</p>
-                          {partCountSurcharge > 0 && (
-                            <div className="flex justify-between text-xs">
-                              <span className="text-muted-foreground">Part count ({partCountNum} parts)</span>
-                              <span className="font-medium">+{(partCountSurcharge * 100).toFixed(0)}%</span>
-                            </div>
-                          )}
-                          {supportsSurcharge > 0 && (
-                            <div className="flex justify-between text-xs">
-                              <span className="text-muted-foreground">Supports needed</span>
-                              <span className="font-medium">+10%</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
 
                       <div className="space-y-1.5 text-sm">
                         {breakdownRowConfig.map((row) => {
