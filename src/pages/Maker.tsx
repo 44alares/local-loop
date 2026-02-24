@@ -52,10 +52,10 @@ export default function Maker() {
                 </Button>
               </div>
 
-              {/* Founders Club CTA - Centered below with spacing */}
+              {/* Pricing breakdown CTA */}
               <div className="flex justify-center md:justify-start pt-4">
                 <Button variant="outline" size="default" className="border-accent text-accent hover:bg-accent/10 text-base" asChild>
-                  <a href="https://forms.gle/D7eY7nSEBHEhLgzK7" target="_blank" rel="noopener noreferrer"><a href="https://forms.gle/D7eY7nSEBHEhLgzK7" target="_blank" rel="noopener noreferrer">Early testers</a></a>
+                  <Link to="/fees-and-payout-breakdown">Pricing breakdown</Link>
                 </Button>
               </div>
             </div>

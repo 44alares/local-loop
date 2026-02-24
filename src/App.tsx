@@ -26,6 +26,7 @@ import DesignerTerms from "./pages/DesignerTerms";
 import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
 import RALEquivalents from "./pages/RALEquivalents";
+import FeesAndPayoutBreakdown from "./pages/FeesAndPayoutBreakdown";
 import { lazy, Suspense } from "react";
 const Tailored = lazy(() => import("./pages/Tailored"));
 const TailoredConfigurator = lazy(() => import("./pages/TailoredConfigurator"));
@@ -65,6 +66,7 @@ const App = () => (
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/cookies" element={<Cookies />} />
           <Route path="/ral-equivalents" element={<RALEquivalents />} />
+          <Route path="/fees-and-payout-breakdown" element={<FeesAndPayoutBreakdown />} />
           <Route path="/tailored" element={<Suspense fallback={null}><Tailored /></Suspense>} />
           <Route path="/tailored/:product" element={<Suspense fallback={null}><TailoredConfigurator /></Suspense>} />
           {/* Community Hub */}

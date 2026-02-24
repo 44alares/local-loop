@@ -1,0 +1,509 @@
+import { useState, useMemo } from 'react';
+import StlPreview from '@/components/StlPreview';
+import { Layout } from '@/components/layout/Layout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Upload, Settings, Calculator, Printer, Building2, Palette, CreditCard, Info, AlertCircle } from 'lucide-react';
+import { calculatePrintPrice, calculateFullBreakdown, MATERIAL_SURCHARGES, QUALITY_SURCHARGES, ARTISTIC_QUALITY_SURCHARGES, ARTISTIC_MATERIAL_SURCHARGES, calculateBuyerPrice, MULTICOLOR_SURCHARGE_RATE } from '@/lib/pricing';
+import type { ProductType } from '@/types';
+
+// Breakdown row config matching ProductConfigurator
+const breakdownRowConfig = [
+  {
+    key: 'maker',
+    label: 'Maker earns',
+    icon: Printer,
+    iconClass: 'text-accent',
+    tooltip: 'What the maker receives for production (time + materials), before taxes.',
+    rowClass: 'py-1.5 border-t border-border bg-accent/5 -mx-4 px-4',
+    valueClass: 'font-bold text-accent text-sm',
+    labelClass: 'font-medium text-xs',
+    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.makerPayout,
+  },
+  {
+    key: 'designer',
+    label: 'Designer earns',
+    icon: Palette,
+    iconClass: 'text-muted-foreground',
+    tooltip: 'Royalty paid to the designer when applicable, before taxes.',
+    rowClass: 'py-1',
+    valueClass: 'text-xs text-muted-foreground',
+    labelClass: 'text-muted-foreground text-xs',
+    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.designerRoyalty,
+  },
+  {
+    key: 'platform',
+    label: 'Platform fee',
+    icon: Building2,
+    iconClass: 'text-muted-foreground',
+    tooltip: "MakeHug's service fee to operate and support the marketplace.",
+    rowClass: 'py-1',
+    valueClass: 'text-xs text-muted-foreground',
+    labelClass: 'text-muted-foreground text-xs',
+    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.platformFee,
+  },
+  {
+    key: 'payment',
+    label: 'Payment processing',
+    icon: CreditCard,
+    iconClass: 'text-muted-foreground',
+    tooltip: 'Estimated payment provider costs (e.g., card processing).',
+    rowClass: 'py-1',
+    valueClass: 'text-xs text-muted-foreground',
+    labelClass: 'text-muted-foreground text-xs',
+    getValue: (b: ReturnType<typeof calculateFullBreakdown>) => b.paymentProcessing,
+  },
+] as const;
+
+const InfoTooltip = ({ text }: { text: string }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button type="button" className="text-muted-foreground cursor-pointer">
+          <span className="text-xs border border-muted-foreground rounded-full h-4 w-4 inline-flex items-center justify-center">ⓘ</span>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
+        {text}
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+export default function FeesAndPayoutBreakdown() {
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [productType, setProductType] = useState<ProductType>('basic');
+  const [partCount, setPartCount] = useState('1');
+  const [hasSupports, setHasSupports] = useState(false);
+  const [estimatedWeight, setEstimatedWeight] = useState('');
+  const [estimatedPrintTime, setEstimatedPrintTime] = useState('');
+  const [selectedMaterial, setSelectedMaterial] = useState('PLA');
+  const [selectedQuality, setSelectedQuality] = useState<'standard' | 'premium' | 'ultra'>('standard');
+  const [supportsMulticolor, setSupportsMulticolor] = useState(false);
+
+  const isArtistic = productType === 'artistic';
+
+  // Material options based on product type
+  const availableMaterials = isArtistic ? ['PLA', 'Resin'] : ['PLA', 'ABS', 'PETG', 'Nylon', 'Resin', 'TPU'];
+  const availableQualities = isArtistic
+    ? (['premium', 'ultra'] as const)
+    : (['standard', 'premium'] as const);
+
+  // Handle Resin ↔ Ultra pairing
+  const handleMaterialChange = (mat: string) => {
+    setSelectedMaterial(mat);
+    if (isArtistic && mat === 'Resin') setSelectedQuality('ultra');
+    else if (isArtistic && mat !== 'Resin' && selectedQuality === 'ultra') setSelectedQuality('premium');
+    if (mat === 'Resin' && supportsMulticolor) setSupportsMulticolor(false);
+  };
+
+  const handleQualityChange = (q: 'standard' | 'premium' | 'ultra') => {
+    setSelectedQuality(q);
+    if (isArtistic && q === 'ultra' && selectedMaterial !== 'Resin') setSelectedMaterial('Resin');
+    else if (isArtistic && q === 'premium' && selectedMaterial === 'Resin') setSelectedMaterial('PLA');
+  };
+
+  const handleProductTypeChange = (pt: ProductType) => {
+    setProductType(pt);
+    if (pt === 'artistic') {
+      if (!['PLA', 'Resin'].includes(selectedMaterial)) setSelectedMaterial('PLA');
+      if (!['premium', 'ultra'].includes(selectedQuality)) setSelectedQuality('premium');
+    } else {
+      if (selectedQuality === 'ultra') setSelectedQuality('standard');
+    }
+  };
+
+  // Surcharges
+  const partCountNum = parseInt(partCount) || 1;
+  const partCountSurcharge = partCountNum >= 4 ? 0.15 : partCountNum >= 3 ? 0.10 : partCountNum >= 2 ? 0.05 : 0;
+  const supportsSurcharge = hasSupports ? 0.10 : 0;
+  const totalSurcharge = partCountSurcharge + supportsSurcharge;
+
+  // Base print price
+  const basePrintPrice = useMemo(() => {
+    if (!estimatedWeight || !estimatedPrintTime) return null;
+    return calculatePrintPrice({
+      weightGrams: parseFloat(estimatedWeight),
+      printTimeMinutes: parseFloat(estimatedPrintTime),
+      materialDensity: 1.24,
+      materialCostPerKg: 25,
+      laborRatePerHour: 15,
+      material: selectedMaterial,
+    });
+  }, [estimatedWeight, estimatedPrintTime, selectedMaterial]);
+
+  // Apply surcharges + material/quality/multicolor via buyer price logic
+  const buyerPrice = useMemo(() => {
+    if (!basePrintPrice) return null;
+    const afterSurcharges = basePrintPrice * (1 + totalSurcharge);
+    return calculateBuyerPrice({
+      basePrice: afterSurcharges,
+      material: selectedMaterial,
+      quality: selectedQuality,
+      isArtistic,
+      multicolorCount: supportsMulticolor ? 2 : 0,
+    });
+  }, [basePrintPrice, totalSurcharge, selectedMaterial, selectedQuality, isArtistic, supportsMulticolor]);
+
+  const breakdown = useMemo(() => {
+    if (!buyerPrice) return null;
+    return calculateFullBreakdown(buyerPrice, productType);
+  }, [buyerPrice, productType]);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) setUploadedFile(file);
+  };
+
+  return (
+    <Layout>
+      {/* Hero */}
+      <section className="bg-gradient-hero py-10 md:py-12">
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center">
+            <Badge variant="secondary" className="mb-3">Transparency</Badge>
+            <h1 className="text-2xl md:text-3xl font-bold mb-3">
+              Fees &amp; Payout Breakdown
+            </h1>
+            <p className="text-muted-foreground">
+              See how revenue is split between makers, designers, and the platform. Enter your print details to get a live estimate.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Form */}
+      <section className="container py-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid lg:grid-cols-5 gap-6">
+            {/* Left: Configuration */}
+            <div className="lg:col-span-3 space-y-5">
+
+              {/* Product Type */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Settings className="h-4 w-4 text-secondary" />
+                    Product Type
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['basic', 'functional', 'artistic'] as const).map((option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => handleProductTypeChange(option)}
+                        className={`p-2.5 rounded-lg border-2 text-sm font-medium capitalize transition-all ${
+                          productType === option
+                            ? 'border-secondary bg-secondary/10 text-secondary'
+                            : 'border-border hover:border-secondary/50'
+                        }`}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {productType === 'basic' && 'Simple items that don\'t need precise fit or special materials.'}
+                    {productType === 'functional' && 'Parts where fit, tolerances, and durability matter.'}
+                    {productType === 'artistic' && 'Aesthetic/collectible pieces where surface finish and detail are the priority.'}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Design File Upload */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Upload className="h-4 w-4 text-secondary" />
+                    Design File Upload
+                  </CardTitle>
+                  <CardDescription className="text-xs">Supported formats: STL, 3MF</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-accent font-medium mb-3 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    You must be registered to upload files.
+                  </p>
+                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-secondary transition-colors">
+                    <input type="file" accept=".stl,.3mf" onChange={handleFileUpload} className="hidden" id="file-upload-fees" />
+                    <label htmlFor="file-upload-fees" className="cursor-pointer">
+                      <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+                      {uploadedFile ? (
+                        <p className="font-medium text-secondary text-sm">{uploadedFile.name}</p>
+                      ) : (
+                        <>
+                          <p className="font-medium text-sm mb-1">Drop your STL/3MF here or click to browse</p>
+                          <p className="text-xs text-muted-foreground">Maximum file size: 100MB</p>
+                        </>
+                      )}
+                    </label>
+                  </div>
+                  {uploadedFile && uploadedFile.name.toLowerCase().endsWith('.stl') && (
+                    <div className="mt-4 space-y-2">
+                      <p className="text-xs text-muted-foreground">Drag to rotate · Scroll to zoom</p>
+                      <StlPreview file={uploadedFile} />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Print Settings */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Settings className="h-4 w-4 text-secondary" />
+                    Print Settings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="flex items-center gap-2 text-sm">
+                        Part Count
+                        <InfoTooltip text="Number of separate pieces required to assemble the object." />
+                      </Label>
+                      <Select value={partCount} onValueChange={setPartCount}>
+                        <SelectTrigger className="h-9">
+                          <SelectValue placeholder="Select parts" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 piece</SelectItem>
+                          <SelectItem value="2">2 pieces</SelectItem>
+                          <SelectItem value="3">3 pieces</SelectItem>
+                          <SelectItem value="4">4 pieces</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm">Requires Supports</Label>
+                      <div className="flex items-center gap-2 h-9">
+                        <Checkbox id="supports-fees" checked={hasSupports} onCheckedChange={(checked) => setHasSupports(checked as boolean)} />
+                        <Label htmlFor="supports-fees" className="cursor-pointer text-sm">Yes, supports needed</Label>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Material */}
+                  <div className="space-y-1.5">
+                    <Label className="text-sm">Material</Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {availableMaterials.map((mat) => (
+                        <button
+                          key={mat}
+                          type="button"
+                          onClick={() => handleMaterialChange(mat)}
+                          className={`p-2 rounded-lg border text-sm font-medium transition-colors ${
+                            selectedMaterial === mat
+                              ? 'border-secondary bg-secondary/5'
+                              : 'border-border hover:border-muted-foreground'
+                          }`}
+                        >
+                          {mat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Multi-color toggle */}
+                  {selectedMaterial !== 'Resin' && (
+                    <div className="flex items-center gap-3 p-3 rounded-lg border border-border">
+                      <Checkbox
+                        id="mc-fees"
+                        checked={supportsMulticolor}
+                        onCheckedChange={(checked) => setSupportsMulticolor(checked as boolean)}
+                      />
+                      <Label htmlFor="mc-fees" className="cursor-pointer text-sm font-medium">
+                        Supports multicolor
+                      </Label>
+                      {supportsMulticolor && (
+                        <Badge variant="secondary" className="text-xs">+30%</Badge>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="weight-fees" className="flex items-center gap-2 text-sm">
+                        Estimated Weight (grams)
+                        <InfoTooltip text="Used to estimate material cost. Enter total grams across all parts (including a reasonable waste margin if needed)." />
+                      </Label>
+                      <Input
+                        id="weight-fees"
+                        type="number"
+                        placeholder="e.g., 50"
+                        value={estimatedWeight}
+                        onChange={(e) => setEstimatedWeight(e.target.value)}
+                        className="h-9"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="time-fees" className="flex items-center gap-2 text-sm">
+                        Print Time (minutes)
+                        <InfoTooltip text="Estimated using the OrcaSlicer profile: 0.32mm standard @MyKliper. Your actual time may vary by printer/settings." />
+                      </Label>
+                      <Input
+                        id="time-fees"
+                        type="number"
+                        placeholder="e.g., 120"
+                        value={estimatedPrintTime}
+                        onChange={(e) => setEstimatedPrintTime(e.target.value)}
+                        className="h-9"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quality */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    Quality
+                    <InfoTooltip text="Higher quality settings use finer layer heights for better surface finish, but increase print time and cost." />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['standard', 'premium', 'ultra'] as const).map((q) => {
+                      const isAvailable = (availableQualities as readonly string[]).includes(q);
+                      const isUltraWithoutResin = q === 'ultra' && selectedMaterial !== 'Resin' && !isArtistic;
+                      const disabled = !isAvailable && !isUltraWithoutResin;
+                      return (
+                        <button
+                          key={q}
+                          type="button"
+                          disabled={disabled && q !== 'ultra'}
+                          onClick={() => {
+                            if (q === 'ultra' && selectedMaterial !== 'Resin') {
+                              handleMaterialChange('Resin');
+                              handleQualityChange('ultra');
+                            } else if (isAvailable) {
+                              handleQualityChange(q);
+                            }
+                          }}
+                          className={`p-2.5 rounded-lg border-2 text-sm font-medium capitalize transition-all ${
+                            selectedQuality === q
+                              ? 'border-secondary bg-secondary/10 text-secondary'
+                              : disabled && q !== 'ultra'
+                              ? 'border-border opacity-40 cursor-not-allowed'
+                              : 'border-border hover:border-secondary/50'
+                          }`}
+                        >
+                          {q}
+                          {q === 'standard' && <span className="block text-[10px] text-muted-foreground font-normal">Base</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {selectedQuality === 'ultra' && selectedMaterial !== 'Resin' && (
+                    <p className="text-xs text-accent mt-2 flex items-center gap-1">
+                      <Info className="h-3 w-3" />
+                      Ultra is available for resin prints. Material has been switched to Resin.
+                    </p>
+                  )}
+                  {!isArtistic && selectedQuality !== 'ultra' && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Ultra quality is available for resin prints only.
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right: Live Breakdown */}
+            <div className="lg:col-span-2">
+              <Card className="sticky top-24">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Calculator className="h-4 w-4" />
+                    Payout Breakdown
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {breakdown ? (
+                    <>
+                      <div className="text-center py-3">
+                        <p className="text-3xl font-bold">{breakdown.buyerPrice.toFixed(2)}</p>
+                        <p className="text-muted-foreground text-sm mt-1">Total price</p>
+                      </div>
+
+                      {totalSurcharge > 0 && (
+                        <div className="space-y-1 text-sm bg-accent/5 rounded-lg p-3">
+                          <p className="text-xs font-medium text-muted-foreground">Surcharges applied:</p>
+                          {partCountSurcharge > 0 && (
+                            <div className="flex justify-between text-xs">
+                              <span className="text-muted-foreground">Part count ({partCountNum} parts)</span>
+                              <span className="font-medium">+{(partCountSurcharge * 100).toFixed(0)}%</span>
+                            </div>
+                          )}
+                          {supportsSurcharge > 0 && (
+                            <div className="flex justify-between text-xs">
+                              <span className="text-muted-foreground">Supports needed</span>
+                              <span className="font-medium">+10%</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {supportsMulticolor && (
+                        <div className="flex justify-between text-xs py-1 border-b border-border/50">
+                          <span className="text-muted-foreground flex items-center gap-1">
+                            <Palette className="h-3 w-3" />
+                            Multi-color +30%
+                          </span>
+                          <span className="font-medium">Included</span>
+                        </div>
+                      )}
+
+                      <div className="space-y-1.5 text-sm">
+                        {breakdownRowConfig.map((row) => {
+                          const IconComp = row.icon;
+                          const value = row.getValue(breakdown);
+                          return (
+                            <div key={row.key} style={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: '8px' }} className={row.rowClass}>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <button type="button" className={`flex items-center gap-1.5 ${row.labelClass} cursor-pointer hover:text-foreground transition-colors`}>
+                                    <IconComp className={`h-3 w-3 shrink-0 ${row.iconClass}`} />
+                                    {row.label}
+                                    <span className="text-muted-foreground text-xs border border-muted-foreground rounded-full h-3.5 w-3.5 inline-flex items-center justify-center shrink-0">ⓘ</span>
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="max-w-xs text-xs z-[100]" side="top" align="start">
+                                  {row.tooltip}
+                                </PopoverContent>
+                              </Popover>
+                              <span className={row.valueClass} style={{ flexShrink: 0, textAlign: 'right', whiteSpace: 'nowrap' }}>{value.toFixed(2)}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <p className="text-xs text-muted-foreground text-center pt-2">
+                        Values update live as you change inputs.
+                      </p>
+                    </>
+                  ) : (
+                    <div className="text-center py-6 text-muted-foreground">
+                      <Calculator className="h-10 w-10 mx-auto mb-3 opacity-50" />
+                      <p className="text-sm">Enter weight and print time to see the payout breakdown</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+    </Layout>
+  );
+}
