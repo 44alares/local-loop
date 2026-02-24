@@ -15,8 +15,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Upload, Image, Camera, Settings, Calculator, Printer, Building2, Palette, CreditCard, CheckCircle2, FileText, AlertCircle, Info, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { ralColors, RALColor } from '@/data/ralColors';
 import { MATERIALS_CONFIG, type MaterialType } from '@/data/materialsConfig';
-import { getPalettesForMaterial, multicolorHexMap, type PaletteId } from '@/data/multicolorPalettes';
+import { getPalettesForMaterial, multicolorHexMap, paletteColorToRal, type PaletteId } from '@/data/multicolorPalettes';
 import { PaletteInfoTooltip } from '@/components/PaletteInfoTooltip';
+import { PaletteColorSwatch } from '@/components/PaletteColorSwatch';
 import { calculatePrintPrice } from '@/lib/pricing';
 import { Link } from 'react-router-dom';
 
@@ -552,11 +553,7 @@ export default function StartCreating() {
                             >
                               <div className="flex gap-0.5 shrink-0">
                                 {displayColors.slice(0, 4).map((c) => (
-                                  <span
-                                    key={c}
-                                    className="h-5 w-5 rounded-full border border-border"
-                                    style={{ backgroundColor: multicolorHexMap[c] || '#CCC' }}
-                                  />
+                                  <PaletteColorSwatch key={c} colorName={c} />
                                 ))}
                               </div>
                               <div>
@@ -679,6 +676,47 @@ export default function StartCreating() {
                       <Palette className="h-3 w-3" />
                       Recommended RAL colors (approx.)
                     </Label>
+
+                    {/* Quick-add: palette colors mapped to RAL */}
+                    {selectedMaterial && (() => {
+                      const allPaletteColors = getPalettesForMaterial(selectedMaterial)
+                        .flatMap(p => p.colors);
+                      const paletteRalOptions = allPaletteColors
+                        .map(name => ({ name, ral: paletteColorToRal[name] }))
+                        .filter((c): c is { name: string; ral: string } =>
+                          c.ral !== null && c.ral !== undefined &&
+                          !selectedRalColors.includes(c.ral)
+                        )
+                        .filter((c, i, arr) => arr.findIndex(x => x.ral === c.ral) === i);
+                      if (paletteRalOptions.length === 0) return null;
+                      return (
+                        <div className="space-y-1">
+                          <p className="text-xs text-muted-foreground">Quick-add from palettes:</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {paletteRalOptions.map(({ name, ral }) => (
+                              <button
+                                key={ral}
+                                type="button"
+                                onClick={() => {
+                                  if (!selectedRalColors.includes(ral)) {
+                                    setSelectedRalColors(prev => [...prev, ral]);
+                                  }
+                                }}
+                                className="flex items-center gap-1.5 px-2 py-1 rounded-md border border-border hover:border-secondary/50 text-xs transition-colors"
+                              >
+                                <span
+                                  className="h-3 w-3 rounded-full border border-border shrink-0"
+                                  style={{ backgroundColor: multicolorHexMap[name] || '#CCC' }}
+                                />
+                                {name}
+                                <span className="text-muted-foreground">({ral})</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+
                     <Select
                       onValueChange={(code) => {
                         if (!selectedRalColors.includes(code)) {
