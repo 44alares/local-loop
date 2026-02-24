@@ -64,6 +64,9 @@ export default function About() {
               <Link to="/designer-terms" className="text-sm text-muted-foreground hover:text-secondary underline underline-offset-2 transition-colors">
                 Learn More
               </Link>
+              <Link to="/fees-and-payout-breakdown" className="text-sm text-muted-foreground hover:text-secondary underline underline-offset-2 transition-colors">
+                Pricing breakdown
+              </Link>
             </div>
           </div>
         </div>
