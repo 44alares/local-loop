@@ -11,10 +11,10 @@ export function HeroSection() {
       }} />
       </div>
 
-      <div className="container relative py-12 md:py-24">
+      <div className="container relative py-6 md:py-24">
         <div className="flex items-start gap-4 md:grid md:grid-cols-2 md:gap-10 md:items-center">
           {/* Content */}
-          <div className="flex-1 space-y-4 md:space-y-6">
+          <div className="flex-1 space-y-2 md:space-y-6">
             {/* Badge - hidden on mobile */}
             <div className="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/10 border border-secondary/20">
               <Leaf className="h-4 w-4 text-secondary" />
@@ -48,8 +48,8 @@ export function HeroSection() {
 
             {/* Transparency row */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 pt-1">
-              <span className="text-sm text-muted-foreground">We believe in transparent pricing.</span>
-              <Button variant="outline" size="sm" className="w-fit border-accent text-accent hover:bg-accent/10" asChild>
+              <span className="text-base md:text-lg text-muted-foreground">We believe in transparent pricing.</span>
+              <Button variant="hero-outline" className="w-fit border-accent text-accent hover:bg-accent hover:text-accent-foreground" asChild>
                 <Link to="/fees-and-payout-breakdown">Pricing breakdown</Link>
               </Button>
             </div>
