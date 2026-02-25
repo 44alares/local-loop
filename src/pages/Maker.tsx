@@ -52,12 +52,6 @@ export default function Maker() {
                 </Button>
               </div>
 
-              {/* Pricing breakdown CTA */}
-              <div className="flex justify-center md:justify-start pt-4">
-                <Button variant="outline" size="default" className="border-accent text-accent hover:bg-accent/10 text-base" asChild>
-                  <Link to="/fees-and-payout-breakdown">Pricing breakdown</Link>
-                </Button>
-              </div>
             </div>
 
             {/* Desktop Hero Image */}
