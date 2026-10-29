@@ -80,7 +80,7 @@ export default function Contact() {
             </div>
             <h1 className="text-display-sm font-bold mb-4">Message Sent!</h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Your email client should have opened with your message. If not, please send an email directly to hello@makehug.com
+              Thanks for reaching out. We've received your message and will get back to you as soon as possible.
             </p>
             <Button variant="hero" onClick={() => setSubmitted(false)}>
               Send Another Message
