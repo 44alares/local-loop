@@ -8,6 +8,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Mail, Send, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { FunctionsHttpError } from '@supabase/supabase-js';
 
 const ROLES = ['Maker', 'Designer', 'Buyer'] as const;
 
@@ -44,14 +46,28 @@ export default function Contact() {
     if (!validate()) return;
 
     setIsSubmitting(true);
-
-    const bodyContent = `Name: ${name}\nCountry: ${country}\nZIP / Postal code: ${zip}\nRoles: ${roles.join(', ')}\n${subject ? `Subject: ${subject}\n` : ''}${message ? `\nMessage:\n${message}` : ''}`;
-    const mailtoLink = `mailto:hello@makehug.com?subject=${encodeURIComponent(subject || 'New Contact Form Submission')}&body=${encodeURIComponent(bodyContent)}`;
-
-    window.location.href = mailtoLink;
-
-    setIsSubmitting(false);
-    setSubmitted(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-contact-message', {
+        body: { name, email, country, zip, roles, subject, message },
+      });
+      if (error) {
+        let details = error.message;
+        if (error instanceof FunctionsHttpError) {
+          try { details = (await error.context.json())?.error || details; } catch { /* keep default */ }
+        }
+        throw new Error(details);
+      }
+      if (!data?.ok) throw new Error(data?.error || 'The message could not be sent.');
+      setSubmitted(true);
+    } catch (err) {
+      toast({
+        title: 'Message not sent',
+        description: err instanceof Error ? err.message : 'Please try again later.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
