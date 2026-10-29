@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { FunctionsHttpError } from '@supabase/supabase-js';
 
-const ROLES = ['Maker', 'Designer', 'Buyer'] as const;
+const ROLES = ['Maker', 'Designer', 'Buyer', 'Other'] as const;
 
 export default function Contact() {
   const [name, setName] = useState('');
