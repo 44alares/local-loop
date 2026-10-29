@@ -13,6 +13,7 @@ const ROLES = ['Maker', 'Designer', 'Buyer'] as const;
 
 export default function Contact() {
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [country, setCountry] = useState('');
   const [zip, setZip] = useState('');
   const [roles, setRoles] = useState<string[]>([]);
@@ -30,6 +31,7 @@ export default function Contact() {
   const validate = () => {
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = 'Please enter your name.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) e.email = 'Please enter a valid email.';
     if (!country.trim()) e.country = 'Please enter your country.';
     if (!zip.trim()) e.zip = 'Please enter your ZIP / postal code.';
     if (roles.length === 0) e.roles = 'Please select at least one role.';
@@ -109,6 +111,12 @@ export default function Contact() {
                   <Label htmlFor="name">Name <span className="text-destructive">*</span></Label>
                   <Input id="name" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
                   {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email <span className="text-destructive">*</span></Label>
+                  <Input id="email" type="email" placeholder="you@example.com" maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} />
+                  {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
